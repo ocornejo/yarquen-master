@@ -75,9 +75,15 @@ public class Trust {
 	public boolean checkAdjacency(Node start, Node end){  
 		
 		RelationshipType rel = DynamicRelationshipType.withName("TRUSTS");
-
+		
+		if(rel==null) return false;
+		
 		for(Relationship r :start.getRelationships(Direction.OUTGOING,rel)) {
-			if(r.getOtherNode(start).equals(end)) return true;
+			LOGGER.info("search of node {}",start);
+			if(r.getOtherNode(start).equals(end)){
+				LOGGER.info("founding friends called {}",end);
+				return true;
+			}
 		}
 		return false;
 	}

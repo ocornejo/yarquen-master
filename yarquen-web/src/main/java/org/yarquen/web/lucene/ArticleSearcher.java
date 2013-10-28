@@ -43,6 +43,7 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
+import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -250,8 +251,9 @@ public class ArticleSearcher {
 		LOGGER.debug("userdetails {}", userDetails.getId());
 		
 		String accountId = userDetails.getId();
-		
+		//neo4j data
 		Trust trustAction = new Trust();
+		Node source = trustAction.getNode(accountId);
 		
 		for (ScoreDoc scoreDoc : hits) {
 			final Document doc = searcher.doc(scoreDoc.doc);
@@ -264,7 +266,7 @@ public class ArticleSearcher {
 						"the article {} is indexed but doesn't exists in the database",
 						id);
 			} else {
-				final SearchResult searchResult = createSearchResult(article,accountId,trustAction);
+				final SearchResult searchResult = createSearchResult(article,accountId,trustAction, source);
 
 				float score = (float) (Math.round(scoreDoc.score * 10.0) / 10.0);
 				searchResult.setScore(score);
@@ -519,7 +521,7 @@ public class ArticleSearcher {
 	}
 	
 	//this method fills the searchResult properties
-	private SearchResult createSearchResult(Article article, String id, Trust trustAction) {
+	private SearchResult createSearchResult(Article article, String id, Trust trustAction, Node source) {
 		final SearchResult searchResult = new SearchResult();
 		searchResult.setId(article.getId());
 		searchResult.setUrl(article.getUrl());
@@ -541,7 +543,7 @@ public class ArticleSearcher {
 		}
 		searchResult.setKeywords(keywords);
 		if(article.getRatings().size()>0)
-			searchResult.setRatingFinal(article.getRatings(),id,trustAction);
+			searchResult.setRatingFinal(article.getRatings(),id,trustAction, source);
 		else
 			searchResult.setRatingFinalDirect(0);
 	

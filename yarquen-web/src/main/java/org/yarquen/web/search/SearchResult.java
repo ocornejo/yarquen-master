@@ -55,20 +55,21 @@ public class SearchResult {
 	public void setRatingFinalDirect(double rate){
 		this.ratingFinal = rate;
 	}
-	public void setRatingFinal(List<Rating> ratings, String id, Trust trustAction) {
+	
+	public void setRatingFinal(List<Rating> ratings, String id, Trust trustAction, Node source) {
 		
 		double rate = 0;
 		
-		if(ratings!=null){
-			for(Rating rt: ratings){
-				Node source = trustAction.getNode(id);
+		if(ratings.size()>0){
+			LOGGER.info("Here I am");
+			for(Rating rt: ratings){				
 				Node sink = trustAction.getNode(rt.getId());
 				if(trustAction.checkAdjacency(source, sink)){
 					rate = Double.parseDouble(rt.getRating()) * trustAction.getTrust(source, sink);
 				}
 				this.ratingFinal+=rate;
 			}
-			LOGGER.debug("Rating final {}", this.ratingFinal);
+			LOGGER.info("Rating final {}", this.ratingFinal);
 			this.ratingFinal = (double)(ratingFinal/10);
 		}
 		else
