@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:substituteby="layout :: header">
+		<meta charset="UTF-8" />
+			<title>Yarquen Crawler</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
+		<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
+		<link href="../../../css/yarquen.css" rel="stylesheet" />
+		<link href="../../../bootstrap/css/bootstrap-responsive.css"
+			rel="stylesheet" />
+		
+		<script src="../../../js/jquery.js"></script>
+		<script src="../../../js/jquery.validate.js"></script>
+		<script src="../../../bootstrap/js/bootstrap.min.js"></script>
+		
+		<!-- Include Bootstrap Asserts JavaScript Files. -->
+		<script type="text/javascript" src="jquery.validate.js"></script>
+	</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" th:substituteby="layout :: navbar">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" th:href="@{/}" href="../home.html">Yarquen</a>
+				<div class="nav-collapse collapse">
+					<p class="navbar-text pull-right"
+						th:substituteby="layout :: logout">
+						Logged in as <a href="#" class="navbar-link">admin</a>
+					</p>
+					<ul class="nav">
+						<li><a th:href="@{/}" href="home.html">Home</a></li>
+						<li sec:authorize="hasRole('PERM_READ_USER')"><a
+							th:href="@{/account/}" href="account/list.html">Accounts</a></li>
+						<li sec:authorize="hasRole('PERM_WRITE_CATEGORY')"><a
+							th:href="@{/category/setupCategory}" href="category/edit.html">Category</a></li>
+						<li><a th:href="@{/pathfinder/setup}"
+							href="path/shohPaths.html">Path Finder</a></li>
+						<li><a th:href="@{/articles}" href="articles.html">Search
+								Articles</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul th:substituteby="layout :: login"></ul>
+				</div>
+			</div>
+		</div>
+		<ul class="breadcrumb">
+			<li><a th:href="@{/}" href="../home.html">Home</a> <span
+				class="divider">/</span></li>
+			<li><a th:href="@{/report/viewReports}"
+				href="../report/viewReports.html">View Reports</a> <span
+				class="divider">/</span></li>
+			<li class="active">Report Detail</li>
+		</ul>
+	</div>
+
+	<div class="container-fluid">
+
+		<div class="row-fluid">
+			<div class="span5 offset1">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td style="text-align: right;"><strong>Author</strong></td>
+							<td th:text="${bugReport.author}">John McKenzie</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Report Date</strong></td>
+							<td
+								th:text="${#dates.format(bugReport.reportDate, 'dd/MMM/yyyy HH:mm')}">01/01/2000
+								20:10</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Title</strong></td>
+							<td th:text="${bugReport.title}">Title of the bug or
+								suggestion</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Description</strong></td>
+							<td th:text="${bugReport.description}">Description of the
+								bug or suggestion</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+		<hr />
+		<footer class="pull-right" th:substituteby="layout :: footer">
+			<small class="muted">Yarquen, a focused, semantic,
+				distributed crawler :)</small>
+		</footer>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Yarquen Crawler</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
+        <link th:href="@{/static/bootstrap/css/bootstrap.min.css}" href="../../../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link th:href="@{/static/css/yarquen.css}" href="../../../css/yarquen.css" rel="stylesheet" />
+        <link th:href="@{/static/bootstrap/css/bootstrap-responsive.min.css}" href="../../../bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+        <link th:href="@{/static/css/flick/jquery-ui-1.10.0.custom.min.css}" href="../../../css/flick/jquery-ui-1.10.0.custom.min.css" rel="stylesheet" />
+        <link th:href="@{/static/css/jquery.tagit.css}" href="../../../css/jquery.tagit.css" rel="stylesheet" />
+
+        <script th:src="@{/static/js/jquery.js}" src="../../../js/jquery.js"></script>
+        <script th:src="@{/static/bootstrap/js/bootstrap.min.js}" src="../../../bootstrap/js/bootstrap.min.js"></script>
+        <script th:src="@{/static/js/jquery-ui-1.10.0.custom.min.js}" src="../../../js/jquery-ui-1.10.0.custom.min.js"></script>
+        <script th:src="@{/static/js/tag-it.min.js}" src="../../../js/tag-it.min.js" charset="utf-8"></script>
+        <script th:src="@{/static/jstree/jquery.jstree.js}" src="../../../jstree/jquery.jstree.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <style>
+
+        path.link {
+          fill: none;
+          stroke: #666;
+          stroke-width: 1.5px;
+        }
+
+        circle {
+          fill: #cac;
+          stroke: #fff;
+          stroke-width: 1.5px;
+        }
+
+        text {
+          fill: #000;
+          font: 10px sans-serif;
+          pointer-events: none;
+        }
+
+        .diagram {
+          border: 1px solid #DEDEDE;
+        }
+        
+        .skill{
+            fill: #acd;
+        }
+        
+        .article{
+        	padding: 8px;
+        	margin-bottom: 15px;
+			border: 1px solid;
+			display:none;
+        }
+        
+        .circle{width:16px;height:16px;border-radius:8px;font-size:20px;color:#acd;line-height:16px;text-align:right;margin-left:20px;background:#acd}
+
+        </style>
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" th:substituteby="layout :: navbar">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" th:href="@{/}" href="../home.html">Yarquen</a>
+				<div class="nav-collapse collapse">
+					<p class="navbar-text pull-right"
+						th:substituteby="layout :: logout">
+						Logged in as <a href="#" class="navbar-link">admin</a>
+					</p>
+					<ul class="nav">
+						<li><a th:href="@{/}" href="home.html">Home</a></li>
+						<li sec:authorize="hasRole('PERM_READ_USER')"><a
+							th:href="@{/account/}" href="account/list.html">Accounts</a></li>
+						<li sec:authorize="hasRole('PERM_WRITE_CATEGORY')"><a
+							th:href="@{/category/setupCategory}" href="category/edit.html">Category</a></li>
+						<li class="active"><a th:href="@{/pathfinder/setup}"
+							href="path/shohPaths.html">Path Finder</a></li>
+						<li><a th:href="@{/articles}" href="articles.html">Search
+								Articles</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul th:substituteby="layout :: login">
+					</ul>
+				</div>
+			</div>
+		</div>
+                <ul class="breadcrumb">
+                    <li><a th:href="@{/}" href="../home.html">Home</a> <span class="divider">/</span></li>
+                    <li class="active">Recommended Paths</li>
+                </ul>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+            <div class="span8">
+            <div class="tabbable">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#1" data-toggle="tab">Graph Visualization</a></li>
+					<li class=""><a href="#2" data-toggle="tab">List Visualization</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="1">
+						<div id="pathGraph" class="diagram"></div>
+			            <div class="inline-block span2">
+				            <table class="table">
+				              <thead>
+				                <tr>
+				                  <th><small>Legend</small></th>
+				                  <th colspan="3"></th>
+				                </tr>
+				              </thead>
+				              <tbody>
+				                <tr>
+				                  <td><div class="circle "></div></td>
+				                  <td><small>Article</small></td>
+				                  <td><div class="circle" style="background:#cac"></div></td>
+				                  <td><small>Skill</small></td>
+				                </tr>
+				              </tbody>
+				            </table>
+			            </div>
+					</div>
+					<div class="tab-pane span5" id="2">
+						<table id="articlesTable" class="table table-bordered">
+						 	<thead>
+				                <tr>
+				                  <th>Articles</th>
+				                </tr>
+				              </thead>
+				              <tbody>
+				                <tr>
+				                  <td>AAAAA</td>
+				                </tr>
+				              </tbody>
+						</table>
+					</div>
+				</div>
+            </div>
+            </div>
+            <div id="table" class="span4">
+            
+            	<div id="article" class="article" >
+					<span> 
+						<em>
+						<a id="a.article"
+							href="http://architects.dzone.com/news/functional-programming-101-lam"
+							 target="_blank">Functional Programming 101: Lambda Forms</a>
+						</em> 
+						<small>by</small> <small><span class="icon-user"></span> 
+						<a id="a.author" href="#">Pramod Subramanyan</a></small> <small>on</small>
+						<small><span class="icon-calendar"></span> <span id="spam.date">05.19.2008</span></small> 
+						<a id="a.enricher"
+						href="enricher.html" rel="tooltip" title="complete metadata"><span class="icon-pencil"></span></a> 
+						<a id="a.record"
+							href="record.html" rel="tooltip" title="see changes">
+							<span class="icon-time"></span></a>
+					</span> 
+					<button type="button" class="close" onclick="javascript:$('#article').hide(600)">×</button>
+					<br /> 
+					<small id="small.url" class="muted">http://architects.dzone.com/news/functional-programming-101-lam</small>
+					<br /> 
+					<span class="icon-tags"></span> <small class="muted">Keywords:</small>
+					<small id="keywords"
+						style="margin-right: 5px"
+						class="text-success">lambda</small> <br /> <small><a id="moreDetails"
+						href="#" class="resultDetailsLink muted" onclick="$(this).toggle();$('#details').toggle(400)">+ more details</a></small>
+					<div class="resultDetails hide" id="details">
+						<button type="button"
+							class="resultDetailsClose pull-right close" onclick="$('#details').toggle(400);$('#moreDetails').toggle()">-</button>
+						<h5>Summary</h5>
+						<p id="p.summary">In this example you will see
+							how to populate a form using Spring annotations. The annotated
+							user controller class is shown below.</p>
+						<h6>Required Skills</h6>
+						<ul id="required">
+						  <li>...</li>
+						</ul>
+						<h6>Provided Skills</h6>
+						<ul id="provided">
+						  <li>...</li>
+						</ul>
+						
+					</div>
+				</div>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Paths Found</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="pathBodyTable">
+                        <tr id="path1" th:each="path, stat: ${pathList}" th:id="${path}">
+                            <td><span th:text="'Path '+${stat.index+1}">Path 1</span></td>
+                            <td>
+                                <span>
+                                    <a href="#" th:onclick="'setupPath('+${stat.index}+');return false;'" onclick="setupPath(0);return false;">
+                                    <i class="icon-eye-open"></i>View </a>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            <hr/>
+            <footer class="pull-right" th:substituteby="layout :: footer">
+                <small class="muted">Yarquen, a focused, semantic, distributed crawler :)</small>
+            </footer>
+        </div>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+	var width = 760,
+	    height = 450,
+	    nodes,
+	    node,
+	    links,
+	    path;
+	var data =new Array();
+	var nodeArticle={name:"Article",type:0,x:20,y:10,fixed:true}
+	var nodeSkill={name:"Skill",type:1,x:20,y:30,fixed:true}
+	
+	var force = d3.layout.force()
+	    .size([width, height])
+	    .linkDistance(100)
+	    .charge(-300)
+	    .start();
+	
+	var svg = d3.select("#pathGraph").append("svg")
+	    .attr("width", width)
+	    .attr("height", height);
+
+
+	function update(){
+	    svg.remove();
+	    svg = d3.select("#pathGraph").append("svg")
+	      .attr("width", width)
+	      .attr("height", height);
+	
+	    // Restart the force layout.
+		force
+			.nodes(nodes)
+			.links(links)
+			.on("tick", tick)
+			.start();
+		
+		// build the arrow.
+		svg.append("svg:defs").selectAll("marker")
+			.data(["end"])      // Different link/path types can be defined here
+		    .enter().append("svg:marker")    // This section adds in the arrows
+			.attr("id", String)
+			.attr("viewBox" , "0 -5 10 10")
+			.attr("refX", 18)
+			.attr("refY", -1.5)
+			.attr("markerWidth", 6)
+			.attr("markerHeight", 6)
+			.attr("orient", "auto")
+		    .append("svg:path")
+		    .attr("d", "M0,-5L10,0L0,5");
+	
+	
+		// add the links and the arrows
+		path = svg.append("svg:g").selectAll("path")
+			.data(force.links())
+			.enter().append("svg:path")
+			.attr("class", "link")
+			.attr("marker-end", "url(#end)");
+	
+		// define the nodes
+		node = svg.selectAll(".node")
+			.data(force.nodes())
+			.enter().append("g")
+			.attr("class", "node")
+			.call(force.drag);
+	
+		// add the nodes
+		node.append("circle")
+			.attr("r", 8)
+			.attr("class", function(d) {
+				if(d.type){
+					return "skill";
+				}else{
+		          	return "";
+		      	}
+			})
+			.on("click", function(d) { 
+				if(d.type){
+					console.log(d.articleId);
+					fillArticle(d.articleId);
+				} 
+			});
+	
+	  	// add the text
+		node.append("text").attr("x", 12)
+	    	.attr("dy", ".35em")
+	   		.text(function(d) { return d.name; });
+	
+	  	// add the curvy lines
+		function tick() {
+		    path.attr("d", function(d) {
+		        var dx = d.target.x - d.source.x,
+		            dy = d.target.y - d.source.y,
+		            dr = Math.sqrt(dx * dx + dy * dy);
+		        return "M" +
+		            d.source.x + "," +
+		            d.source.y + "A" +
+		            dr + "," + dr + " 0 0,1 " +
+		            d.target.x + "," +
+		            d.target.y;
+		    });
+	
+			node.attr("transform", function(d) {
+			    return "translate(" + d.x + "," + d.y + ")"; 
+			    });
+		}
+	}
+
+	function initPath(){
+		data=[{nodes:[{"name":"1","type":0},{"name":"2","type":0},{"name":"3","type":0},{"name":"4","type":0},{"name":"5","type":0},{"name":"6","type":0},
+        	{"name":"D","type":1},{"name":"B","type":1}],links:[{"source":0,"target":6},{"source":1,"target":6},{"source":6,"target":3},{"source":6,"target":4},{"source":2,"target":7},{"source":3,"target":7},
+    		{"source":7,"target":5}]},
+        	{nodes:[{"name":"1","type":0},{"name":"2","type":0},{"name":"5","type":0},{"name":"4","type":0},{"name":"5","type":0},{"name":"6","type":0},
+        	{"name":"D","type":1},{"name":"C","type":1}],links:[{"source":0,"target":6},{"source":1,"target":6},{"source":6,"target":3},{"source":6,"target":4},{"source":2,"target":7},{"source":3,"target":7},
+    		{"source":7,"target":5}]}];
+    
+        rawData= /*[[ ${pathList} ]]*/ [];
+        console.log(rawData);
+        for (var i=0;i<rawData.length;i++){
+        	var nodeMap=Array();
+            var nodeList = new Array();
+            var linkList = new Array();
+            var articles=rawData[i].articles;
+            for (var j=0;j<articles.length;j++){
+            	idArticle= articles[j].id
+            	node={name:articles[j].title,type:1,articleId:idArticle}
+            	if(nodeMap[idArticle] == undefined){
+            		nodeList.push(node)
+            		nodeMap[idArticle]=nodeList.length-1
+            	}
+            	idArticle=nodeMap[idArticle]
+                var providedSkills=articles[j].providedSkills
+                for(var z=0;z<providedSkills.length;z++){
+                    var skill=providedSkills[z];
+                    id = skill.categoryBranch.code
+                    CategoryName=skill.categoryBranch.nodes[skill.categoryBranch.nodes.length-1].name
+                    node={name:CategoryName,type:0}
+                    if(nodeMap[id] == undefined){
+                		nodeList.push(node)
+                		nodeMap[id]=nodeList.length-1
+                	}
+                	id=nodeMap[id]
+                    linkList.push({"source":idArticle,"target":id})
+                }
+                var requiredSkills=articles[j].requiredSkills
+                for(var z=0;z<requiredSkills.length;z++){
+                    var skill=requiredSkills[z];
+                    id = skill.categoryBranch.code
+                    CategoryName=skill.categoryBranch.nodes[skill.categoryBranch.nodes.length-1].name
+                    node={name:CategoryName,type:0}
+                    if(nodeMap[id] == undefined){
+                		nodeList.push(node)
+                		nodeMap[id]=nodeList.length-1
+                	}
+                	id=nodeMap[id]
+                    linkList.push({"source":id,"target":idArticle})
+                }
+
+            }
+            data[i] = {nodes:nodeList,links:linkList}
+            console.log(nodeMap);
+            
+        }
+        console.log(data);
+   	}
+	
+	function updateArticlesTable(){
+		$("#articlesTable tbody").empty();
+		for(var i=0;i<nodes.length;i++){
+			var node=nodes[i];
+			if(node.type){
+				$('#articlesTable tbody').append('<tr><td><a href="#" onclick="fillArticle('+"'"+node.articleId+"'"+')">'+node.name+'</a></td></tr>');
+			}
+		}
+	}
+	
+	function setupPath(index){
+		nodes=data[index].nodes;
+		links = data[index].links;
+		update();
+		updateArticlesTable();
+	}
+  
+	function fillArticle(articleId){
+		var prefixUrl=/*[[ @{/} ]]*/ "http://localhost:8080/yarquen/";
+		var enricherUrl=/*[[@{/articles/enricher/}]]*/ enricher.html;
+		var recordUrl=/*[[@{/articles/record/}]]*/ record.html;
+		var url = prefixUrl+"pathfinder/article?articleId="+articleId;
+		$.getJSON(url, function(article){
+			console.log(article);
+			$("#a\\.article").html(article.title);
+			$("#a\\.article").attr("href",article.url);
+			$("#a\\.author").html(article.author);
+			$("#a\\.record").attr("href",recordUrl+articleId);
+			$("#a\\.enricher").attr("href",enricherUrl+articleId);
+			$("#small\\.url").html(article.url);
+			$("#spam\\.date").html(article.date);
+			var keywordList = "";
+			for(var i=0;i<article.keywords.length;i++){
+				keywordList+=article.keywords[i]+", ";
+			}
+			$("#required").empty();
+			$("#provided").empty();
+			for(var i=0;i<article.providedSkills.length;i++){
+				$("#provided").append('<li>'+article.providedSkills[i].categoryBranch.name+'</li>');
+			}
+			for(var i=0;i<article.requiredSkills.length;i++){
+				$("#required").append('<li>'+article.requiredSkills[i].categoryBranch.name+'</li>');
+			}
+			$("#keywords").html(keywordList.substring(0,keywordList.length-2));
+			$('#details').hide(400);
+			$('#moreDetails').show();
+			$("#article").show(600);
+		});
+  	}
+  
+	$(function() {
+	 initPath();
+	 setupPath(0);
+	});
+  /*]]>*/
+
+</script>
+</body>
+</html>

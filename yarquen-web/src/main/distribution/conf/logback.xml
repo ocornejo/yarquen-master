@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author: Jorge Riquelme -->
+<!-- date: 16/02/2012 -->
+<configuration scan="true" scanPeriod="10 seconds">
+
+	<!-- levels -->
+	<logger name="org.yarquen" level="TRACE" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.base}/logs/yarquen.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- one log per dia -->
+			<fileNamePattern>${catalina.base}/logs/yarquen.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+			<!-- 30 days -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+	</root>
+
+	<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+</configuration>

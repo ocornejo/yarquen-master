@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+
+
+
+
+
+
+
+
+
+
+<html>
+
+<head>
+    <title>Forbidden</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" /><script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()])</script> 
+	<link rel="stylesheet" type="text/css" href="http://cdn1.infoq.com/styles/style-errorpage.css" />
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="http://cdn4.infoq.com/styles/style-ie.css" />
+    <![endif]-->
+    <script src="http://cdn3.infoq.com/scripts/combinedJs_.js?20110704" type="text/javascript"></script>
+</head>
+<body>
+<div id="container">
+<!-- content start -->
+<div id="content-whole">
+<div id="content-wrapper">
+	
+	
+		
+
+
+
+
+
+
+	<div class="s-logo">
+	    <p class="r-logo"><a href="/">InfoQ</a></p>
+	</div>
+	<!-- box start -->
+    <div class="box">
+		<h2>Forbidden</h2>
+
+		<div class="top-corners"><div></div></div>
+		
+		<div class="box-content"><div class="box-content-2">
+			<div style="padding:20px 0 10px 10px;">
+	  			<h3>Oops! It looks like you are trying to access a resource to which your access is not granted.</h3>
+				<div style="margin-right:10px;padding-top:20px;">	
+		  			<h3>You can click <a href="/">here</a> to go to the InfoQ home page or you can check out our latest content.</h3>		
+		  			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+
+
+
+
+
+
+
+
+	<script type="text/javascript">		
+		$.ajax({
+			url: "/api/latestcontent.action",
+			contentType: "application/x-www-form-urlencoded; charset=utf-8",
+			type: 'POST',
+			data: {"categoryAliases" : "development,architecture-design,process-practices,operations-infrastructure,enterprise-architect", "itemsNumber" : "5", "languageCode" : ""},
+			success: displayCategoryWidget
+		});
+		function displayCategoryWidget(data) {
+			addLatestNewsColumn(data['developmentName'], data['development']);
+			addLatestNewsColumn(data['architecture-designName'], data['architecture-design']);
+			addLatestNewsColumn(data['process-practicesName'], data['process-practices']);
+			addLatestNewsColumn(data['operations-infrastructureName'], data['operations-infrastructure']);
+			addLatestNewsColumn(data['enterprise-architectName'], data['enterprise-architect']);
+			var newLineDom = $('<div class="clearer"></div>');
+			$('.latest-content').append(newLineDom);
+		}
+		function addLatestNewsColumn(title, list) {
+			var countryCode= '';
+			var newColumnDom = $('<div class="column">');
+			var titleDom = $('<p>'+title+'</p>');
+			newColumnDom.append(titleDom);
+			var listDom = $('<ul></ul>');
+			newColumnDom.append(listDom);
+			for(var it=0;it<list.length;it++){
+				var elementDom = $('<li><a href="' + countryCode + list[it]['path'] + '" title="' + list[it]['title'] + '">' + list[it]['title'] + '</a></li>');
+				listDom.append(elementDom);
+			}
+			$('.latest-content').append(newColumnDom);
+		}
+	</script>
+	<div class="latest-content">
+	</div>
+
+
+	  			</div>
+			</div>
+			<div class="clearer"></div>
+
+			<div class="box-bottom"></div>
+		</div></div>
+		
+		<div class="bottom-corners"><div></div></div>
+	</div><!-- box end -->
+
+	<div style="float:left; padding-right:20px; padding-top:10px;">
+	<p class="general">General Feedback</p>
+	<a class="mail-to" href="mailto:feedback@infoq.com" title="">feedback@infoq.com</a>
+	</div>
+	<div style="float:left; padding-right:20px; padding-top:10px;">
+	<p class="general">Bugs</p>
+	<a class="mail-to" href="mailto:bugs@infoq.com" title="">bugs@infoq.com</a>
+	</div>
+
+<div class="clearer"></div>
+	
+</div> <!-- wrapper end -->
+</div>
+
+<div class="clearer"></div>
+
+<!-- footer start -->
+<div id="footer"><p>&#169; 2006-2012 InfoQ</p></div>
+<!-- footer end -->
+</div>
+	<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-6608133-2");
+			pageTracker._trackPageview();
+		} catch(err) {}	
+	</script>
+<script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {NREUMQ.push(["load",new Date().getTime()]);var e=document.createElement("script");e.type="text/javascript";e.async=true;e.src="https://d1ros97qkrwjf5.cloudfront.net/42/eum/rum.js";document.body.appendChild(e);if(NREUMQ.a)NREUMQ.a();};NREUMQ.a=window.onload;window.onload=NREUMQ.f;};NREUMQ.push(["nrf2","beacon-1.newrelic.com","bfafe6a5f6",410411,"YAFWMEEAW0RUVk1cCllLfjdjTlBFR1pLU0tdF0Q=",0,9,new Date().getTime()])</script></body>
+</html>

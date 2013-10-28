@@ -1,0 +1,3583 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0045)http://www.infoq.com/articles/ESB-Integration -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="./Choosing the Right ESB for Your Integration Needs_files/widget110.css" media="all">
+	<title>Choosing the Right ESB for Your Integration Needs</title>
+    
+	
+	
+
+
+
+
+
+
+
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+
+<meta name="copyright" content="© 2006 C4Media">
+<meta name="author" content="alex[at]c4media[dot]com">
+
+<meta name="google-site-verification" content="0qInQx_1WYOeIIbxnh7DnXlw1XOxNgAYakO2k4GhNnY">
+<meta property="wb:webmaster" content="3eac1729a8bbe046">
+
+	
+	
+    <link rel="stylesheet" type="text/css" media="screen" href="./Choosing the Right ESB for Your Integration Needs_files/style.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="./Choosing the Right ESB for Your Integration Needs_files/header_footer.css">
+    <link rel="stylesheet" type="text/css" media="print" href="./Choosing the Right ESB for Your Integration Needs_files/print.css">
+    <!--[if LTE IE 6]>
+    <link rel="stylesheet" type="text/css" media="screen" href="http://cdn3.infoq.com/styles/style-ie6.css" />
+    <![endif]-->
+    <!--[if IE 7]>
+    <link rel="stylesheet" type="text/css" media="screen" href="http://cdn3.infoq.com/styles/style-ie7.css" />
+    <![endif]-->
+    <!--[if IE 8]>
+    <link rel="stylesheet" type="text/css" media="screen" href="http://cdn4.infoq.com/styles/style-ie8.css" />
+    <![endif]-->
+    <link rel="shortcut icon" href="http://cdn3.infoq.com/favicon.ico?20110420" type="image/x-icon">
+    <link rel="apple-touch-icon" href="http://cdn1.infoq.com/apple-touch-icon.png?20110420">
+    
+    <script type="text/javascript" async="" src="./Choosing the Right ESB for Your Integration Needs_files/ga.js"></script><script async="" type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/gpt.js"></script><script src="./Choosing the Right ESB for Your Integration Needs_files/combinedJs_en.js" type="text/javascript"></script><style type="text/css"></style>
+	<script src="./Choosing the Right ESB for Your Integration Needs_files/dropdown.js" type="text/javascript"></script>
+	<script src="./Choosing the Right ESB for Your Integration Needs_files/dropdownie6.js" type="text/javascript"></script>
+	<script src="./Choosing the Right ESB for Your Integration Needs_files/custom-form-elements.js" type="text/javascript"></script><style type="text/css">input.styled { display: none; } select.styled { position: relative; width: 190px; opacity: 0; filter: alpha(opacity=0); z-index: 5; } .disabled { opacity: 0.5; filter: alpha(opacity=50); }</style>
+	
+	
+<script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()])</script>
+	
+	<link rel="image_src" href="http://cdn3.infoq.com/styles/i/infoq-logo1.jpg">
+	<link rel="image_src" href="./Choosing the Right ESB for Your Integration Needs_files/logoESB.jpg">
+	<meta name="keywords" content="ESB Integration,Enterprise Architecture,Websphere,WSO2,Application Servers,Mule,Fuse,FuseSource,SOA Platforms,ESB,Fusion Middleware,Java,Oracle,RedHat,SOA,IBM,Middleware,Web Servers,Enterprise Architecture,Architecture,Infrastructure,Web Development,Enterprise,Integration,Talend,Services,">
+	<meta name="description" content="Kai Wähner explains the differences between an integration framework, an ESB and an integration suite, following with advice for selecting the right one from existing commercial and open source solutions.">
+	<meta name="tprox" content="1364899980000">
+
+
+<!-- ww:if test="%{#request[@com.c4m.infoq.util.Constants@FILTER_EXTRACTED_LANG_PREFERENCE] == 'en'}" -->
+	<style type="text/css">
+   		.box .box-content-2 {
+			padding-top:10px;
+		}
+	</style>
+<!-- /ww:if -->
+	
+
+
+<div style="visibility: hidden; height: 1px; width: 1px; position: absolute; z-index: 100000;" id="_atssh"><iframe id="_atssh506" title="AddThis utility frame" style="height: 1px; width: 1px; position: absolute; z-index: 100000; border: 0px; left: 0px; top: 0px;" src="./Choosing the Right ESB for Your Integration Needs_files/sh114.html"></iframe></div><script type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/core071.js"></script></head>
+
+<body> 
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+	var bannerURL='/ads/skyscraper.action';
+	var textLinksHomepageURL='/ads/homepageads.action';
+	var textLinksLeftBarURL='/ads/textlinks.action';
+	var rightbarURL='/rightbar.action';
+	var comunityWidgetUrl='/widgets/communityWidget.action';
+</script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var loginLanguage='en';
+var loginURL='/login.action';
+var registerURL='/reginit.action';
+var reactivateURL='/reactivate.action';
+var reserpasswordURL='/resetpasswordinit.action';
+var loggedIn=false;
+var logoutURL='/logout.action';
+var editUserURL='/edituser.action';
+var aboutURL='/about';
+var homeURL='/';
+</script>
+<div id="tooltip" style="display:none;"></div>
+<div id="loginWindow" style="display:none;">
+	
+
+
+
+
+
+
+
+
+
+<div id="innerLoginWindow" class="LoginWindowBox">
+	        <div class="login-popup-top-box"></div>
+	        <a href="javascript:void(0);" class="close-popup" onclick="javascript:hideLoginWindow(false);">Close</a>
+	        <h2 class="existing-user">Existing Users:</h2>
+	        <div id="loginAreaFields">
+	        <!-- form name="popup-login" onsubmit="doLogin('loginMessage', 'forgotMessage', 'username', 'password', false);return false;"-->
+	        <form method="POST" name="popup-login" action="https://www.infoq.com/login.action" target="loginFrame" onsubmit="showLoginMessages(&#39;loginMessage&#39;,&#39;forgotMessage&#39;);">	        
+	          <label>Email</label>
+	          <div class="clearer" style="height: 0px;"></div>
+	          <input type="hidden" name="fromHeader" id="fromHeader" value="false">
+	          <input type="text" name="username" id="username" value="">
+	          <div class="clearer" style="height: 0px;"></div>
+	          <label>Password</label>
+	          <div class="clearer" style="height: 0px;"></div>
+	          <input type="password" name="password" id="password" value="">
+	          <div class="clearer" style="height: 0px;"></div>
+	          <input type="submit" value="" name="submit-login" class="submit-login">
+	          <div class="clearer" style="height: 0px;"></div>
+	        </form>
+	        </div>
+	        
+	        <div id="socialLogin">
+	            	        	
+	        		<a class="social google" href="http://www.infoq.com/social/googleLogin.action?fl=login" title="Login with Google">Login with Google</a>
+	        		<div class="clearer" style="height: 0px;"></div>
+	        	
+	        		
+	        			<a class="social twitter" href="http://www.infoq.com/social/twitterLogin.action?fl=login" title="Login with Twitter">Login with Twitter</a>
+	        			<div class="clearer" style="height: 0px;"></div>
+	        	
+	        			<a class="social facebook" href="http://www.infoq.com/social/facebookLogin.action?fl=login" title="Login with Facebook">Login with Facebook</a>
+	        			<div class="clearer" style="height: 0px;"></div>
+	        		
+	        	
+	           		<a class="social microsoft" href="http://www.infoq.com/social/liveLogin.action?fl=login" title="Login with Microsoft Account">Login with Microsoft Account</a>
+	        		<div class="clearer" style="height: 0px;"></div>
+	            
+	        </div>
+	        
+	        <div class="login-type">
+				<div id="loginUpperArea" style="display:none;"></div>
+				<div style="display: none; text-align: left; padding-top:2px; padding-bottom:2px;" id="loginMessage"></div>
+				<div style="display: none; text-align: left; padding-top:2px; padding-bottom:2px;" id="forgotMessage">					
+					<p><a style="text-decoration:none;" href="javascript:void(0);" onclick="javascript:showResetPasswordWindow();Tracker.doTrackForgotPasswordSteps(&#39;Forgot password click&#39;);">Forgot password?</a></p>
+				</div>
+				<hr>
+				<h2>New Users:</h2>
+	            <a style="text-decoration:none; font-weight:bold;" href="http://www.infoq.com/reginit.action">Register now</a>
+	        </div>
+	        <div class="login-popup-end-box"></div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		// Login dropdown
+		$('.top-right a.login').click(function() {			
+			var popup = $('#popupLogin'),
+				link = $('.top-right a.login'),
+				position = link.parent().position();
+
+			action=new Function("void(0);");
+			link.toggleClass('login-active');
+			popup.css('left', position.left);
+			popup.toggle();
+			
+		});		
+
+		var popupOut = $('.popupOut'),
+			popup = $('#popupLogout');
+		if (popupOut.length > 0) {
+			var w = popupOut.width();
+			var wL = $('#welcomeLabel').width();
+			popup.css({
+					width: (w + wL + 78) + 'px',
+					left: '-' + (w + wL + 98) + 'px'
+			})
+			popupOut.click(function() {
+					popup.toggle();
+			});
+		}
+	});	
+</script>
+
+
+</div>
+<div id="tagPopup" style="display:none;"></div>
+<div id="container">
+	<h1 class="logo"><a href="http://www.infoq.com/articles/ESB-Integration#">InfoQ</a></h1>
+
+	
+
+
+
+
+
+
+
+	<!-- Start header  -->
+  
+	<!-- Start logo and search box -->
+	<h1 class="logo"><a href="http://www.infoq.com/articles/ESB-Integration#">InfoQ</a></h1>
+	<div class="logo-and-search">
+    <div class="logo-box">
+      
+
+
+
+
+
+
+
+<a class="logo-img" href="http://www.infoq.com/"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo-infoq.gif" alt="InfoQ"></a>
+
+
+      
+	  
+
+
+
+
+
+
+
+
+<p style="margin:0;padding-top:3px;">
+	En | <a href="http://www.infoq.com/cn/">中文</a> | <a href="http://www.infoq.com/jp/">日本語</a> | <a href="http://www.infoq.com/br/">Br</a>
+</p>
+<span class="users-count">
+	
+	    
+	    
+	787,569 Mar unique visitors
+</span>
+
+    </div>	
+	</div>
+  <!-- End logo and search box  -->
+  
+  <div id="header">
+	<p class="skip"><a href="http://www.infoq.com/articles/ESB-Integration#content">Skip to Content</a></p>
+  
+    <div id="quote"><p><nobr>Facilitating the spread of knowledge and innovation in enterprise software development</nobr></p></div>
+    
+    
+	
+	<div id="mainLoginArea">	    
+	    <div class="top-right">
+	      <ul>
+	        <li>
+
+
+
+
+
+
+
+<script type="text/javascript">
+	function doSearch(searchOrder){		
+		var searchString = document.getElementById("searchId").value;
+		document.getElementById("searchTerm").value =  searchString;
+		document.getElementById("searchOrder").value = searchOrder;		
+		
+		document.getElementById("cse-search-box").submit();
+	}
+	
+	function clearSearchText(){	
+		var searchtext =  document.getElementById("searchId").value
+		if(searchtext==JSResource.search){
+			document.getElementById("searchId").value="";
+		}
+	}
+</script>
+
+	
+
+
+
+<div class="search-box">
+				
+<form id="cse-search-box" onsubmit="customOnsubmit(); return true;" action="http://www.infoq.com/search.action" method="GET">
+
+		<input type="hidden" name="queryString" size="20" id="searchTerm">
+        <input type="hidden" name="searchOrder" size="15" id="searchOrder">
+        
+			
+			<div class="input-search-bg">
+					
+				
+					<input type="text" name="search" id="searchId" onclick="clearSearchText();" onkeypress="if ((event.which &amp;&amp; event.which == 13)||(event.keyCode &amp;&amp; event.keyCode == 13)){doSearch(&#39;relevance&#39;);}">
+				
+			</div>
+    		<input type="submit" value="" name="go" class="search-go" onclick="doSearch(&#39;relevance&#39;);return false;">
+		
+	</form>
+
+
+<script>
+	function customOnsubmit() {
+		
+	}
+</script>
+
+
+
+</div>
+</li>
+            	       
+	        <li><a href="javascript:void(0)" class="login" title="Login"><b></b><span></span>Login</a></li>
+	        <li><a href="http://www.infoq.com/reginit.action" class="register" title="Register"><span></span>Register</a></li>
+            <li id="headerRss"><a id="persfeed" href="http://www.infoq.com/rss/rss.action?token=vr3RHwgbmFHrsuQSxGt72HwjVqm6OugD" class="feed" title="Personal Feed"></a></li>
+            <li>
+				
+
+
+
+
+
+
+
+
+
+
+
+<div class="Qcon">
+	<div class="conference1">
+		
+		<a href="http://qconnewyork.com/?utm_source=infoq&utm_medium=header&utm_campaign=infoqheader" target="_blank" title="New York 2013"><strong>New York 2013</strong><br><small>Jun 10th - Jun 14th</small></a>
+	</div>
+</div>
+
+
+	        </li>
+	      </ul>
+	      <iframe name="loginFrame" id="loginFrame" style="width:0;height:0;border:0;"></iframe>
+          <div id="popupLogin" class="LoginWindowHeaderBox">
+            <div class="bg-top-right"></div>
+            <a href="javascript:void(0);" class="close-popup-top" onclick="javascript:hideLoginWindow(true);">Close</a>
+            <h2 class="existing-user">Existing Users:</h2>
+            
+            
+            
+            <form method="POST" name="tpopup-login" action="https://www.infoq.com/login.action" target="loginFrame" onsubmit="showLoginMessages(&#39;tloginMessage&#39;,&#39;tforgotMessage&#39;);">
+	          <label>Email</label>
+	          <div class="clearer" style="height: 0px;"></div>
+	          <input type="hidden" name="fromHeader" id="tfromHeader" value="true">
+	          <input type="text" name="username" id="tusername" value="">
+	          <div class="clearer" style="height: 0px;"></div>
+	          <label>Password</label>
+	          <div class="clearer" style="height: 0px;"></div>
+	          <input type="password" name="password" id="tpassword" value="">
+	          <div class="clearer" style="height: 0px;"></div>
+	          <input type="submit" value="" name="submit-login" class="submit-login">
+	          <div class="clearer" style="height: 0px;"></div>
+	        </form>
+	        
+	        <div id="socialLogin">
+	            	        	
+	        		<a class="social google" href="http://www.infoq.com/social/googleLogin.action?fl=login" title="Login with Google">Login with Google</a>
+	        		<div class="clearer" style="height: 0px;"></div>
+	        	
+	        		
+	        			<a class="social twitter" href="http://www.infoq.com/social/twitterLogin.action?fl=login" title="Login with Twitter">Login with Twitter</a>
+	        			<div class="clearer" style="height: 0px;"></div>
+	        	
+	        			<a class="social facebook" href="http://www.infoq.com/social/facebookLogin.action?fl=login" title="Login with Facebook">Login with Facebook</a>
+	        			<div class="clearer" style="height: 0px;"></div>
+	        		
+	        	
+	           		<a class="social microsoft" href="http://www.infoq.com/social/liveLogin.action?fl=login" title="Login with Microsoft Account">Login with Microsoft Account</a>
+	        		<div class="clearer" style="height: 0px;"></div>
+	            
+	        </div>	        
+	        	        
+	        <div class="login-type">
+				<div id="tloginUpperArea" style="display:none;"></div>
+				<div style="display: none; text-align: left; padding-top:2px; padding-bottom:2px;" id="tloginMessage"></div>
+				<div style="display: block; text-align: left; padding-top:2px; padding-bottom:2px;" id="tforgotMessage">					
+					<p><a style="text-decoration:none;" href="javascript:void(0);" onclick="javascript:showResetPasswordWindow(true);Tracker.doTrackForgotPasswordSteps(&#39;Forgot password click&#39;);">Forgot password?</a></p>
+				</div>
+				<hr>
+				<h2>New Users:</h2>
+	            <a style="text-decoration:none; font-weight:bold;" href="http://www.infoq.com/reginit.action">Register now</a>
+	        </div>
+	        <div class="login-popup-end-box"></div>
+	      </div>
+	    </div>	    
+	</div>
+	
+        
+    <div class="clearer" style="height: 0px;"></div>
+    
+    <!--googleoff: index-->
+    
+
+
+
+
+
+
+
+
+<div class="navigation tworownavigation">
+    <p>&nbsp;</p>	
+	<ul>
+		<li id="pseudopersona" class="active">
+        <div class="div-submenu">
+          <div class="submenu-content">
+          <div class="submenu-start"></div>
+            <ul>
+              <li><a class="f_headertopic" href="http://www.infoq.com/mobile/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Mobile">Mobile</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/HTML5Topic/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="HTML5">HTML5</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/javascript/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="JavaScript">JavaScript</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/apm/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="APM">APM</a></li>
+              
+              
+              <li><a class="f_headertopic" href="http://www.infoq.com/cloud-computing/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Cloud">Cloud</a></li><li><a class="f_headertopic" href="http://www.infoq.com/NoSQL/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="NoSQL">NoSQL</a></li><li><a class="f_headertopic" href="http://www.infoq.com/soa/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="SOA">SOA</a></li>
+              
+              
+                           
+            </ul>
+            
+            <div class="submenu-end"></div>
+            
+            <ul class="partner-zones">
+            	<li>
+            		<a class="f_headertopic" href="http://www.infoq.com/topics"><strong>All topics</strong></a>                	
+                </li>
+                
+            	
+            	
+            	                
+            </ul>
+            
+            
+          </div>
+        </div>
+		</li>
+	
+	
+		<li>
+	
+        <a href="http://www.infoq.com/development/" title="Development">Development</a>
+        <div class="div-submenu">
+          <div class="submenu-content">
+          <div class="submenu-start"></div>
+            <ul>
+              <li><a class="f_headertopic" href="http://www.infoq.com/java/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Java">Java</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/dotnet/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title=".Net">.Net</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/cloud-computing/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Cloud">Cloud</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/mobile/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Mobile">Mobile</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/HTML5Topic/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="HTML5">HTML5</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/javascript/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="JavaScript">JavaScript</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/ruby/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Ruby">Ruby</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/dsl/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="DSLs">DSLs</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/python/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Python">Python</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/Topic_PHP/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="PHP">PHP</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/api/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="API">API</a></li>
+            </ul>
+            <div class="submenu-end"></div>
+            
+            
+            
+            <ul class="partner-zones">
+              
+              
+            </ul>
+            
+          </div>
+        </div>
+      </li>
+	
+	
+		<li>
+	
+      	<a href="http://www.infoq.com/architecture-design/" title="Architecture &amp; Design" class="tworowpersona">Architecture <br><span>&amp; Design</span></a>
+        <div class="div-submenu">
+          <div class="submenu-content">
+          <div class="submenu-start"></div>
+          <ul>
+              <li><a class="f_headertopic" href="http://www.infoq.com/Modeling/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Modeling">Modeling</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/performance-scalability/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Scalability/Performance">Scalability/Performance</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/domain-driven-design/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="DDD">DDD</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/Behavior-Driven-Development/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="BDD">BDD</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/AOP/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="AOP">AOP</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/DesignPattern/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Patterns">Patterns</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/Security/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Security">Security</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/cloud-computing/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Cloud">Cloud</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/soa/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="SOA">SOA</a></li>
+          </ul>
+          <div class="submenu-end"></div>
+          
+            
+            <ul class="partner-zones">
+              
+              
+            </ul>
+            
+          </div>
+        </div>
+      </li>
+	
+	
+		<li>
+	
+      	<a href="http://www.infoq.com/process-practices/" title="Process &amp; Practices" class="tworowpersona">Process &amp;<br><span>Practices</span></a>
+        <div class="div-submenu">
+          <div class="submenu-content">
+          <div class="submenu-start"></div>
+          <ul>
+              <li><a class="f_headertopic" href="http://www.infoq.com/agile/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Agile">Agile</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/Leadership/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Leadership">Leadership</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/team-collaboration/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Collaboration">Collaboration</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/agile_techniques/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Agile Techniques">Agile Techniques</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/methodologies/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Methodologies">Methodologies</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/continuous_integration/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Continuous Integration">Continuous Integration</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/lean/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Lean/Kanban">Lean/Kanban</a></li>
+              
+          </ul>
+          <div class="submenu-end"></div>
+          
+            
+            <ul class="partner-zones">
+              
+              
+            </ul>
+            
+          </div>
+        </div>
+      </li>
+	
+	
+		<li>
+	
+      	<a href="http://www.infoq.com/operations-infrastructure/" title="Operations &amp; Infrastructure" class="tworowpersona">Operations &amp;<br><span>Infrastructure</span></a>
+        <div class="div-submenu">
+          <div class="submenu-content">
+          <div class="submenu-start"></div>
+          <ul>
+              <li><a class="f_headertopic" href="http://www.infoq.com/performance/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Performance">Performance</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/bigdata/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Big Data">Big Data</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/devops/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="DevOps">DevOps</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/cloud-computing/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Cloud">Cloud</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/apm/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="APM">APM</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/virtualization/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Virtualization">Virtualization</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/NoSQL/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="NoSQL">NoSQL</a></li>
+          </ul>
+          <div class="submenu-end"></div>
+          
+            
+            <ul class="partner-zones">
+              
+              
+            </ul>
+            
+          </div>
+        </div>
+      </li>
+	
+	
+		<li>
+	
+      	<a href="http://www.infoq.com/enterprise-architect/" title="Enterprise Architecture" class="tworowpersona">Enterprise <br><span>Architecture</span></a>
+        <div class="div-submenu">
+          <div class="submenu-content">
+          <div class="submenu-start"></div>
+          <ul>
+              <li><a class="f_headertopic" href="http://www.infoq.com/enterprise-architecture/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Enterprise Architecture">Enterprise Architecture</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/bpm/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="BPM">BPM</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/business_it_alignment/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Business/IT Alignment">Business/IT Alignment</a></li>
+              
+              <li><a class="f_headertopic" href="http://www.infoq.com/Architecture-Documentation/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="Architecture Documentation">Architecture Documentation</a></li>
+              <li><a class="f_headertopic" href="http://www.infoq.com/Governance/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="IT Governance">IT Governance</a></li>
+              
+              <li><a class="f_headertopic" href="http://www.infoq.com/soa/?utm_source=infoq&utm_medium=header_graybar&utm_campaign=topic_clk" title="SOA">SOA</a></li>
+          </ul>
+          <div class="submenu-end"></div>
+          
+            
+            <ul class="partner-zones">
+              
+              
+            </ul>
+            
+          </div>
+        </div>
+      </li>	
+    </ul>
+  </div>
+  <div class="clearer" style="height: 0px;"></div>
+</div>
+
+
+    <!--googleon: index-->
+	<script src="./Choosing the Right ESB for Your Integration Needs_files/jquery.hoverIntent.js" type="text/javascript"></script>
+<script type="text/javascript">
+		var loginMessage;
+		var forgotMessage;
+		// rss url is used in more places so declare it a global var
+		var rssUrl;
+		//after page is loaded the RSS link is constructed
+		$(function(){
+			 buildRSSUrl();			 
+		});	
+		
+		function buildRSSUrl() {
+			var token = 'vr3RHwgbmFHrsuQSxGt72HwjVqm6OugD';
+			token=encodeURIComponent(token); 
+			var countryCode= ''; 
+			var first = '/rss';
+			var second = '/rss.action?token='
+			rssUrl = countryCode + first + second + token;
+			//change the value of the link
+			$('#persfeed').attr('href', rssUrl);
+
+			if(!token){
+				// this is usually the case of first time access and userConfirmation.jsp will solve the issue
+				// or a more seriuos problem not being able to save the user in db	
+				disableRssLinks();
+			}
+		}
+				
+		//enable hoverIntent plugin for personas links
+		jQuery(".navigation li a").not('.f_headertopic').hoverIntent({
+			 sensitivity: 1,
+			 interval: 50,
+			 over: showTopics,
+			 out: function(){}
+		});
+				
+		function showTopics() {		    	    			
+			$('.navigation li').removeClass("active");
+			$(this).parent().addClass("active");			
+		}		
+		
+		function showDefaultTopics() {
+		    $('.navigation li').removeClass("active");
+		    $('#pseudopersona').addClass("active");
+		}
+
+		function showLoginMessages(loginMessageId, forgotMessageId){
+			$('#'+forgotMessageId).hide();			
+			$('#'+loginMessageId).html(JSResource.login_sendingRequest);			
+			$('#'+loginMessageId).show();
+			// loginMessage and forgot message value is used in ok.jsp and notRegistered.jsp loaded in an iframe. Needs to be set here to be accessed from the iframe
+			loginMessage=loginMessageId;
+			forgotMessage=forgotMessageId;
+		}
+</script>
+    
+<!-- End header -->
+
+
+	<div id="columns_container">
+	
+	<div id="content">
+	<div id="content-wrapper">
+		
+		<div class="box">
+			
+			
+
+	<div class="contribute contribute-print contribute-print-articles">
+		<ul>
+			<li class="c-print"><a href="javascript:print()">Print</a></li>
+			
+			
+		    	<li class="c-my-bookmark"><a href="" id="widget-01-open-butt"></a></li>
+		    	
+		    			
+		</ul>		        
+	</div>			
+	<h2>Article</h2>
+    <div class="top-corners" id="widget-01-close"><div></div></div>
+    
+<!-- ww:if test="%{#request[@com.c4m.infoq.util.Constants@FILTER_EXTRACTED_LANG_PREFERENCE] == 'en'}" -->
+	<div id="widget-01-open">
+	      <em class="left"></em>
+	      <em class="badge"></em>
+	      <div class="left">My Bookmarks</div>
+	      <div class="right">
+	      	<ul>
+	          <li id="bookoneli"><div id="nobooks" style="display: block;">You have no bookmarked content</div><a id="bookone" href="" style="display: none; color: #1C497B;"></a></li>
+	          <li id="booktwoli"><a id="booktwo" href="" style="display: none; color: #1C497B;"></a></li>
+	          <li id="bookthreeli"><a id="bookthree" href="" style="display: none; color: #1C497B;"></a></li>
+	        </ul>
+	      </div>
+	      <div class="clearer"></div>
+	      <em class="right"></em>      
+	      
+	      
+	        <p><a onclick="javascript:showLoginWindow(this,ALIGN_LEFT,new Function(&#39;void(0);&#39;));" href="javascript:void(0)">Login</a> or <a href="http://www.infoq.com/reginit.action">Register</a> to enable bookmarks for unlimited time.</p> 
+	      
+	      <em class="right-bottom" id="widget-01-close-butt"></em>
+	</div>
+	<div id="bookmark-message"><p>The content has been bookmarked!</p></div>
+	<div id="bookmark-message-error"><p>There was an error bookmarking this content! Please retry.</p></div>
+<!-- /ww:if -->
+
+    <div class="box-content">
+    <div class="box-content-2">
+    <div class="box-content-5">
+	
+    	
+    		<p class="h1-r"><img src="./Choosing the Right ESB for Your Integration Needs_files/logoESB.jpg" alt=""></p>
+    	
+	
+		
+			
+			      
+	    <h1><a href="./Choosing the Right ESB for Your Integration Needs_files/Choosing the Right ESB for Your Integration Needs.html" rel="permalink">Choosing the Right ESB for Your Integration Needs</a></h1>
+	      		
+		<p class="info">
+			Posted by
+			
+				
+			
+			<strong><a href="http://www.infoq.com/author/Kai-W%C3%A4hner" class="editorlink f_taxonomyEditor">
+Kai Wähner</a>
+</strong>
+			
+			on
+			Apr 02, 2013			
+		</p>
+		
+    	<dl class="tags2">
+			<dt class="community">Sections</dt>
+			
+				<dd>	<a class="f_taxonomy" href="http://www.infoq.com/enterprise-architect" name="enterprise-architect" id="6,819" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Enterprise Architecture</a></dd>
+			
+			
+	       		
+
+
+
+
+
+
+
+<dt class="topics">Topics</dt>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/websphere" name="websphere" id="23" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Websphere</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/wso2" name="wso2" id="241" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">WSO2</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/ApplicationServers" name="ApplicationServers" id="233" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Application Servers</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Mule" name="Mule" id="116" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Mule</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Fuse" name="Fuse" id="7,524" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Fuse</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/FuseSource" name="FuseSource" id="7,525" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">FuseSource</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/soa_platforms" name="soa_platforms" id="773" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">SOA Platforms</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/ESB" name="ESB" id="119" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">ESB</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/FusionMiddleware" name="FusionMiddleware" id="4,016" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Fusion Middleware</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/java" name="java" id="1" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Java</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/oracle" name="oracle" id="148" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Oracle</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/redhat" name="redhat" id="265" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">RedHat</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/soa" name="soa" id="2" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">SOA</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/IBM" name="IBM" id="231" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">IBM</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Middleware" name="Middleware" id="6,272" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Middleware</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/WebServer" name="WebServer" id="4,527" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Web Servers</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/enterprise-architecture" name="enterprise-architecture" id="708" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Enterprise Architecture</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/architecture" name="architecture" id="1,389" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Architecture</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Infrastructure" name="Infrastructure" id="6,188" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Infrastructure</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Web-Development" name="Web-Development" id="7,211" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Web Development</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Enterprise" name="Enterprise" id="6,385" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Enterprise</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Integration" name="Integration" id="6,208" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Integration</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Talend" name="Talend" id="5,579" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Talend</a>
+   		,
+   	</dd>
+
+   	<dd>
+   		
+   			
+			
+   		
+		<a class="f_taxonomy" href="http://www.infoq.com/Services" name="Services" id="3,970" onclick="try {CategoryPopup.showPopup(this);} catch(e) {}; return false;">Services</a>
+   		
+   	</dd>
+
+
+	       		
+	       		
+	     
+
+		</dl>
+		
+		<script type="text/javascript">		        
+        	//pass the title of this content to the bookmark JS function
+        	function bookmarkContent(){
+            	var contentTitle = "Choosing the Right ESB for Your Integration Needs";
+        		bookmark(contentTitle);
+        	}       	         
+		</script>
+   	    
+   	    
+
+
+
+
+
+
+
+<!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style" style="width:100%;height:19px;">
+	<div style="float: left;">
+		<a href="http://www.addthis.com/bookmark.php?v=250&username=infoq" class="addthis_button" style="text-decoration:none;color:#1C497B; padding:0 2px; float:left; font-weight: bold;font-size: 85%;">
+			Share				
+			<img src="./Choosing the Right ESB for Your Integration Needs_files/sm-plus.gif" width="16" height="15" border="0" alt="Share">
+		</a>
+		<span class="addthis_separator">|</span>
+		<a class="addthis_button_facebook at300b" title="Facebook" href="http://www.infoq.com/articles/ESB-Integration#"><span class="at16nc at300bs at15nc at15t_facebook at16t_facebook"><span class="at_a11y">Share on facebook</span></span></a>
+		<a class="addthis_button_digg at300b" href="http://www.addthis.com/bookmark.php?v=250&winname=addthis&pub=infoq&source=tbx-250&lng=en-US&s=digg&url=http%3A%2F%2Fwww.infoq.com%2Farticles%2FESB-Integration&title=Choosing%20the%20Right%20ESB%20for%20Your%20Integration%20Needs&ate=AT-infoq/-/-/516705e14e6a30bf/1&frommenu=1&uid=516705e1fd9c6ea0&ct=1&pre=http%3A%2F%2Fwww.infoq.com%2Farticles%2Freal-question-why&tt=0&captcha_provider=nucaptcha" target="_blank" title="Digg"><span class="at16nc at300bs at15nc at15t_digg at16t_digg"><span class="at_a11y">Share on digg</span></span></a>
+		<a class="addthis_button_dzone at300b" href="http://www.addthis.com/bookmark.php?v=250&winname=addthis&pub=infoq&source=tbx-250&lng=en-US&s=dzone&url=http%3A%2F%2Fwww.infoq.com%2Farticles%2FESB-Integration&title=Choosing%20the%20Right%20ESB%20for%20Your%20Integration%20Needs&ate=AT-infoq/-/-/516705e14e6a30bf/2&frommenu=1&uid=516705e1dc91743f&ct=1&pre=http%3A%2F%2Fwww.infoq.com%2Farticles%2Freal-question-why&tt=0&captcha_provider=nucaptcha" target="_blank" title="Dzone"><span class=" at300bs at15nc at15t_dzone"><span class="at_a11y">Share on dzone</span></span></a>		
+		<a class="addthis_button_twitter at300b" title="Tweet" href="http://www.infoq.com/articles/ESB-Integration#"><span class="at16nc at300bs at15nc at15t_twitter at16t_twitter"><span class="at_a11y">Share on twitter</span></span></a>
+		<a class="addthis_button_reddit at300b" href="http://www.addthis.com/bookmark.php?v=250&winname=addthis&pub=infoq&source=tbx-250&lng=en-US&s=reddit&url=http%3A%2F%2Fwww.infoq.com%2Farticles%2FESB-Integration&title=Choosing%20the%20Right%20ESB%20for%20Your%20Integration%20Needs&ate=AT-infoq/-/-/516705e14e6a30bf/3&frommenu=1&uid=516705e1d3bff824&ct=1&pre=http%3A%2F%2Fwww.infoq.com%2Farticles%2Freal-question-why&tt=0&captcha_provider=nucaptcha" target="_blank" title="Reddit"><span class="at16nc at300bs at15nc at15t_reddit at16t_reddit"><span class="at_a11y">Share on reddit</span></span></a>
+		<a class="addthis_button_delicious at300b" href="http://www.addthis.com/bookmark.php?v=250&winname=addthis&pub=infoq&source=tbx-250&lng=en-US&s=delicious&url=http%3A%2F%2Fwww.infoq.com%2Farticles%2FESB-Integration&title=Choosing%20the%20Right%20ESB%20for%20Your%20Integration%20Needs&ate=AT-infoq/-/-/516705e14e6a30bf/4&frommenu=1&uid=516705e1dbbf0857&ct=1&pre=http%3A%2F%2Fwww.infoq.com%2Farticles%2Freal-question-why&tt=0&captcha_provider=nucaptcha" target="_blank" title="Delicious"><span class="at16nc at300bs at15nc at15t_delicious at16t_delicious"><span class="at_a11y">Share on delicious</span></span></a>
+		<a class="addthis_button_email at300b" title="Email" href="http://www.infoq.com/articles/ESB-Integration#"><span class="at16nc at300bs at15nc at15t_email at16t_email"><span class="at_a11y">Share on email</span></span></a>		
+	</div>
+	
+		<script type="text/javascript">
+			var label = 'en';  
+   	        var action = 'articles';
+   	        
+   	        function trackThisBookmark(){
+   	        	Tracker.doTrackContentBookmark(action, label);   	        	
+   	        }		    
+		</script>
+		<div style="float: right;">
+		   	<a id="bookmark-this" title="" href="javascript:bookmarkContent();" class="bookmark-this" onclick="trackThisBookmark();"><img src="./Choosing the Right ESB for Your Integration Needs_files/bookmarkthis.png"></a>
+		</div>	
+		<div class="clearer"></div>		
+	
+<div class="atclear"></div></div>
+
+<script type="text/javascript">
+   var addthis_config = {
+      data_ga_property: 'UA-6608133-2',
+      data_ga_social: true
+   };
+</script>
+
+
+<!-- AddThis Button END -->
+
+
+		   	    
+       	<p>Different applications within companies and between different companies need to communicate with each other. The Enterprise Service Bus (ESB) has been established as a tool to support application integration. But what is an ESB? When is it better to use an integration suite? And which product is best suited for the next project? This article explains why there is no silver bullet and why an ESB can also be the wrong choice. Selecting the right product is essential for project success.</p>
+        
+        <div class="content-sidebar-wide">
+			
+
+
+
+
+
+
+
+
+<div class="vendor-content-box-float">
+	<h3>Related<span class="vendor">Vendor</span>Content</h3>
+	
+	
+	
+
+	
+	
+		
+			
+		
+		<p class="entrypdf f_vcrembed" jsh="{&quot;id&quot;:2153,&quot;title&quot;:&quot;The Rise of the Composite API Platform, a ‘Best-of-Breed’ API Management Solution&quot;}">
+			<a href="http://www.infoq.com/vendorcontent/show.action?vcr=2153&utm_source=infoq&utm_medium=VCR&utm_campaign=vcr_articles_click" target="_blank">
+				The Rise of the Composite API Platform, a ‘Best-of-Breed’ API Management Solution
+			</a>
+		</p>
+	
+		
+			
+		
+		<p class="entrypdf f_vcrembed" jsh="{&quot;id&quot;:2149,&quot;title&quot;:&quot;Application Performance Management Buyer&#39;s Guide&quot;}">
+			<a href="http://www.infoq.com/vendorcontent/show.action?vcr=2149&utm_source=infoq&utm_medium=VCR&utm_campaign=vcr_articles_click" target="_blank">
+				Application Performance Management Buyer's Guide
+			</a>
+		</p>
+	
+		
+			
+		
+		<p class="entryarticle f_vcrembed" jsh="{&quot;id&quot;:2157,&quot;title&quot;:&quot;Infographic: Just How Big is the Nerd Economy&quot;}">
+			<a href="http://www.infoq.com/vendorcontent/show.action?vcr=2157&utm_source=infoq&utm_medium=VCR&utm_campaign=vcr_articles_click" target="_blank">
+				Infographic: Just How Big is the Nerd Economy
+			</a>
+		</p>
+	
+		
+			
+		
+		<p class="entrypdf f_vcrembed" jsh="{&quot;id&quot;:2119,&quot;title&quot;:&quot;Enterprises Need Hybrid SSO Solutions to Bridge Internal IT and SaaS&quot;}">
+			<a href="http://www.infoq.com/vendorcontent/show.action?vcr=2119&utm_source=infoq&utm_medium=VCR&utm_campaign=vcr_articles_click">
+				Enterprises Need Hybrid SSO Solutions to Bridge Internal IT and SaaS
+			</a>
+		</p>
+	
+		
+			
+		
+		<p class="entrydemo f_vcrembed" jsh="{&quot;id&quot;:2146,&quot;title&quot;:&quot;Beyond Continuous Integration: Automate your Builds,  Deployments,  and Workflows with Ease - Learn More&quot;}">
+			<a href="http://www.infoq.com/vendorcontent/show.action?vcr=2146&utm_source=infoq&utm_medium=VCR&utm_campaign=vcr_articles_click" target="_blank">
+				Beyond Continuous Integration: Automate your Builds,  Deployments,  and Workflows with Ease - Learn More
+			</a>
+		</p>
+	
+
+	
+	
+		
+		
+	
+	
+	
+	
+	
+		
+			
+		
+
+
+
+
+
+
+
+
+	
+</div>
+
+
+		    
+		    
+				
+				
+				
+				
+
+
+
+
+
+
+
+<div id="researchWidget" style="display:none" class="related-research-box-wide">
+   	<fieldset>
+       	<legend>RELATED Research</legend>
+       	
+       	<div id="research1" class="rr-entry">
+           	<a href="" style="display:none"><img style="width:100px" src=""></a>
+           	<a id="research1label" href=""></a>
+       	</div>
+       	
+       	<div id="research2" class="rr-entry">
+           	<a href="" style="display:none"><img style="width:100px" src=""></a>
+           	<a id="research2label" href=""></a>
+       	</div>
+   		
+   		<div id="research3" class="rr-entry">
+           	<a href="" style="display:none"><img style="width:100px" src=""></a>
+           	<a id="research3label" href=""></a>
+       	</div>
+       	
+       	<a id="researchmore" style="display:none;" class="researchmore-default researchmore-wide" href="">More Research &gt;</a>
+   	</fieldset>
+</div>
+
+<script type="text/javascript">
+function displayResearch(data){
+            //it keeps "related research"
+            var campaign = '?utm_source=infoqresearch&utm_campaign=rr-content';
+                       
+            //are there any research items to display?
+		    var researchFound = false;
+
+            if (data != null && data[0] != null && data[0][0] && data[0][1] != null && data[0][2] != null){				
+				$("#research1 > a").attr('href', data[0][0] + campaign);
+				$("#research1 > a").css({"display" : "block"});
+				$("#research1label").html(data[0][1]);
+   				$("#research1 img").attr('src', data[0][2]); 
+   				researchFound = true;			
+   			}   			
+   			
+   			if (data != null && data[1] != null && data[1][0] && data[1][1] != null && data[1][2] != null){
+				$("#research2 > a").attr('href', data[1][0] + campaign);
+				$("#research2 > a").css({"display" : "block"});
+				$("#research2label").html(data[1][1]);
+   				$("#research2 img").attr('src', data[1][2]);
+   				researchFound = true;				
+   			}   			
+   			
+   			if (data != null && data[2] != null && data[2][0] && data[2][1] != null && data[2][2] != null){
+				$("#research3 > a").attr('href', data[2][0] + campaign);
+				$("#research3 > a").css({"display" : "block"});
+				$("#research3label").html(data[2][1]);
+   				$("#research3 img").attr('src', data[2][2]);   
+   				researchFound = true;			
+   			} 
+   			
+   			//display the widget if it is not empty; researchCounter should be a "thruthy" value (>0)
+   			if (researchFound){  
+   				//before showing it append campaign data
+   				$("#researchmore").attr("href", "/research" + campaign);
+   				$("#researchmore").css({"display" : "block"});
+   				$("#researchWidget").css({"display" : "block"});
+   			}    			
+}
+</script>
+
+
+			
+				
+				
+        </div> 
+        
+       	
+<h2>Definition of the Term "Enterprise Service Bus"</h2>
+<p>Numerous products from different vendors include the name "Enterprise Service Bus". Unfortunately, there is no standard definition of this term. The products therefore offer many different features. The term ESB should always be clearly defined before it is used. In the following, an ESB is defined as a software product which assists the developer in application integration and therefore provides the necessary infrastructure to implement routing, translation, and other integration facilities. On the integration complexity path, an ESB usually falls between a framework and a suite as an alternative for application integration, as shown in the following picture:   <br>
+&nbsp;<img src="./Choosing the Right ESB for Your Integration Needs_files/7fig1.jpg" vspace="3" hspace="3" align="absBottom" alt="" _href="img://7fig1.jpg" _p="true"><br>
+Figure 1: Alternatives for application integration   <br>
+After the term ESB has been defined, the next section explains when an ESB should be considered, and when an integration framework or an integration suite is a better choice.</p>
+<h2>Integration Framework</h2>
+<p>A framework helps implementing Enterprise Integration Patterns (EIP, http://www.eaipatterns.com), such as Splitter or Content Based Router, in order to integrate applications in a standardized way. Using standard APIs to integrate products noticeably lowers the implementation effort and the source code is easier to understand for other developers. A framework is well suited to integrate different applications with different protocols and technologies, and concepts such as endpoints, producer, consumer and EIPs are used to create the integration logic. Even implicitly supported test automation uses the same concepts.   <br>
+A framework consists of a set of ordinary libraries and is therefore compatible with any development environment, even a classic text editor.   <br>
+Known examples of frameworks are Apache Camel and Spring Integration in the <a href="http://www.h-online.com/developer/features/Free-integration-frameworks-on-the-Java-platform-1672712.html">Java environment</a> and <a href="http://nservicebus.com/">NServiceBus</a> for .NET.   <br>
+With frameworks the development team is more or less solely responsible for the project's success. Commercial support is generally not available. Tooling is also only partly available, and not necessarily suitable for "mission-critical" deployments. The rest of this article is therefore devoted to ESB and corresponding suites, which are often a better choice than a framework.</p>
+<h2>Enterprise Service Bus</h2>
+<p>Like a framework, an ESB is used to integrate applications. An ESB is based on a framework implicitly. However, it is a much more powerful product. Contrary to a framework, an ESB offers strong tool support for deployment, administration and monitoring at runtime, besides basic functionalities for application integration. In addition, graphical editors are used for the implementation of various integration scenarios. The integration logic can be modeled with "drag and drop", the corresponding source code being generated automatically. Commercial support completes the package of an ESB.   <br>
+The great advantage of ESBs over the use of pure frameworks is therefore the better tooling, which reduces the cost and complexity significantly. Integration problems are solved at a higher abstraction level.</p>
+<h2>Integration Suite</h2>
+<p>A suite offers all features of an ESB. In addition, many other functions such as Business Process Management (BPM), Business Activity Monitoring, Master Data Management, or a Repository are included. If some of these additional features are required in addition to pure integration, then the use of a suite is advisable. The entire integration can be realized with a single software stack.   <br>
+The differences between a framework, an ESB and a suite are hopefully now clarified. Next will be explained how to select the right ESB or suite.</p>
+<h2>Comparison Criteria</h2>
+<p>Notice: we will not provide a matrix that compares all the available products with respect to various criteria. ??From the perspective of the author, it is hardly possible to create a good and useful matrix because the products offer far too many (often different) functionalities and concepts. Besides, the feature list also changes virtually every day in the IT world.   <br>
+Therefore, it is advisable to pre-define your own needs, and then to evaluate which products are best suited. Proprietary solutions are often very similar, and also the most used open source competitors offer similar characteristics. Therefore, it makes sense to think of at the beginning, whether a proprietary or an open source solution is the better choice.   <br>
+In order to make this decision, you should use the following criteria:</p>
+<ul>
+    <li><b>Usability</b>: How complicated is the installation? How many tools are needed? Is the development environment intuitive?</li>
+    <li><b>Maintainability</b>: How do you administer the product? Is there a GUI for monitoring services?</li>
+    <li><b>Community</b>: Are there active public forums or mailing lists? Are numerous articles, tutorials, articles, and videos available? Is the product supported by several companies?</li>
+    <li><b>Enterprise</b><b> Support</b>: What support options are offered ("business hours", "24/7" hotline vs. Email vs. on-site support, etc.)? Can the required service level agreements be guaranteed? Is support offered in your preferred language?</li>
+    <li><b>Functionality</b>: Are all the required functionalities offered?</li>
+    <li><b>Flexibility</b>: Can you customize functionalities of the product to fit my needs?</li>
+    <li><b>Expandability</b>: Is it possible to expand the product? Is the product and its interfaces based on standards?</li>
+    <li><b>Connectors</b>: Are adapters for all required technologies available? Are there adapters for B2B products such as SAP or Salesforce? How easily can I build your own adapter?</li>
+    <li><b>Cost</b>: What is the full cost (total cost of ownership) of the product - including maintenance, all required ancillary products, connectors, etc.)?</li>
+    <li><b>Licensing</b>: What licensing or subscription model is used? What happens when requirements change (more computers, more CPUs, switching to virtual machines, etc.)? Are upgrades for free? Are downgrades possible, too? Are the costs "foreseeable" at all, is the price list even understandable?</li>
+</ul>
+<p><br>
+Table 1 compares the advantages and disadvantages of proprietary vs. open source ESBs and suites (green = good, yellow = medium, red = bad). The conclusion regarding the differences is the following: Proprietary solutions generally offer more features and "powerful" support. However, the question remains, "Are these really needed?" Remember that efforts, complexity, and costs are correspondingly higher. Open Source products score with easier usability, greater flexibility, easier extensibility and lower costs.</p>
+<table border="0" cellspacing="1" cellpadding="1">
+    <tbody>
+        <tr bgcolor="#808080">
+            <td valign="top" width="18%">
+            <p><b>Criteria</b></p>
+            </td>
+            <td valign="top" width="40%" color="#808080">
+            <p><b>Proprietary</b></p>
+            </td>
+            <td valign="top" width="40%">
+            <p><b>Open Source</b></p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Ease of use</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>Very complex installation (consultants needed !?), „tool hell“</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>One Click Installer (also for Mac in some cases), start using after minutes, unified platform</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Maintainability and Monitoring</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Powerful tooling (e.g. for administration and monitoring), Analysis of source code not necessary, refactoring via GUI</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>Less powerful tooling (e.g. for administration and monitoring, integration of further products from other vendors required sometimes), Analysis of source code not necessary, refactoring via GUI</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Community</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>Buy support, forums (but no real community which helps)</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Based on open source projects, plus own community</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Enterprise Support</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>24/7 enterprise support, SLAs as you wish, deployments with thousands of servers</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FFFF00">
+            <p>24/7 enterprise support, less guarantees than proprietary support, check for local consulting and support</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Functionality</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Integration features + many more (BAM, CEP, EDA, etc., etc., etc.)</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FFFF00">
+            <p>Integration features + some more</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Flexibility</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>(Make a change request + wait long + pay) OR (pay a lot + get it quickly)</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Open source, change what you want</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Extensibility</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>Do it yourself (tough) OR pay</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Standards-based, defacto standards</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Connectors</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Adapters for technologies and business products</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Adapters for technologies and business products</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Costs</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>MUCH (and even more)</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>LESS</p>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" width="18%" bgcolor="#808080">
+            <p>Licencing</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#FF0000">
+            <p>Complex price list, pay for everything (upgrades, migration to VM, „you-name-it“)</p>
+            </td>
+            <td valign="top" width="40%" bgcolor="#008000">
+            <p>Subscription model, upgrades inclusive, predictive costs, downgrades possible</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p>&nbsp;Table 1: Advantages and disadvantages of proprietary and open source products</p>
+<h2>Product Alternatives</h2>
+<p>After the main differences between proprietary and open source products have been explained, some specific products are introduced in the following. Thus, an overview of the various available alternatives will be given including a small practical insight.   <br>
+Almost every vendor of proprietary integration products, such as IBM and Oracle, offers a solution for every conceivable function. Regarding open source alternatives, in particular the Unified Platform of Talend and the WSO2 Platform are worth mentioning, because they also offer complete suites. Besides, several alternatives concentrate solely on ESB. Perhaps the most important open source offerings are Mule ESB and Fuse ESB.</p>
+<h2>Oracle Service Bus / Fusion Middleware</h2>
+<p><a href="http://www.oracle.com/technetwork/middleware/service-bus/overview/index.html">Oracle Service Bus</a>&nbsp;is the current ESB from Oracle. It is a component of Oracle Fusion Middleware (OFM) stack, which according to the definition of this article is an integration suite. Many other products are available in it, for example, the SOA Suite, Coherence, Complex Event Processing, BPEL Process Manager, Enterprise Messaging Service, Service Registry, and many more.   <br>
+There is probably not much functionality which is not provided by Oracle’s suite. The tools are very powerful and stable. Graphical editors exist for most products. Support is also available for most conceivable service level agreements. If these powerful and SLAs are really needed, you are on the right side with Oracle. This power comes at a price of course. The high complexity of the products should not be underestimated. Besides, you should be aware of high licensing and support costs plus a non-transparent pricing model.   <br>
+The OFM is based on standards such as Java EE, BPEL, SOAP, or SCA. The products are proprietary and come from multiple acquisitions made by Oracle over time. Therefore different codebases are used, and different products often need different development tools. The sum of the downloads can quickly exceed 20 Gb. The installation is tedious and can occasionally move over several days - even for a simple installation on your laptop. The products are rather heavy. Resource requirements at runtime are very high.   <br>
+By the way, you could have just replaced "Oracle" with "IBM" and "Fusion Middleware" with "WebSphere". The content of this section would still be almost the same - except to mention that IBM has three different ESBs in the portfolio: the Message Broker, the ESB and the DataPower SOA Appliances. Also, Tibco, Microsoft and SAP play an important role in the market of proprietary ESBs and integration suites.   <br>
+The conclusion of this section is therefore that proprietary integration suites can offer almost every conceivable function and cover almost all SLAs. However, many of these functionalities or SLAs are not required in most projects. In this case, be sure to also evaluate open source alternatives. The most important ones are described in the next sections.</p>
+<h2>Mule ESB</h2>
+<p><a href="http://www.mulesoft.org/">Mule ESB</a> is one of the first successful open source ESBs. It has a lot of qualities in common with the other previously mentioned open source ESBs. These include a very simple ("one click") installation and intuitive, Eclipse-based tooling. Usually, open source ESBs are very lightweight and extensible solutions. Apart from the free open source version, a commercial enterprise version is available. This offers additional functionality and support for the product.   <br>
+For those who still do not know it, it should be mentioned that “open source” does not mean “for free”. Even vendors of open source software have to make money and cannot develop products and offer support free of charge. However, the prices are much more customer friendly and not based on obscure price lists as most proprietary products. Nevertheless, the open source version can be used (even in production) without any licensing costs. Often, however, the open source version simply serves for playing around or doing a proof of concept to later upgrade to the enterprise version with additional features and support.   <br>
+As the name suggests, Mule ESB is a pure ESB. Important advantages in contrast to frameworks like Apache Camel or Spring Integration are the graphical editors for an efficient implementation of integration scenarios and the available connectors for B2B products such as SAP or Salesforce. However, the functionality of a suite is missing in Mule ESB. For such use cases, the ESB has to be combined with products from other vendors. Negative aspects of Mule ESB are the small community, a restrictive licensing model and limited availability of the source code. Competitors have significant advantages at this.</p>
+<h2>Fuse ESB</h2>
+<p>The <a href="http://fusesource.com/products/enterprise-servicemix">Fuse ESB</a> is a pure ESB like Mule ESB, without a suite. It is based on de facto standards in the integration environment such as Apache CXF and Apache Camel. As a result, a great community is already secured from the ground up. The development environment is based on Eclipse and very intuitive.</p>
+<p>Fuse ESB was part of FuseSource. However, FuseSource was recently acquired by <a href="http://fusesource.com/redhat">Red Hat</a> and now belongs to the JBoss division. Fuse ESB is contained in the current road map and will continue to be supported. It will be integrated into the JBoss Enterprise SOA Platform - just like the also acquired BPM solution Polymita. There is still a long way towards a unified suite, since the <a href="http://www.redhat.com/promo/jboss_integration_week/">integration</a> of FuseSource and Polymita will still take a few months, and with JBoss ESB, Switchyard and Fuse ESB now three ESB products need to be merged into one. Here, other open source vendors have already achieved better results.</p>
+<h2>Talend ESB / Unified Platform</h2>
+<p><a href="http://www.talend.com/products/esb">Talend ESB</a> is part of the suite of Talend. Talend ESB can be used independently or in combination with other components of Talend’s unified platform. All components are open source and freely available. The enterprise version offers additional features and support. The difference to proprietary products is that all the partial components are based on the same code base and the same tooling is used everywhere. The usage of different areas such as ESB, BPM, ETL, MDM, etc. is done fluently - and is not a separate integration project on its own.   <br>
+All tooling of the Talend suite is built on Eclipse. The familiar "look and feel" and the intuitive use of Eclipse remain. Talend offers a visual designer for all product parts and uses a "zero-coding" approach. This allows an efficient implementation of integration scenarios. Of course, you can still write and integrate custom logic to your project, e.g. via Java classes (POJOs) or different scripting languages.   <br>
+Like Fuse ESB, Talend ESB is based on several de facto standards in the integration environment such as Apache Camel, Apache CXF, Apache Karaf and Apache Zookeeper. Besides the available connectors for Apache Camel for technologies such as JMS, HTTP or FTP, many other B2B adapters are available, for example for Alfresco, Jasper, SAP, Salesforce or host systems. All 500+ connectors are included by default. One consequence is that Talend’s IDE has higher hardware requirements than its competitors. You should not install Talend on a too weak laptop. Another disadvantage is missing SOA governance features. This is planned for next releases.</p>
+<h2>WSO2 ESB / Platform</h2>
+<p><a href="http://wso2.com/products/enterprise-service-bus">WSO2</a> is a relatively unknown vendor. However, WSO2 provides the entire range of components of a suite including Business Process Server, Business Rules Server, Business Activity Monitor or Governance Registry. The entire WSO2 platform can be installed very easily and offers a lightweight, Eclipse-based development studio. Like Talend and FuseSource, WSO2 also puts primarily open source projects such as Apache Synapse (lightweight ESB), Axis (Web Service Implementation) or ODE (Business Process Engine) into its components.   <br>
+Besides Talend, WSO2 is the only vendor that offers a full suite that is based on a single code base and a single development environment. Therefore, nothing stands in the way for an iterative development process, beginning with a small couple of features, and by adding more functionality later step-by-step. A weakness is the graphical tooling. It supports all components of the platform, but it is not as intuitive to use as the tooling of its competitors.</p>
+<h2>“Do it yourself” Integration Suite?</h2>
+<p>A warning to the conclusion: The combination of several frameworks or products to build your own custom integration suite is usually unnecessary expensive and leads to many additional pitfalls. Since several solutions already exist, it is strongly discouraged to create one from various pieces. "Glue code" needs to be written, testing and bug fixing have to be done, and there is no specific contact in case of problems. Vendors usually just refer to the other side, i.e. if you try to combine an ESB with a BPM solution of another vendor, which one do you call when you have a problem? So why should you care about all of these problems if other people have already cared, and an entire stack (also open source) is already available?</p>
+<h2>Conclusion</h2>
+<p>There is no silver bullet to solve integration problems. First, a decision must be made whether a framework is sufficient. Be aware that most of the source code must be written by yourself, and tooling and support is scarce. Otherwise, an ESB is the better choice. However, if any additional features of a suite are required at some point later, it would be better to use the ESB of an integration suite from the beginning. This secures sustainability without any problems and additional expense for the combination of multiple products.</p>
+<p>If an ESB or integration suite should be used, it must be decided whether a proprietary or open source product is a better choice. Proprietary solutions provide all possible features and strong support. However, this also leads to higher costs and a perceived higher complexity. Contrary, open source solutions score with lower cost, ease of use and flexibility. Once this issue is settled, a shortlist can be created to evaluate the alternatives in detail. It is strongly recommended to perform a proof of concept before making a final decision. Ensure that your team will implement this prototype (from the first installation to final deployment and monitoring), and not just the consultants of the vendor. Your team will have to install the product in the future alone and implement the integration problems independently of any consultants which may not be available.</p>
+<h2>About the Author</h2>
+<p><strong><img src="./Choosing the Right ESB for Your Integration Needs_files/Kai_Waehner.jpg" vspace="3" hspace="3" align="left" alt="" _href="img://Kai_Waehner.jpg" _p="true">Kai Wähner</strong> is a Principal Consultant at Talend. His focus is in the areas of Java EE, SOA, Cloud Computing, BPM, Big Data, and Enterprise Architecture Management. Please give feedback via email (kontakt@kai-waehner.de), Twitter (@KaiWaehner) or social network (LinkedIn / Xing).</p>
+       	
+       	<div class="clearer-space"></div>		
+		
+		
+		
+		
+		
+		
+
+
+
+
+
+
+<script type="text/javascript">		
+		$.ajax({
+			url: "/api/recommendationlinks.action",
+			contentType: "application/x-www-form-urlencoded; charset=utf-8",
+			type: 'POST',
+			data: {"topicIds" : "237,116,1172,23,113,2987,145,2179,1632,2030,1136,-1000,-1000", "title" : "Choosing the Right ESB for Your Integration Needs", "contentPath" : "/articles/ESB-Integration",  "language" : "en"},
+			success: displayRelatedContent
+		});
+		function displayRelatedContent(data) {
+			if(data.length>0){
+				var trackingCode = "?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk";
+				var splitIndex = Math.ceil(data.length/2.0);
+				var relatedContentCol = $('<div class="related-content-bottom-col">');			
+				for(var i=0;i<data.length;i++){
+					var link = $('<p class="entry-'+data[i].contentType+'"><a href="'+data[i].url+trackingCode+'">'+data[i].title+'</a></p>');
+					relatedContentCol.append(link);
+					if(i==splitIndex-1){
+						$('#relatedContent').append(relatedContentCol);
+						relatedContentCol = $('<div class="related-content-bottom-col">');
+					}
+				}
+				$('#relatedContent').append(relatedContentCol);
+				$('#relatedContent').show();
+			}
+		}		
+</script>
+
+<div id="relatedContent" class="related-content-bottom" style="display: block;">
+    <h3>You may also like</h3>    
+<div class="related-content-bottom-col"><p class="entry-news"><a href="http://www.infoq.com/news/2013/04/WSO2-Developer-Studio-3?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk">WSO2 Developer Studio 3.0&amp;3.1 Have Better ESB Tooling</a></p><p class="entry-news"><a href="http://www.infoq.com/news/2011/09/replace-esb-with-gateway?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk">SOA Gateway: A Lightweight, Low-Cost Alternative to the ESB</a></p><p class="entry-presentations"><a href="http://www.infoq.com/presentations/Integration-New-Enterprise-Web?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk">Integration At Scale: Lessons Learned From The New Enterprise Web</a></p></div><div class="related-content-bottom-col"><p class="entry-presentations"><a href="http://www.infoq.com/presentations/Evolution-Integration?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk">The Evolution of Integration</a></p><p class="entry-presentations"><a href="http://www.infoq.com/presentations/Enterprise-Integration?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk">Enterprise Integration–The Seriously Nasty Stuff</a></p><p class="entry-presentations"><a href="http://www.infoq.com/presentations/Hypermedia-Services-for-Systems-Integration?utm_source=infoq&utm_medium=related_content_link&utm_campaign=relatedContent_articles_clk">Using Hypermedia Services for Systems Integration</a></p></div></div>
+
+
+		
+		
+        
+        
+        	
+        
+
+
+
+
+
+
+<script type="text/javascript">
+var replyEnabled=true;
+var forumID=1;
+var threadID=28956;
+var previewText='Preview';
+var pleaseWait='Please Wait ...';	
+var reply='Reply';
+var postMessage='Post Message';	
+var errorSubject='Please enter a subject.';	
+var errorBody='You can not post a blank message. Please type your message and try again.';
+var cancel='Cancel';
+var goBackOrEdit='Go Back/Edit';
+var re='Re:';
+var lastMessage=0;
+var stopWatchText='Stop Watching Thread';
+var startWatchText='Watch Thread';
+var descending='false';
+var ctxPath= '';
+var postAddress= ctxPath + '/forum/post!post.action?language=' + 'en';
+var postAddWatches= ctxPath + '/forum/watches!add.action';
+var postRemoveWatches= ctxPath + '/forum/watches!remove.action';
+var loggedIn=false;	
+
+
+var forumNotificationDefault=false;
+
+</script>
+
+<script src="./Choosing the Right ESB for Your Integration Needs_files/forum.js" type="text/javascript"></script>
+<script type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/ForumNotifications.js"></script>
+<script type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/jquery.timeago.js"></script>
+<script type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/date.js"></script>
+
+	<div class="comments-header">
+	    <h3><span id="comments-number">12</span> comments</h3>
+	    <p>
+			
+				
+				
+	                <span id="watch">
+	                    <a href="javascript:void(0)" class="comment-watch" onclick="javascript:loggedIn?startWatch():showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;startWatch();&#39;));">
+	                        Watch Thread
+	                    </a>
+	                </span>	
+				
+				
+			<a href="javascript:void(0)" class="comment-reply" onclick="javascript:loggedIn?replyFromTooltip(96156,true):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromTooltip(96156,true)&#39;));">Reply</a>
+		</p>
+	</div>
+	
+	<span id="newMessage" style="display:none;"></span>
+	
+	<span id="replyTree_96156"></span>	  	
+	<span id="replyMessage_96156"></span>
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 0px; margin-right: 0px;">		
+			<a class="forum-list">
+			<span id="tooltip_96414" style="cursor:pointer; cursor:hand;">Fuse ESB has always been open source</span>		
+			</a>
+			by 
+			James Strachan 
+			Posted
+			<span id="treeRelativeTime_0">02/04/2013 09:34</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_0").html(getRelativeTime(1364909690909));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96414').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96414').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96414"></span>
+		<span id="replyMessage_96414"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 15px; margin-right: 15px;">		
+			<a class="forum-list">
+			<span id="tooltip_96418" style="cursor:pointer; cursor:hand;">Re: Fuse ESB has always been open source</span>		
+			</a>
+			by 
+			Kai Wähner 
+			Posted
+			<span id="treeRelativeTime_1">02/04/2013 01:14</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_1").html(getRelativeTime(1364922876412));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96418').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96418').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96418"></span>
+		<span id="replyMessage_96418"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 30px; margin-right: 30px;">		
+			<a class="forum-list">
+			<span id="tooltip_96441" style="cursor:pointer; cursor:hand;">Re: Fuse ESB has always been open source</span>		
+			</a>
+			by 
+			James Strachan 
+			Posted
+			<span id="treeRelativeTime_2">03/04/2013 07:00</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_2").html(getRelativeTime(1364986818736));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96441').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96441').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96441"></span>
+		<span id="replyMessage_96441"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 0px; margin-right: 0px;">		
+			<a class="forum-list">
+			<span id="tooltip_96443" style="cursor:pointer; cursor:hand;">Enterprise Support</span>		
+			</a>
+			by 
+			Claus Ibsen 
+			Posted
+			<span id="treeRelativeTime_3">03/04/2013 08:06</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_3").html(getRelativeTime(1364990796929));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96443').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96443').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96443"></span>
+		<span id="replyMessage_96443"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 15px; margin-right: 15px;">		
+			<a class="forum-list">
+			<span id="tooltip_96445" style="cursor:pointer; cursor:hand;">Re: Enterprise Support</span>		
+			</a>
+			by 
+			Mark Little 
+			Posted
+			<span id="treeRelativeTime_4">03/04/2013 12:46</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_4").html(getRelativeTime(1365007586448));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96445').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96445').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96445"></span>
+		<span id="replyMessage_96445"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 30px; margin-right: 30px;">		
+			<a class="forum-list">
+			<span id="tooltip_96447" style="cursor:pointer; cursor:hand;">Re: Enterprise Support</span>		
+			</a>
+			by 
+			Kai Wähner 
+			Posted
+			<span id="treeRelativeTime_5">04/04/2013 02:11</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_5").html(getRelativeTime(1365055911356));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96447').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96447').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96447"></span>
+		<span id="replyMessage_96447"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 45px; margin-right: 45px;">		
+			<a class="forum-list">
+			<span id="tooltip_96448" style="cursor:pointer; cursor:hand;">Re: Enterprise Support</span>		
+			</a>
+			by 
+			Mark Little 
+			Posted
+			<span id="treeRelativeTime_6">04/04/2013 03:14</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_6").html(getRelativeTime(1365059652590));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96448').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96448').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96448"></span>
+		<span id="replyMessage_96448"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 60px; margin-right: 60px;">		
+			<a class="forum-list">
+			<span id="tooltip_96481" style="cursor:pointer; cursor:hand;">Re: Enterprise Support</span>		
+			</a>
+			by 
+			Kai Wähner 
+			Posted
+			<span id="treeRelativeTime_7">05/04/2013 07:39</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_7").html(getRelativeTime(1365161943988));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96481').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96481').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96481"></span>
+		<span id="replyMessage_96481"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 0px; margin-right: 0px;">		
+			<a class="forum-list">
+			<span id="tooltip_96520" style="cursor:pointer; cursor:hand;">ServiceMix?</span>		
+			</a>
+			by 
+			abhishek manocha 
+			Posted
+			<span id="treeRelativeTime_8">08/04/2013 00:46</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_8").html(getRelativeTime(1365396410465));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96520').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96520').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96520"></span>
+		<span id="replyMessage_96520"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 15px; margin-right: 15px;">		
+			<a class="forum-list">
+			<span id="tooltip_96572" style="cursor:pointer; cursor:hand;">Re: ServiceMix?</span>		
+			</a>
+			by 
+			Kai Wähner 
+			Posted
+			<span id="treeRelativeTime_9">2 days ago</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_9").html(getRelativeTime(1365488865921));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96572').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96572').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96572"></span>
+		<span id="replyMessage_96572"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 0px; margin-right: 0px;">		
+			<a class="forum-list">
+			<span id="tooltip_96566" style="cursor:pointer; cursor:hand;">I have started to see this term (ESB) being used for almost all middleware</span>		
+			</a>
+			by 
+			Ian Fleming  
+			Posted
+			<span id="treeRelativeTime_10">2 days ago</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_10").html(getRelativeTime(1365480890009));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96566').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96566').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96566"></span>
+		<span id="replyMessage_96566"></span>
+		
+	
+		
+		<div class="forum-list-tree" style="position: relative; left: 15px; margin-right: 15px;">		
+			<a class="forum-list">
+			<span id="tooltip_96574" style="cursor:pointer; cursor:hand;">Re: I have started to see this term (ESB) being used for almost all middlew</span>		
+			</a>
+			by 
+			Kai Wähner 
+			Posted
+			<span id="treeRelativeTime_11">2 days ago</span>		
+			<script type="text/javascript" language="javascript">				
+				$("#treeRelativeTime_11").html(getRelativeTime(1365489647703));
+			</script>
+			<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	        <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	        
+			<script type="text/javascript" language="javascript">				
+		    	$('#tooltip_96574').mouseover(function(e) {
+		    		initializeTooltip(e);
+		    	});
+		    	$('#tooltip_96574').mouseout(function(e) {
+		    		deintializeTooltip(e);
+		    	});
+		  	</script>  	
+	  	</div>
+		<span id="replyTree_96574"></span>
+		<span id="replyMessage_96574"></span>
+		
+	
+	
+	<div class="comments-sort">
+		<span id="comments-sort">
+			
+			
+				<a class="comment-sort-desc" href="javascript:changeOrder(2);">Sort by date descending</a>
+			
+		</span>
+	</div>
+	
+   	<ol class="comments">
+	
+	
+	
+		
+		<li id="comment-96414">
+			<a name="view_96414"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96414">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96414" name="96414" onclick="javascript:hideTooltip();return true;">Fuse ESB has always been open source</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_0">02/04/2013 09:34</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_0").html(getRelativeTime(1364909690909));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        James Strachan 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96414">
+			<p>
+				<span id="quote_96414">
+					Hi Kai<br><br>Any chance you could the correct various mistakes &amp; confusion in your article around Fuse. <br><br>e.g. "Fuse ESB was a paid, proprietary product while under the care of FuseSource". Thats never been true. Fuse ESB has always been open source and completely Apache Licensed; not sure where you got this from. Could you please update the article?<br><br>It also seems a bit confused what an ESB is. Polymeta is a user focussed BPM suite; so its nothing to do with the ESB so there's no unification between it and Fuse required? As of JBoss Fuse 6.0 which is being released as I speak, there is really one unified ESB at JBoss; Fuse ESB. Switchyard is a service composition framework which works with Camel / Drools / jBPM.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96414):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96414);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96414"></span>
+		</li>
+		<span id="replyFlatMessage_96414"></span>	
+		
+	
+		
+		<li id="comment-96418">
+			<a name="view_96418"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96418">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96418" name="96418" onclick="javascript:hideTooltip();return true;">Re: Fuse ESB has always been open source</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_1">02/04/2013 01:14</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_1").html(getRelativeTime(1364922876412));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Kai Wähner 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96418">
+			<p>
+				<span id="quote_96418">
+					James,<br><br>Sorry, the part about "proprietary Fuse ESB" was a mistake. Article will be changed, of course! I already send an email with an updated section to the editors. I do not know why this is in my head. However, you are right. Probably, I mixed it up with Fuse IDE ?! <br><br>I have read about JBoss Fuse (new brand for Fuse ESB). I looked at this some days ago, it was not available already. Great news that it will be released these days. Maybe you can post a link here to the press release as soon as it is released.<br><br>Regarding unification of ESB and BPM, I disagree with you a little bit. Of course, an unification is not required. However, that is the advantage of unified suites. Developers use one tooling to implement ESB, BPM, and other components. So, an unification is not required, but a huge benefit (if you need more than just an ESB).
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96418):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96418);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96418"></span>
+		</li>
+		<span id="replyFlatMessage_96418"></span>	
+		
+	
+		
+		<li id="comment-96441">
+			<a name="view_96441"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96441">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96441" name="96441" onclick="javascript:hideTooltip();return true;">Re: Fuse ESB has always been open source</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_2">03/04/2013 07:00</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_2").html(getRelativeTime(1364986818736));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        James Strachan 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96441">
+			<p>
+				<span id="quote_96441">
+					Thanks Kai. Here's the <a rel="nofollow" href="http://www.jboss.org/jbossfuse">JBoss Fuse site</a>, I'll post a link to the announcement when it comes out. <br><br>Just to be completely clear, since the acquisition by Red Hat, JBoss Fuse (Fuse ESB), Fuse IDE and all the management tooling is completely open source. Or to say that even more clearly, there is no code which is not open source :). <br><br>Incidentally for those who didn't know, our long term open source management console for Apache Camel, Apache ActiveMQ, Apache Karaf, Fuse Fabric, middleware &amp; integration is called <a rel="nofollow" href="http://hawt.io/">hawtio</a><br><br>I agree folks want a way of using the plethora of technology out there together &amp; to have them integrated &amp; managed in a consistent way. This is one of the reasons Red Hat's open source portfolio is so compelling; Red Hat are the only vendor who has a completely open source distribution and support for the entire stack of middleware &amp; integration technologies: from RHEL, OpenJDK, virtualisation, application servers (EWS, Fuse, EAP), middleware, ESB/integration (JBoss Fuse), SOA, governance/BAM, BPM and rules/BPMNS, distributed caching, virtual storage &amp; networking - together with cloud, PaaS, IaaS and soon iPaaS.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96441):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96441);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96441"></span>
+		</li>
+		<span id="replyFlatMessage_96441"></span>	
+		
+	
+		
+		<li id="comment-96443">
+			<a name="view_96443"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96443">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96443" name="96443" onclick="javascript:hideTooltip();return true;">Enterprise Support</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_3">03/04/2013 08:06</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_3").html(getRelativeTime(1364990796929));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Claus Ibsen 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96443">
+			<p>
+				<span id="quote_96443">
+					Hi Kai<br><br>I wonder a bit why you have categorized enterprise support for Open Source as yellow?<br><br>Its my understanding that you can obtain support on par with the big closed source vendors, on the open source side as well.<br>My employeer, Red Hat, have customers who subscribers this high level of support from us.<br>For example our federal and government customers of ours demand that, with high level of SLA as well.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96443):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96443);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96443"></span>
+		</li>
+		<span id="replyFlatMessage_96443"></span>	
+		
+	
+		
+		<li id="comment-96445">
+			<a name="view_96445"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96445">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96445" name="96445" onclick="javascript:hideTooltip();return true;">Re: Enterprise Support</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_4">03/04/2013 12:46</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_4").html(getRelativeTime(1365007586448));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Mark Little 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96445">
+			<p>
+				<span id="quote_96445">
+					Just to reiterate what Claus has stated, Red Hat offers 24x7 support to our customers on our open source products. That's part of our value proposition and why we became the first open source company to break the $1 billion barrier last year (<a rel="nofollow" href="http://www.linuxtoday.com/it_management/red-hat-grows-business-to-1.3-billion-as-openstack-cloud-opportunity-looms-large.html" target="_blank">www.linuxtoday.com/it_management/red-hat-grows-...</a>)<br><br>The article really needs to be updated and stick to the facts. Thanks.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96445):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96445);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96445"></span>
+		</li>
+		<span id="replyFlatMessage_96445"></span>	
+		
+	
+		
+		<li id="comment-96447">
+			<a name="view_96447"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96447">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96447" name="96447" onclick="javascript:hideTooltip();return true;">Re: Enterprise Support</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_5">04/04/2013 02:11</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_5").html(getRelativeTime(1365055911356));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Kai Wähner 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96447">
+			<p>
+				<span id="quote_96447">
+					Hi guys,<br><br>thanks for your feedback.<br><br>With "yellow" for support, I do NOT mean that an open source vendor does not offer good enterprise support! Claus' example (federal and government customers with high level of SLA) is also true for my company (Talend). So the question is not if these companies do not offer good enterprise support. They do offer good enterprise support, definitely.<br><br>So no question: Most open source vendors also offer 24/7 support, etc. (as it is stated in the table). However, usually, open source vendors cannot offer same "powerful" support as several proprietary vendors such as IBM or Oracle. As described in the table, this includes availability of consultants, support in language of customer, some guaranteed SLAs. <br><br>In my experience, vendors such as IBM or Oracle can offer more here - of course, it has its price. For example, I have seen many open source vendors which cannot offer German support.<br><br>Unfortunately, a "generic table" always has some exceptions, however IMO the table is true for most available products, therefore it is a good starting point for doing evaluations. In the end, a decision maker has to evaluate his short list in more details to understand the differences between alternative products.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96447):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96447);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96447"></span>
+		</li>
+		<span id="replyFlatMessage_96447"></span>	
+		
+	
+		
+		<li id="comment-96448">
+			<a name="view_96448"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96448">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96448" name="96448" onclick="javascript:hideTooltip();return true;">Re: Enterprise Support</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_6">04/04/2013 03:14</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_6").html(getRelativeTime(1365059652590));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Mark Little 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96448">
+			<p>
+				<span id="quote_96448">
+					Hi Kai,<br><br>I'm sure our customers and consultants in China, Japan, Brazil, Spain, Germany, France, Sweden, India and a host of other non-English speaking countries would like me to remind you that many of them have moved from the likes of IBM and Oracle for many of your so-called "powerful" features. And I'm not suggesting that Red Hat is alone in this regard: there are other open source companies that do the same. However, I do think it is important that your article is as accurate as possible and it is clear by now that a two column table is not able to convey the facts.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96448):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96448);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96448"></span>
+		</li>
+		<span id="replyFlatMessage_96448"></span>	
+		
+	
+		
+		<li id="comment-96481">
+			<a name="view_96481"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96481">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96481" name="96481" onclick="javascript:hideTooltip();return true;">Re: Enterprise Support</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_7">05/04/2013 07:39</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_7").html(getRelativeTime(1365161943988));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Kai Wähner 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96481">
+			<p>
+				<span id="quote_96481">
+					Well, I am not really sure, if Red Hat can give support in all these languages for e.g. JBoss Fuse :-) However, I agree with you that this article cannot be accurate enough to describe all facts. You have to write a book for this. Though, I still think that this article is perfect to begin thinking about integration solutions. You can get an overview about different kinds of solutions and aspects which you have to look at. With this article, you can begin to create and evaluate your short list. Then you will find out, if for example this or that vendor has support in this or that language. Afterwards, you can make a good decision. <br><br>That's also the feedback I got from many readers...
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96481):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96481);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96481"></span>
+		</li>
+		<span id="replyFlatMessage_96481"></span>	
+		
+	
+		
+		<li id="comment-96520">
+			<a name="view_96520"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96520">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96520" name="96520" onclick="javascript:hideTooltip();return true;">ServiceMix?</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_8">08/04/2013 00:46</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_8").html(getRelativeTime(1365396410465));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        abhishek manocha 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96520">
+			<p>
+				<span id="quote_96520">
+					Where does ServiceMix sits among those 3 definitions then?
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96520):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96520);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96520"></span>
+		</li>
+		<span id="replyFlatMessage_96520"></span>	
+		
+	
+		
+		<li id="comment-96566">
+			<a name="view_96566"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96566">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96566" name="96566" onclick="javascript:hideTooltip();return true;">I have started to see this term (ESB) being used for almost all middleware</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_9">2 days ago</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_9").html(getRelativeTime(1365480890009));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Ian Fleming  
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96566">
+			<p>
+				<span id="quote_96566">
+					Recently I have noticed a surge in the term ESB from our prospects who describe their systems architecture.<br>I think it has replaced SOA (which replaced EDI) as the generic placeholder for an api messaging architecture.<br><br>That said, am I right in thinking that most ESB messages can be tested via SOAPUI or is there a better tool for this.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96566):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96566);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96566"></span>
+		</li>
+		<span id="replyFlatMessage_96566"></span>	
+		
+	
+		
+		<li id="comment-96572">
+			<a name="view_96572"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96572">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96572" name="96572" onclick="javascript:hideTooltip();return true;">Re: ServiceMix?</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_10">2 days ago</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_10").html(getRelativeTime(1365488865921));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Kai Wähner 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96572">
+			<p>
+				<span id="quote_96572">
+					The plain Apache project ServiceMix is really tough to categorize :-) <br><br>Besides integration features, it also includes messaging and BPM engines. However, Apache ServiceMix misses two main advantages of ESBs / integration suites: tooling and commercial support. Instead you have to do a lot of coding by yourself. So for me, the definiton of a framework fits best - even if that's not really true. ServiceMix is somewhere in the middle of these three alternatives as it is Apache Camel (integration framework) and some more stuff around it...   <br><br>Fuse ESB was the enterprise version of ServiceMix offered by FuseSource (which added tooling + commercial support). I am not sure if JBoss Fuse will also continue to use ServiceMix, or maybe just Camel, ActiveMQ, etc. Probably, one of the JBoss guys can give some more details here?
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96572):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96572);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96572"></span>
+		</li>
+		<span id="replyFlatMessage_96572"></span>	
+		
+	
+		
+		<li id="comment-96574">
+			<a name="view_96574"></a>
+			<div class="comment-header">
+				<p class="comment-top">
+					<a style="position:relative;" href="http://www.infoq.com/articles/ESB-Integration#">Back to top</a>
+				</p>
+				
+				<div id="header_96574">
+	                <h4><a href="http://www.infoq.com/articles/ESB-Integration#view_96574" name="96574" onclick="javascript:hideTooltip();return true;">Re: I have started to see this term (ESB) being used for almost all middlew</a></h4>
+	                <p class="comment-author">
+	                	<span id="bodyRelativeTime_11">2 days ago</span>	                		
+	                	<script type="text/javascript" language="javascript">
+	                		$("#bodyRelativeTime_11").html(getRelativeTime(1365489647703));
+						</script>
+						<!-- leave the next line here in case we will need to use it for comments older then 3 days-->
+	                    <!-- ww:date name="%{top.creationDate}" format="%{#request['postDateTimeFormat']}" />  -->
+	                    by
+	                    <strong>
+	                        Kai Wähner 
+	                    </strong>
+	                </p>
+				</div>
+			</div>				
+			<div id="body_96574">
+			<p>
+				<span id="quote_96574">
+					Well, SoapUI is an awesome tool for testing. It is a perfect match if you "just" want to test SOAP / REST web services, JMS, etc. I use SoapUI especially when I just want to do some rapid prototyping and testing. I don't know a better tool for this.<br><br>Depending on your product choice, there might be better alternatives for your "real" integration tests.<br><br>Integration frameworks such as Apache Camel offer awesome testing capabilities. You use the same concepts as in your integration code. The testing code is always almost the same - no matter which technologies you integrate. I prefer this solution if developer and tester are the same person.<br><br>Many ESB vendors also offer good testing tools which are already integrated into their solution. For example, in Talend ESB, there are components for creating service consumers / mocks / dummy data easily without coding. This tooling is integrated directly into your IDE. You create tests the same way as you create your integration logic. Nevertheless, Talend has integrated SoapUI into its IDE, too. You can choose depending on your use case.
+				</span>
+			</p>
+			</div>
+			<p class="comment-footer"><a class="comment-reply" href="javascript:void(0)" onclick="javascript:loggedIn?replyFromFlat(96574):showLoginWindow(this,ALIGN_RIGHT,new Function(&#39;replyFromFlat(96574);&#39;));">Reply</a></p>			
+		<span id="replyFlat_96574"></span>
+		</li>
+		<span id="replyFlatMessage_96574"></span>	
+		
+	
+	
+	<span id="lastMessages"></span>
+	<span id="replyFlatMessage_96156"></span>
+	
+	</ol>
+
+
+    <div class="box-bottom"></div>
+    </div>
+    </div> 
+    <div class="bottom-corners"><div></div></div>
+    </div> 
+    
+    
+
+
+
+
+
+
+	
+			
+	
+	
+	<!-- Start sponsored Text Links -->
+    <div id="textlinks" class="sponsoredTextLinks" style="display:none;">
+    	<span>Sponsored Links</span>
+       	<ul>
+       		<li id="textlink1" style="display:none;"></li>
+           	<li id="textlink2" style="display:none;"></li>
+           	<li id="textlink3" style="display:none;"></li>
+	       	<li id="textlink4" style="display:none;"></li>
+	       	<li id="textlink5" style="display:none;"></li>
+	       	<li id="textlink6" style="display:none;"></li>
+       	</ul>
+    </div>
+    
+    
+
+<script type="text/javascript">
+$(function(){
+	$("#widget-01-open-butt").click(function(){
+		$("#widget-01-open").toggle();
+		$("#widget-01-close").toggle();
+		return false;
+	});
+	$("#widget-01-close-butt").click(function(){
+		$("#widget-01-open").hide();
+		$("#widget-01-close").show();
+	});	
+	loadBookmarks();
+}); 
+
+//gets the bookmarks in JSON format via an AJAX call 		
+function loadBookmarks(){    
+	var bookmarksURL='/widgets/bookmarkWidget.action';         
+	
+	$.ajax({
+  	    type: "POST",
+		url: bookmarksURL, 
+		contentType: "application/x-www-form-urlencoded; charset=utf-8",		 				
+		dataType: "json",
+		success: function(data){
+			//constructing the list with bookmark links			
+			displayBookmarks(data);
+		},
+		error: function(){
+			// fail silently
+		}
+	});
+}               
+
+//displays the bookmarks list in the widget    
+function displayBookmarks(data){    
+    if (data != null && data[0] != null && data[0][1] != null && data[0][2] != null && data[0][3] != null ){
+		var urlone= data[0][0] + '/' + data[0][1] + '/' + data[0][2];
+		$("#bookone").attr('href', urlone);
+		$("#bookone").html(data[0][3]);
+   		$("#bookone").css({"display" : "block"});
+   		//default message
+   		$("#nobooks").html("");
+   		$("#nobooks").css({"display" : "none"});
+   	}else{   	    
+   		//default message
+   		$("#nobooks").html("You have no bookmarked content");
+   		$("#nobooks").css({"display" : "block"});
+   	}
+   	if (data != null && data[1] != null && data[1][1] != null && data[1][2] != null && data[1][3] != null ){
+		var urltwo= data[1][0] + '/' + data[1][1] + '/' + data[1][2];
+		$("#booktwo").attr('href', urltwo);		
+   		$("#booktwo").html(data[1][3]);
+   		$("#booktwo").css({"display" : "block"});
+   	}
+   	if (data != null && data[2] != null && data[2][1] != null && data[2][2] != null && data[2][3] != null ){
+		var urlthree= data[2][0] + '/' + data[2][1] + '/' + data[2][2];
+		$("#bookthree").attr('href', urlthree);		
+  		$("#bookthree").html(data[2][3]);
+   		$("#bookthree").css({"display" : "block"});
+   	}	    	
+}  
+
+//bookmark a content item; an action is triggered on the server side by an AJAX request 
+function bookmark(contentTitle){    
+    var countryCode= ''; 
+   	var uriMapping= 'articles';
+   	var path= 'ESB-Integration';   	   	                
+   	var unencodedurl='/widgets/bookmark.action';
+   	
+  	$.ajax({
+  	    type: "POST",
+		url: unencodedurl, 
+		contentType: "application/x-www-form-urlencoded; charset=utf-8",    	
+		data: { "countryCodePart" : countryCode, "uriMappingPart" : uriMapping, pathPart : path, namePart : contentTitle },  				
+		success: function(){
+			$("#bookmark-message p").fadeIn(2000).fadeOut(4000);
+		},
+		error: function(){
+			$("#bookmark-message-error p").fadeIn(2000).fadeOut(4000);
+		}
+	});
+	//refresh the bookmarks widget; do this on the client without another server hit
+	shiftBookmarks(contentTitle);		    	
+}       
+
+//used to construct the bookmarks list in real time on the client after the user bookmarks a certain content item     	
+function shiftBookmarks(contentTitle){ 
+   	//construct the first link
+  	var urlone = '' 
+  	  		    + '/' + 'articles' 
+  	   		    + '/' + 'ESB-Integration';
+    	    
+   	//if the new bookmark link will not introduce duplicates or is identical with the third bookmarked link
+   	if (urlone != $("#bookone").attr('href') && urlone != $("#booktwo").attr('href')){ 
+   		shiftAll(contentTitle, urlone);	    	
+    }else if(urlone == $("#booktwo").attr('href')){  
+    	//interchange bookmark one and bookmark two
+    	var interchangeUrl = $("#bookone").attr('href');
+       	var interchangeContentTitle = $("#bookone").html();
+       	$("#bookone").attr('href', $("#booktwo").attr('href'));
+       	$("#bookone").html($("#booktwo").html());
+       	$("#booktwo").attr('href', interchangeUrl);
+       	$("#booktwo").html(interchangeContentTitle);
+    }
+    //do nothing if the new bookmark link is identical with the first bookmark link existing in the widget
+}
+
+//introduce the new bookmark as first in the list shifting the existing bookmarks to the end of the list
+function shiftAll(contentTitle, urlone){
+	var displayBookOne = $("#bookone").css("display");
+   	var displayBookTwo = $("#booktwo").css("display");
+        
+   	//if second bookmark exists(is displayed) then it becomes bookmark three
+   	if (displayBookTwo == 'block'){
+   		$("#bookthree").attr('href', $("#booktwo").attr('href'));
+   		$("#bookthree").html($("#booktwo").html());
+		$("#bookthree").css({"display" : "block"});
+    }
+             
+    //if first bookmark exists(is displayed) then it becomes bookmark two
+    if (displayBookOne == 'block'){
+    	$("#booktwo").attr('href', $("#bookone").attr('href'));
+       	$("#booktwo").html($("#bookone").html());
+		$("#booktwo").css({"display" : "block"});     	        
+    }    	        	         	    
+    	    
+    $("#bookone").attr('href', urlone);
+	$("#bookone").html(contentTitle);
+	$("#bookone").css({"display" : "block"});
+	//eliminate default message
+	$("#nobooks").html("");
+   	$("#nobooks").css({"display" : "none"});
+}
+
+//BASE64 encoding utility
+var Base64 = {
+
+	// private property
+	_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+	// public method for encoding
+	encode : function (input) {
+		var output = "";
+		var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+		var i = 0;
+
+		input = Base64._utf8_encode(input);
+
+		while (i < input.length) {
+
+			chr1 = input.charCodeAt(i++);
+			chr2 = input.charCodeAt(i++);
+			chr3 = input.charCodeAt(i++);
+
+			enc1 = chr1 >> 2;
+			enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+			enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+			enc4 = chr3 & 63;
+
+			if (isNaN(chr2)) {
+				enc3 = enc4 = 64;
+			} else if (isNaN(chr3)) {
+				enc4 = 64;
+			}
+
+			output = output +
+			this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+			this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+		}
+
+		return output;
+	},
+
+	// public method for decoding
+	decode : function (input) {
+		var output = "";
+		var chr1, chr2, chr3;
+		var enc1, enc2, enc3, enc4;
+		var i = 0;
+
+		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+		while (i < input.length) {
+
+			enc1 = this._keyStr.indexOf(input.charAt(i++));
+			enc2 = this._keyStr.indexOf(input.charAt(i++));
+			enc3 = this._keyStr.indexOf(input.charAt(i++));
+			enc4 = this._keyStr.indexOf(input.charAt(i++));
+
+			chr1 = (enc1 << 2) | (enc2 >> 4);
+			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+			chr3 = ((enc3 & 3) << 6) | enc4;
+
+			output = output + String.fromCharCode(chr1);
+
+			if (enc3 != 64) {
+				output = output + String.fromCharCode(chr2);
+			}
+			if (enc4 != 64) {
+				output = output + String.fromCharCode(chr3);
+			}
+
+		}
+
+		output = Base64._utf8_decode(output);
+
+		return output;
+
+	},
+
+	// private method for UTF-8 encoding
+	_utf8_encode : function (string) {
+		string = string.replace(/\r\n/g,"\n");
+		var utftext = "";
+
+		for (var n = 0; n < string.length; n++) {
+
+			var c = string.charCodeAt(n);
+
+			if (c < 128) {
+				utftext += String.fromCharCode(c);
+			}
+			else if((c > 127) && (c < 2048)) {
+				utftext += String.fromCharCode((c >> 6) | 192);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+			else {
+				utftext += String.fromCharCode((c >> 12) | 224);
+				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+				utftext += String.fromCharCode((c & 63) | 128);
+			}
+
+		}
+
+		return utftext;
+	},
+
+	// private method for UTF-8 decoding
+	_utf8_decode : function (utftext) {
+		var string = "";
+		var i = 0;
+		var c = c1 = c2 = 0;
+
+		while ( i < utftext.length ) {
+
+			c = utftext.charCodeAt(i);
+
+			if (c < 128) {
+				string += String.fromCharCode(c);
+				i++;
+			}
+			else if((c > 191) && (c < 224)) {
+				c2 = utftext.charCodeAt(i+1);
+				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+				i += 2;
+			}
+			else {
+				c2 = utftext.charCodeAt(i+1);
+				c3 = utftext.charCodeAt(i+2);
+				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+				i += 3;
+			}
+
+		}
+
+		return string;
+	}
+}   
+</script>
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<script type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/addthis_widget.js"></script>
+
+    
+	
+
+
+
+
+
+
+<script type="text/javascript">            
+       //gets the research items in JSON format via an AJAX call 		
+       function loadResearch(){    
+	       var horizontal = '';
+	       var researchURL;
+	       if (horizontal){
+	           researchURL='/widgets/researchHorizontalWidget.action';
+	       }else{
+	       	   researchURL='/widgets/researchWidget.action';
+	       }
+	              
+	       var path= 'ESB-Integration'; 
+	       var uriMapping= 'articles';
+	       
+	       $.ajax({
+  	           type: "POST",
+		       url: researchURL, 
+		       contentType: "application/x-www-form-urlencoded; charset=utf-8",		 				
+		       data: { "path" : path, "uriMapping" : uriMapping},
+		       success: function(data){
+			      //displaying the last three research items			      	
+			      displayResearch(data);
+		       },
+		       error: function(){
+			      // fail silently
+		       }
+	       });
+       }   
+           
+       loadResearch();           
+</script>
+
+<script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {NREUMQ.push(["load",new Date().getTime()]);var e=document.createElement("script");e.type="text/javascript";e.async=true;e.src="https://d1ros97qkrwjf5.cloudfront.net/42/eum/rum.js";document.body.appendChild(e);if(NREUMQ.a)NREUMQ.a();};NREUMQ.a=window.onload;window.onload=NREUMQ.f;};NREUMQ.push(["nrf2","beacon-1.newrelic.com","bfafe6a5f6",410411,"YAFWMEEAW0RUVk1cCllLfjdjTlRFQVxaWQBES0cMXBYbXUZF",0,168,new Date().getTime()])</script>
+			
+		</div>
+		
+	</div></div>
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="./Choosing the Right ESB for Your Integration Needs_files/google_service.js"></script>
+
+<script type="text/javascript">	
+	var gamId="ca-pub-8701954197102483";		
+	GS_googleAddAdSenseService(gamId);	
+	GS_googleEnableAllServices();
+</script>
+
+<script type="text/javascript">	
+	GA_googleAddSlot(gamId, "en_300x250_banner_top");
+	GA_googleAddSlot(gamId, "en_300x250_banner_bottom");
+	GA_googleAddSlot(gamId, "en_textlink1");
+	GA_googleAddSlot(gamId, "en_textlink2");
+	GA_googleAddSlot(gamId, "en_textlink3");
+	GA_googleAddSlot(gamId, "en_textlink4");
+	GA_googleAddSlot(gamId, "en_textlink5");
+</script>
+
+<script type="text/javascript">
+	GA_googleFetchAds();
+</script>
+	
+
+
+
+
+
+
+
+<div style="position: absolute; z-index: 10000; left: 0px; top: 0px; width: 100%; height: 100%; display: none;" id="disabledZone">
+	<div style="position: absolute; top: 0px; right: 0px; background: none repeat scroll 0% 0% red; color: white; font-family: Arial,Helvetica,sans-serif; padding: 4px;" id="messageZone">Loading...</div>
+</div>
+
+<!--googleoff: index-->
+<!-- right side start -->
+
+	
+	<div id="rightbar" class="nocontent">
+	<div id="right-wrapper">
+	    <!-- box start -->
+	    <div class="box">
+	        <h2>Educational Content</h2>
+	        <ul class="menu" id="tabsmenu">
+	   			<li id="tab_ALL_EXCEPT_NEWS" class="m-ALL_EXCEPT_NEWS-off"><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="ContentSummary.switchTab(&#39;ALL_EXCEPT_NEWS&#39;);return false;">All</a></li>
+	            <li id="tab_ARTICLE" class="m-ARTICLE-on"><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="ContentSummary.switchTab(&#39;ARTICLE&#39;);return false;">Articles</a></li>
+	            <li id="tab_PRESENTATION" class="m-PRESENTATION-off"><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="JSResource.presentationsTab();return false;">Presentations</a></li>
+	            <li id="tab_INTERVIEW" class="m-INTERVIEW-off"><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="JSResource.interviewsTab();return false;">Interviews</a></li>
+	            <li id="tab_MINIBOOK" class="m-MINIBOOK-off"><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="JSResource.minibooksTab();return false;">Minibooks</a></li>
+	            
+	            	<li id="tab_RESEARCH" class="m-RESEARCH-off"><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="JSResource.researchTab();return false;">Research</a></li>
+	            	
+	        </ul>
+		    <div class="top-corners"><div></div></div>
+		    
+		    <div class="box-content">
+			    <div class="box-content-2">
+			    <div id="rightbarcontentbox" class="box-content-3">
+                    
+					
+                        
+						
+					
+
+
+
+
+
+
+
+<form id="tabstateform" action="">
+	<div id="tabstateformelements">
+		<input id="startIndex" type="hidden" name="startIndex" value="0">
+		<input id="selectedTab" type="hidden" name="selectedTab" value="ARTICLE">
+		<input id="rightBarLanguage" type="hidden" name="language" value="en">
+	</div>
+</form>
+
+
+
+	
+	
+		
+	
+	<div class="entry" id="entry1">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/Joe-Duffy-Safe-Parallelism">Joe Duffy on Uniqueness and Reference Immutability for Safe Parallelism</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/Joe-Duffy-Safe-Parallelism"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo1.jpg" alt=""></a></p>
+        
+        <p>We interviewed Joe Duffy, author of Concurrent Programming on Windows, about his research into the use of type systems to ensure safe parallelism.</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Jonathan-Allen" class="editorlink">
+Jonathan Allen</a>
+</strong>
+				
+				
+				Apr 11, 2013
+	        	
+	        </li>
+    	    
+    	    	
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+     
+    <div id="clearer1" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry2">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/ovum-create-agile-enterprise">Interview with Michael Azoff from Ovum about How To Create the Agile Enterprise</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/ovum-create-agile-enterprise"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo.jpg" alt=""></a></p>
+        
+        <p>Large enterprises face challenges in innovation, budgeting, and transformation to agile. Principal analyst Michael Azoff explains Ovum’s view on creating an agile enterprise.</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Ben-Linders" class="editorlink">
+Ben Linders</a>
+</strong>
+				
+				
+				Apr 10, 2013
+	        	
+	        </li>
+    	    
+    	    	
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		<div id="banner300x250_top" style="clear: both; padding-top: 5px;display:none;">
+			<div id="adIndex2" class="adContour">
+				<script type="text/javascript">GA_googleFillSlot("en_300x250_banner_top");</script>					
+		    </div>
+			<span class="banner_announcement">advertisement</span>
+		</div>
+		<script type="text/javascript">
+			checkToDisplayGAMADs("adIndex2", "banner300x250_top");				
+		</script>
+	
+		
+	
+     
+    <div id="clearer2" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry3">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/book-dsl-engineering">Interview and Book Review: DSL Engineering</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/book-dsl-engineering"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo(1).jpg" alt=""></a></p>
+        
+        <p>Markus Völter, one of the authors of "Model-Driven Software Development", has published a new book in the field of model-driven software development (MDSD) - "DSL Engineering".</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Ralph-Winzinger" class="editorlink">
+Ralph Winzinger</a>
+</strong>
+				
+				
+				Apr 09, 2013
+	        	
+	        </li>
+    	    
+    	    	
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+     
+    <div id="clearer3" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry4">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/real-question-why">The Real Question is Why?</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/real-question-why"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo(2).jpg" alt=""></a></p>
+        
+        <p>The Agile movement has driven a revolutionary change in the way we build and deliver software solutions. The challenge today is building the right solution.  The author challenges us to ask Why.</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Gordon-Weir-and-Russ-Miles" class="editorlink">
+Gordon Weir and Russ Miles</a>
+</strong>
+				
+				
+				Apr 08, 2013
+	        	,
+	        </li>
+    	    
+    	    	
+    	    	<li class="comments">
+    	    		<a href="http://www.infoq.com/articles/real-question-why"><span>&nbsp;</span>	    	    		
+    		    			1    		    		    		    		
+    		    	</a>
+    		    </li>
+    		    
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+     
+    <div id="clearer4" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry5">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/QCon-London-2013">Key Takeaway Points and Lessons Learned from QCon London 2013</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/QCon-London-2013"><img src="./Choosing the Right ESB for Your Integration Needs_files/qcon_100x100.png" alt=""></a></p>
+        
+        <p>The main takeway points and lessons learned from QCon London 2013 as seen by the many attendees who blogged or tweeted about QCon. Experience QCon through the opinions of the attendees!</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Abel-Avram" class="editorlink">
+Abel Avram</a>
+</strong>
+				
+				
+				Apr 05, 2013
+	        	
+	        </li>
+    	    
+    	    	
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+     
+    <div id="clearer5" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry6">
+    	<h1 class="ex-articles"><a href="./Choosing the Right ESB for Your Integration Needs_files/Choosing the Right ESB for Your Integration Needs.html">Choosing the Right ESB for Your Integration Needs</a></h1>
+    	
+        	<p class="image"><a href="./Choosing the Right ESB for Your Integration Needs_files/Choosing the Right ESB for Your Integration Needs.html"><img src="./Choosing the Right ESB for Your Integration Needs_files/logoESB.jpg" alt=""></a></p>
+        
+        <p>Kai Wähner explains the differences between an integration framework, an ESB and a suite, following with advice for selecting the right one from existing commercial and open source solutions.</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Kai-W%C3%A4hner" class="editorlink">
+Kai Wähner</a>
+</strong>
+				
+				
+				Apr 02, 2013
+	        	,
+	        </li>
+    	    
+    	    	
+    	    	<li class="comments">
+    	    		<a href="./Choosing the Right ESB for Your Integration Needs_files/Choosing the Right ESB for Your Integration Needs.html"><span>&nbsp;</span>	    	    		
+    		    			12    		    		    		    		
+    		    	</a>
+    		    </li>
+    		    
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+	   	<div id="banner300x250_bottom" style="clear: both; padding-top: 5px;display:none;">
+	    	<div id="adIndex6" class="adContour">					
+				<script type="text/javascript">GA_googleFillSlot("en_300x250_banner_bottom");</script>					
+	    	</div>
+			<span class="banner_announcement">advertisement</span>
+		</div>
+		<script type="text/javascript">
+			checkToDisplayGAMADs("adIndex6", "banner300x250_bottom");				
+		</script>
+	
+     
+    <div id="clearer6" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry7">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/bridging-management-gap">Bridging the Management Gap</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/bridging-management-gap"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo(3).jpg" alt=""></a></p>
+        
+        <p>Resistance from management is recognized as a bottleneck in agile adoption. When will we reach the tipping point where organizations unshackle themselves from the limitations of command &amp; control?</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Tiago-Garcez" class="editorlink">
+Tiago Garcez</a>
+</strong>
+				
+				
+				Apr 01, 2013
+	        	
+	        </li>
+    	    
+    	    	
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+     
+    <div id="clearer7" class="clearer"></div>
+
+	
+	
+		
+	
+	<div class="entry" id="entry8">
+    	<h1 class="ex-articles"><a href="http://www.infoq.com/articles/capturing-compliance-requirements-a-pattern-based-approach">Capturing Compliance Requirements: A Pattern-Based Approach</a></h1>
+    	
+        	<p class="image"><a href="http://www.infoq.com/articles/capturing-compliance-requirements-a-pattern-based-approach"><img src="./Choosing the Right ESB for Your Integration Needs_files/logo(4).jpg" alt=""></a></p>
+        
+        <p>Assuring compliance across an enterprise needs a holistic approach for defining process &amp; system controls. This article covers a new pattern-based framework to manage process compliance requirements.</p>
+        <ul class="info link-col">
+	        <li class="author">
+	        	
+					
+				
+				<strong><a href="http://www.infoq.com/author/Oktay-Turetken%2C-Amal-Elgammal%2C-Willem~Jan-van-den-Heuvel%2C-and-Michael-P.-Papazoglou" class="editorlink">
+Oktay Turetken, Amal Elgammal, Willem-Jan van den Heuvel, and Michael P. Papazoglou</a>
+</strong>
+				
+				
+				Mar 27, 2013
+	        	
+	        </li>
+    	    
+    	    	
+    		 
+        </ul>
+    </div>    
+      
+    
+	
+		
+	
+     
+    <div id="clearer8" class="clearer"></div>
+
+
+	
+
+
+
+<ul class="newsnav link-col" id="paginationRightbar">
+
+
+
+
+    <li><a href="http://www.infoq.com/articles/ESB-Integration#" onclick="ContentSummary.setStartIndex(&#39;8&#39;);return false;">Older &gt;</a></li>
+
+
+
+</ul>
+
+	                <!-- Rightbar:107ms -->
+    
+    				<div class="clearer"></div>
+				    <div class="box-bottom"></div>
+				</div>
+				</div>
+				<div class="bottom-corners"><div></div></div>
+			</div>
+		</div>
+		<!-- box end -->
+		<script type="text/javascript">
+			ContentSummary.determine300x250BannerPosition();
+		</script>
+	</div>
+	</div>
+
+<!-- right side end -->
+<!--googleon: index-->
+	</div>
+
+	<div class="clearer"></div>
+
+	
+
+
+
+
+
+
+
+
+	<div id="footer">
+	<script type="text/javascript">
+		var oneStepNewsletterURL ='/newsletter/subscribe.action';
+		$.ajax({
+			url: "/api/latestcontent.action",
+			contentType: "application/x-www-form-urlencoded; charset=utf-8",
+			type: 'POST',
+			data: {"categoryAliases" : "development,architecture-design,process-practices,operations-infrastructure,enterprise-architect", "itemsNumber" : "5", "languageCode" : "en"},
+			success: displayCategoryWidget
+		});
+		function displayCategoryWidget(data) {
+			addLatestNewsColumn(data['developmentName'], data['development']);
+			addLatestNewsColumn(data['architecture-designName'], data['architecture-design']);
+			addLatestNewsColumn(data['process-practicesName'], data['process-practices']);
+			addLatestNewsColumn(data['operations-infrastructureName'], data['operations-infrastructure']);
+			addLatestNewsColumn(data['enterprise-architectName'], data['enterprise-architect']);
+			var newLineDom = $('<div class="clearer"></div>');
+			$('.top-band-footer').append(newLineDom);
+		}
+		function addLatestNewsColumn(title, list) {
+			var countryCode= '';
+			var newColumnDom = $('<div class="footer-column">');
+			var titleDom = $('<p>'+title+'</p>');
+			newColumnDom.append(titleDom);
+			var listDom = $('<ul></ul>');
+			newColumnDom.append(listDom);
+			for(var it=0;it<list.length;it++){
+				var elementDom = $('<li><a href="' + countryCode + list[it]['path'] + '" title="' + list[it]['title'] + '">' + list[it]['title'] + '</a></li>');
+				listDom.append(elementDom);
+			}
+			$('.top-band-footer').append(newColumnDom);
+		}
+	</script>
+	<div class="top-band-footer">
+	<div class="footer-column"><p>Development</p><ul><li><a href="http://www.infoq.com/interviews/jim-hirschauer-appdynamics-apm" title="Jim Hirschauer on Application Monitoring, AppDynamics 3.7">Jim Hirschauer on Application Monitoring, AppDynamics 3.7</a></li><li><a href="http://www.infoq.com/news/2013/04/go_beta1_1" title="Google&#39;s Go Readies 1.1 Release">Google's Go Readies 1.1 Release</a></li><li><a href="http://www.infoq.com/news/2013/04/cucumber-ecosystem" title="BDD Tool Cucumber with a Larger Team and Numerous Bugs Fixed">BDD Tool Cucumber with a Larger Team and Numerous Bugs Fixed</a></li><li><a href="http://www.infoq.com/presentations/Cloud-Foundry-Tips" title="Practical Cloud Foundry">Practical Cloud Foundry</a></li><li><a href="http://www.infoq.com/news/2013/04/dart2js-outperforms-js" title="Dart2js Outperforms Hand-Written JavaScript in DeltaBlue Benchmark">Dart2js Outperforms Hand-Written JavaScript in DeltaBlue Benchmark</a></li></ul></div><div class="footer-column"><p>Architecture &amp; Design</p><ul><li><a href="http://www.infoq.com/interviews/jim-hirschauer-appdynamics-apm" title="Jim Hirschauer on Application Monitoring, AppDynamics 3.7">Jim Hirschauer on Application Monitoring, AppDynamics 3.7</a></li><li><a href="http://www.infoq.com/articles/Joe-Duffy-Safe-Parallelism" title="Joe Duffy on Uniqueness and Reference Immutability for Safe Parallelism">Joe Duffy on Uniqueness and Reference Immutability for Safe Parallelism</a></li><li><a href="http://www.infoq.com/news/2013/04/cucumber-ecosystem" title="BDD Tool Cucumber with a Larger Team and Numerous Bugs Fixed">BDD Tool Cucumber with a Larger Team and Numerous Bugs Fixed</a></li><li><a href="http://www.infoq.com/presentations/Cloud-Foundry-Architecture" title="Cloud Foundry Architecture">Cloud Foundry Architecture</a></li><li><a href="http://www.infoq.com/presentations/MongoDB-Design" title="MongoDB Large-scale Data Centric Architectures">MongoDB Large-scale Data Centric Architectures</a></li></ul></div><div class="footer-column"><p>Process &amp; Practices</p><ul><li><a href="http://www.infoq.com/news/2013/04/backlog-process-story-maps" title="Product Backlogs with Process Maps or Story Maps">Product Backlogs with Process Maps or Story Maps</a></li><li><a href="http://www.infoq.com/articles/ovum-create-agile-enterprise" title="Interview with Michael Azoff from Ovum about How To Create the Agile Enterprise">Interview with Michael Azoff from Ovum about How To Create the Agile Enterprise</a></li><li><a href="http://www.infoq.com/interviews/business-models-alexander-osterwalder-igs" title="Talking Business Models with Alexander Osterwalder at the Innovation Games Summit">Talking Business Models with Alexander Osterwalder at the Innovation Games Summit</a></li><li><a href="http://www.infoq.com/news/2013/04/scaling-agile-spotify-kniberg" title="Scaling Agile At Spotify: An Interview with Henrik Kniberg">Scaling Agile At Spotify: An Interview with Henrik Kniberg</a></li><li><a href="http://www.infoq.com/articles/real-question-why" title="The Real Question is Why?">The Real Question is Why?</a></li></ul></div><div class="footer-column"><p>Operations &amp; Infrastructure</p><ul><li><a href="http://www.infoq.com/interviews/jim-hirschauer-appdynamics-apm" title="Jim Hirschauer on Application Monitoring, AppDynamics 3.7">Jim Hirschauer on Application Monitoring, AppDynamics 3.7</a></li><li><a href="http://www.infoq.com/news/2013/04/ibm-mobile-first" title="IBM Mobile First- MBaaS, Big Data and Then Some for Enterprise">IBM Mobile First- MBaaS, Big Data and Then Some for Enterprise</a></li><li><a href="http://www.infoq.com/news/2013/04/scaling-agile-spotify-kniberg" title="Scaling Agile At Spotify: An Interview with Henrik Kniberg">Scaling Agile At Spotify: An Interview with Henrik Kniberg</a></li><li><a href="http://www.infoq.com/news/2013/04/gartner-technology-trends" title="Gartner&#39;s Technology Trends for Information Infrastructure: Big Data, NoSQL and In-Memory Computing">Gartner's Technology Trends for Information Infrastructure: Big Data, NoSQL and In-Memory Computing</a></li><li><a href="http://www.infoq.com/articles/QCon-London-2013" title="Key Takeaway Points and Lessons Learned from QCon London 2013">Key Takeaway Points and Lessons Learned from QCon London 2013</a></li></ul></div><div class="footer-column"><p>Enterprise Architecture</p><ul><li><a href="http://www.infoq.com/interviews/jim-hirschauer-appdynamics-apm" title="Jim Hirschauer on Application Monitoring, AppDynamics 3.7">Jim Hirschauer on Application Monitoring, AppDynamics 3.7</a></li><li><a href="http://www.infoq.com/articles/ovum-create-agile-enterprise" title="Interview with Michael Azoff from Ovum about How To Create the Agile Enterprise">Interview with Michael Azoff from Ovum about How To Create the Agile Enterprise</a></li><li><a href="http://www.infoq.com/presentations/Netflix-Architecture" title="Architectural Patterns for High Availability">Architectural Patterns for High Availability</a></li><li><a href="http://www.infoq.com/news/2013/04/ibm-mobile-first" title="IBM Mobile First- MBaaS, Big Data and Then Some for Enterprise">IBM Mobile First- MBaaS, Big Data and Then Some for Enterprise</a></li><li><a href="http://www.infoq.com/news/2013/04/scaling-agile-spotify-kniberg" title="Scaling Agile At Spotify: An Interview with Henrik Kniberg">Scaling Agile At Spotify: An Interview with Henrik Kniberg</a></li></ul></div><div class="clearer"></div></div>
+	
+    <div class="bottom-band-footer">
+    	
+      <div class="footer-column">
+        <ul>
+       	  <li><a href="http://www.infoq.com/" class="home" title="Home">Home</a></li>
+       	  <li><a href="http://www.infoq.com/topics" style="padding-left:28px;" title="All Topics"><strong>All topics</strong></a></li>
+          <li><a href="http://www.infoq.com/about" class="about" title="About InfoQ">About us</a></li>
+          
+          <li><a href="http://www.qconferences.com/" target="_blank" class="qcon" title="QCon Conferences">QCon Conferences</a></li>
+          
+		  
+          
+	        <li><a href="http://www.infoq.com/reginit.action" class="account" title="Create account">Create account</a></li>
+          	<li><a href="javascript:void(0)" class="login" title="Login" onclick="javascript:showLoginWindow(this,ALIGN_LEFT,new Function(&#39;void(0);&#39;));">Login</a></li>
+                    
+          
+		    	<li class="contribute-li"><a href="http://www.infoq.com/contribute" class="contribute-news" title="Contribute an Article">Contribute an Article</a></li>		    	
+		  	    
+		  
+        </ul>
+      </div>
+      
+      <div class="footer-column" id="mainCommunitiesArea">
+      	<p class="communities" id="communitiespick">Personalize Your Main Interests</p>
+      	<div id="communities">
+	        <ul>
+	        	
+
+
+
+
+
+
+<script language="JavaScript">
+var communityChangeMessage = 'Your new preferences will be used starting with the next refresh.';
+</script>	
+
+
+	<li><span class="checkbox" style="background-position: 0px -26px;"></span><input type="checkbox" name="development" value="true" checked="checked" id="community6815" class="styled" onclick="includeExcludeCommunity(this, false);">
+ <a href="http://www.infoq.com/development/">Development</a></li>
+
+	<li><span class="checkbox" style="background-position: 0px -26px;"></span><input type="checkbox" name="architecture-design" value="true" checked="checked" id="community6816" class="styled" onclick="includeExcludeCommunity(this, false);">
+ <a href="http://www.infoq.com/architecture-design/">Architecture &amp; Design</a></li>
+
+	<li><span class="checkbox" style="background-position: 0px -26px;"></span><input type="checkbox" name="process-practices" value="true" checked="checked" id="community6817" class="styled" onclick="includeExcludeCommunity(this, false);">
+ <a href="http://www.infoq.com/process-practices/">Process &amp; Practices</a></li>
+
+	<li><span class="checkbox" style="background-position: 0px -26px;"></span><input type="checkbox" name="operations-infrastructure" value="true" checked="checked" id="community6818" class="styled" onclick="includeExcludeCommunity(this, false);">
+ <a href="http://www.infoq.com/operations-infrastructure/">Operations &amp; Infrastructure</a></li>
+
+	<li><span class="checkbox" style="background-position: 0px -26px;"></span><input type="checkbox" name="enterprise-architect" value="true" checked="checked" id="community6819" class="styled" onclick="includeExcludeCommunity(this, false);">
+ <a href="http://www.infoq.com/enterprise-architect/">Enterprise Architecture</a></li>
+
+
+	        </ul>
+        </div>
+      </div>
+      
+      
+
+
+
+
+
+
+
+
+<div class="footer-column">
+	
+	
+	<p>EVENTS</p>
+	<ul>
+				
+		<li><a href="http://www.qcontokyo.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon Tokyo Apr 23">QCon Tokyo, Apr 23</a></li>
+		<li><a href="http://www.qconbeijing.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon Beijing Apr 25-27">QCon Beijing, Apr 25-27</a></li>
+		<li><a href="http://www.qconchengdu.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon Chengdu Apr 28-29">QCon Chengdu, Apr 28-29</a></li>		
+		<li><a href="http://qconnewyork.com/?utm_source=infoq&utm_medium=header&utm_campaign=footer" target="_blank" title="QCon New York June 12-14">QCon New York, June 12-14</a></li>
+		<li><a href="http://www.qconsp.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon São Paulo Aug 30-31">QCon São Paulo, Aug 30-31</a></li>
+		<li><a href="http://www.qconferences.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon Shanghai Oct 23-25">QCon Shanghai, Oct 23-25</a></li>
+		<li><a href="http://www.qconferences.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon Guangzhou Oct 26-27">QCon Guangzhou, Oct 26-27</a></li>
+		<li><a href="http://www.qconsf.com/?utm_source=infoq&utm_medium=listing&utm_campaign=footer" target="_blank" title="QCon San Francisco Nov 11-13">QCon San Francisco, Nov 11-13</a></li>
+	</ul>
+</div>
+
+	
+      
+     <div class="footer-column follow-us">
+		
+
+
+
+
+
+
+
+<!--Follow Us -->
+
+	<div class="followus-box">
+	    <fieldset>
+	    <legend>Follow Us</legend>
+	        <div>
+		        <a target="_blank" href="http://www.infoq.com/newsletter_sample.html" class="followus-click">
+		        	<img src="./Choosing the Right ESB for Your Integration Needs_files/img_click-here.png">
+		        </a>
+		        <p class="general">Infoq Weekly Newsletter</p>
+		        <div class="followus-description">Subscribe to our Weekly email newsletter to follow all new content on InfoQ</div>
+	        </div>	        
+	        <div id="subscriptionForm">
+		        <form action="http://www.infoq.com/articles/ESB-Integration#" onsubmit="newsletter.saveSubscription(); return false;">
+		            <input type="text" class="followus-input" id="newsletterEmail" name="newsletterEmail" value="Your email here" onclick="newsletter.clearEmailText();" onblur="newsletter.resetEmailText();">
+		            <input type="submit" value="Subscribe" class="followus-submit" onclick="return newsletter.validateEmail();">		            
+		        </form>
+	        </div>
+	        <div id="successMessage" class="followus-successMessage"></div>
+			<div id="errorMessage" class="followus-message"></div>			
+	        <div>
+	            <ul class="followus-box-list">
+	                <li id="followUsRss"><a class="followus-box-list-rss" href="http://www.infoq.com/rss/rss.action?token=vr3RHwgbmFHrsuQSxGt72HwjVqm6OugD" id="followUsBoxRss" target="_blank">Your personalized RSS</a></li>
+	                <li><a class="followus-box-list-t" href="http://twitter.com/infoq" target="_blank">For daily content and announcements</a></li>
+	                <li><a class="followus-box-list-fb" href="http://www.facebook.com/InfoQ" target="_blank">For major community updates</a></li>
+	                <li><a class="followus-box-list-ld" href="http://www.linkedin.com/company/infoq" target="_blank">For the latest info, trend, and data</a></li>
+	            </ul>
+	        </div>
+	    </fieldset>
+	</div>
+
+<!-- Follow Us END -->
+
+<script type="text/javascript">
+	var newsletterDefaultText='Your email here';
+	$(document).ready(function() {
+		// the rss link here is disabled from header if the token does not exist
+		// this is usually the case of first time access and userConfirmation.jsp will solve the issue
+		// or a more seriuos problem not being able to save the user in db, in which case this remains disabled	
+		$('#followUsBoxRss').attr('href', rssUrl);		
+	});
+</script>
+     </div>
+     
+     
+      
+      <div class="footer-column">
+      	<p class="general">General Feedback</p>
+        <a class="mail-to" href="mailto:feedback@infoq.com" title="">feedback@infoq.com</a>
+        
+        <p class="general">Bugs</p>
+        <a class="mail-to" href="mailto:bugs@infoq.com" title="">bugs@infoq.com</a>
+        
+        <p class="general">Advertising</p>
+        <a class="mail-to" href="mailto:sales@infoq.com" title="">sales@infoq.com</a>
+        
+        <p class="general">Editorial</p>
+        <a class="mail-to" href="mailto:editors@infoq.com" title="">editors@infoq.com</a>
+
+        <p class="general">Twitter</p>
+        <a class="mail-to" href="http://twitter.com/infoq" title="" target="_blank">http://twitter.com/infoq</a>
+               
+        
+        
+        <span>InfoQ.com and all content copyright © 2006-2012 C4Media Inc.&nbsp;InfoQ.com hosted at <a href="http://www.contegix.com/">Contegix</a>, the best ISP we've ever worked with.<br><a href="http://www.infoq.com/PrivacyPolicy.jsp">Privacy policy</a></span>
+      </div>
+      <div class="clearer"></div>
+    </div>
+	</div>
+
+	
+
+
+
+
+
+
+
+<script type="text/javascript">
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+	var gads = document.createElement('script');
+	gads.async = true;
+	gads.type = 'text/javascript';
+	var useSSL = 'https:' == document.location.protocol;
+	gads.src = (useSSL ? 'https:' : 'http:') + '//www.googletagservices.com/tag/js/gpt.js';
+	var node = document.getElementsByTagName('script')[0];
+	node.parentNode.insertBefore(gads, node);
+})();
+</script>
+
+<script type="text/javascript">
+googletag.cmd.push(function() {
+	googletag.defineSlot('/5286733/en_geo_banner_bottom', [728, 90], 'id_geo_banner_ad').addService(googletag.pubads());
+	googletag.pubads().enableSingleRequest();
+	googletag.pubads().collapseEmptyDivs();
+	googletag.enableServices();
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<div id="id_geo_banner" style="display:none;position:fixed;bottom:0;left:0;width:100%;z-index:100000;">
+	<div id="id_geo_banner_ad" style="display:none;">
+		<script type="text/javascript">
+		if(CookieManager.readCookie("igabgt") == null) {
+			// use the jquery.watch method to see when GAM changes the display css attribute of id_geo_banner_ad
+			// whenever an ad is placed there GAM will chnage the display which is init as none. This is the safest way to determine when an ad is fetched by GAM!
+			$("#id_geo_banner_ad").watch('display',showAd,1000);		
+			googletag.cmd.push(function() { googletag.display('id_geo_banner_ad');});
+		}
+		function showAd() {
+			try {
+				$('#id_geo_banner iframe:first').attr('width', '100%');
+				$('#id_geo_banner iframe:first').attr('height', '100%');
+				$('#id_geo_banner iframe:first').css('min-width', '1024px');
+			}catch(err){}
+			$('#id_geo_banner').show('slow');
+			setTimeout("$('#id_geo_banner').hide('slow');", 30000);
+		}
+		</script>
+	</div>
+</div>
+
+
+</div>
+
+<script src="./Choosing the Right ESB for Your Integration Needs_files/engine.js" type="text/javascript"></script>
+<script src="./Choosing the Right ESB for Your Integration Needs_files/UserCategoryUtil.js" type="text/javascript"></script>
+<script src="./Choosing the Right ESB for Your Integration Needs_files/DWRRewriteAction.js" type="text/javascript"></script>
+<script type="text/javascript">
+	ContentSummary.setSelectedTab('en');
+	$("#content-wrapper").mouseenter(function() {	
+			showDefaultTopics();
+	});
+</script>
+
+
+
+
+
+
+
+<script type="text/javascript">
+	var includeName = 'Include';
+	var excludeName = 'Exclude';
+	var includeHint = 'You can include this category.';
+	var excludeHint = 'You can exclude this category.';
+	var excludeCategoryMessage = 'You can re-include from your profile personalization, or right now.<BR />';
+	var viewallCategoryMessage = 'You can view all items that belong to this category.';
+	var busyMessage = 'Please wait...';
+	var contextPath = '' + '/';
+	var viewallCategoryPath= '';
+	var includeExcludeLink= true;
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  var gaProfile="UA-6608133-2";
+  
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', gaProfile]);
+  _gaq.push(['_setLocalGifPath', 'http://www.infoq.com/styles/i/__utm.gif']);
+  _gaq.push(['_setLocalRemoteServerMode']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<script src="./Choosing the Right ESB for Your Integration Needs_files/tracker.js" type="text/javascript"></script>
+<script type="text/javascript">
+Tracker.safeExec(function() {
+	
+    
+    _gaq.push(["_trackEvent", "userregistered", "false"]);
+    	
+});
+Tracker.safeExec(function() {_gaq.push(["_trackEvent", "userprefs", "0"]);});
+Tracker.safeExec(Tracker.doTrackVcrImpressions);
+Tracker.safeExec(Tracker.doTrackPresentationDefaultDisplay);
+Tracker.safeExec(Tracker.doTrackTaxonomyImpressions);
+Tracker.safeExec(Tracker.doTrackAuthorImpressions);
+</script>
+
+
+
+
+
+
+
+
+<div id="textlinks_afterpageLoad" style="display: none;">
+	<div id="divtextlink1" style="display:none;">
+		<!-- en_textlink1 -->
+		<script type="text/javascript">
+			GA_googleFillSlot("en_textlink1");
+		</script>
+	</div>
+	<div id="divtextlink2" style="display:none;">
+		<!-- en_textlink2 -->
+		<script type="text/javascript">
+			GA_googleFillSlot("en_textlink2");
+		</script>
+	</div>
+	<div id="divtextlink3" style="display:none;">
+		<!-- en_textlink3 -->
+		<script type="text/javascript">
+			GA_googleFillSlot("en_textlink3");
+		</script>
+	</div>
+	<div id="divtextlink4" style="display:none;">
+		<!-- en_textlink4 -->
+		<script type="text/javascript">
+			GA_googleFillSlot("en_textlink4");
+		</script>
+	</div>
+	<div id="divtextlink5" style="display:none;">
+		<!-- en_textlink5 -->
+		<script type="text/javascript">
+			GA_googleFillSlot("en_textlink5");
+		</script>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+		$(document).ready(function() {
+		    var noleftbartextlinks='';			
+			
+			for(i=1; i<6; i++){					
+					$("#textlink"+i).append($("#divtextlink"+i+" > div"));
+					$("#divtextlink"+i+" > div").remove();
+					
+					// remove the height and width from all elements under the $("#textlink" + i) as it seems goole started to inforce the size on the textlinks to 120x100. This has started today: 2011-11-17.
+					// this size needs to be specified in GAM as no element can be created without a size. Today there are divs so this is why I wanted to remove the size from all elements under
+					// the li
+					//2011-11-18 they removed the height and width props from the div they generate. I also remove this so that all appears correctly. I leave it only commented in casase this is needed again. 
+					//$("#textlink" + i).children().css("height","auto");
+					//$("#textlink" + i).children().css("width","auto");
+			}	
+			checkToDisplayGAMADs("textlink1", "textlink1");
+			checkToDisplayGAMADs("textlink2", "textlink2");
+			checkToDisplayGAMADs("textlink3", "textlink3");
+			checkToDisplayGAMADs("textlink4", "textlink4");
+			checkToDisplayGAMADs("textlink5", "textlink5");
+			if(noleftbartextlinks=='true'){
+				if($("#home_textlinks > li:has(div)").length>0){
+					$('#widgetSponsoredLinks').show();
+					$('.adsTowerWrap').css('display', 'block');	
+					// resize the reserved space 
+					$('#hometextlinks').css("height","auto");
+					$("#home_textlinks > li:visible:last").addClass("last");
+				}else{
+					// hide the div above the hometextlinks div which acts like a predefined reserved space there because there are no links
+					$('.adsTowerWrap').css('display', 'none');	               
+				}
+			}else{ //textlinks in the content page use case			    
+				//eliminate <br> and </br> in this specific use case
+				for(i=1; i<6; i++){					
+					var linkContent = $("#textlink" + i + " > div").html();
+					if (linkContent == null || linkContent == '')
+						continue;
+										
+					//perform a global case insensitive REGEX search
+					//search and replace the <br> and <br/>, followed, preceded, surrounded by spaces or without any spaces around them
+					$("#textlink" + i + " > div").html(linkContent.replace(/\s*<br>\s*|\s*<br\/>\s*/ig, ' '));					
+				}				
+				
+				//display the text links region
+				if($("#textlinks > ul >li:has(div)").length>0){
+					$('#textlinks').show();
+				}				
+			}
+	     });				
+</script>	
+
+
+
+<script type="text/javascript" async="" src="./Choosing the Right ESB for Your Integration Needs_files/rum.js"></script></body></html>

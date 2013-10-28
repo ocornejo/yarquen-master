@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Yarquen Crawler</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
+		<link th:href="@{/static/bootstrap/css/bootstrap.min.css}" href="../../../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+		<link th:href="@{/static/css/yarquen.css}" href="../../../css/yarquen.css" rel="stylesheet" />
+		<link th:href="@{/static/bootstrap/css/bootstrap-responsive.min.css}" href="../../../bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+		<link th:href="@{/static/css/flick/jquery-ui-1.10.0.custom.min.css}" href="../../../css/flick/jquery-ui-1.10.0.custom.min.css" rel="stylesheet" />
+		<link th:href="@{/static/css/jquery.tagit.css}" href="../../../css/jquery.tagit.css" rel="stylesheet" />
+
+		<script th:src="@{/static/js/jquery.js}" src="../../../js/jquery.js"></script>
+		<script th:src="@{/static/bootstrap/js/bootstrap.min.js}" src="../../../bootstrap/js/bootstrap.min.js"></script>
+		<script th:src="@{/static/js/jquery-ui-1.10.0.custom.min.js}" src="../../../js/jquery-ui-1.10.0.custom.min.js"></script>
+		<script th:src="@{/static/js/tag-it.min.js}" src="../../../js/tag-it.min.js" charset="utf-8"></script>
+		<script th:src="@{/static/jstree/jquery.jstree.js}" src="../../../jstree/jquery.jstree.js"></script>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" th:substituteby="layout :: navbar">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" th:href="@{/}" href="../home.html">Yarquen</a>
+				<div class="nav-collapse collapse">
+					<p class="navbar-text pull-right"
+						th:substituteby="layout :: logout">
+						Logged in as <a href="#" class="navbar-link">admin</a>
+					</p>
+					<ul class="nav">
+						<li><a th:href="@{/}" href="home.html">Home</a></li>
+						<li sec:authorize="hasRole('PERM_READ_USER')"><a
+							th:href="@{/account/}" href="account/list.html">Accounts</a></li>
+						<li sec:authorize="hasRole('PERM_WRITE_CATEGORY')"><a
+							th:href="@{/category/setupCategory}" href="category/edit.html">Category</a></li>
+						<li><a th:href="@{/pathfinder/setup}"
+							href="path/shohPaths.html">Path Finder</a></li>
+						<li class="active"><a th:href="@{/articles}"
+							href="articles.html">Search Articles</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul th:substituteby="layout :: login"></ul>
+				</div>
+			</div>
+		</div>
+				<ul class="breadcrumb">
+					<li><a th:href="@{/}" href="../home.html">Home</a> <span class="divider">/</span></li>
+					<li class="active">Enricher</li>
+				</ul>
+		</div>
+		
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span7 offset1">
+					<form id="enrichmentForm" class="form-horizontal" method="POST" th:object="${article}"
+							action="enricher.html" th:action="@{'/articles/enricher/' + *{id}}">
+						<fieldset>
+							<div class="alert alert-error" th:each="err: ${#fields.errors('keywords')}">
+								<button type="button" class="close" data-dismiss="alert">x</button>
+								<strong>Keywords Error</strong>: <span th:text="${err}">cannot be empty</span>
+							</div>
+							<div class="alert alert-error" th:each="err: ${#fields.errors('providedSkills')}">
+								<button type="button" class="close" data-dismiss="alert">x</button>
+								<strong>Provided Skills Error</strong>: <span th:text="${err}">cannot be empty</span>
+							</div>
+							<div class="alert alert-error" th:each="err: ${#fields.errors('requiredSkills')}">
+								<button type="button" class="close" data-dismiss="alert">x</button>
+								<strong>Required Skills Error</strong>: <span th:text="${err}">cannot be empty</span>
+							</div>
+							<input id="id" name="id" type="hidden" th:field="*{id}" />
+							<legend>Article</legend>
+							<div class="control-group">
+								<label class="control-label" for="title">Title</label>
+								<div class="controls">
+									<input id="title" name="title" type="text" class="input-xlarge" placeholder="article title" th:value="*{title}"></input>
+									<span class="text-error" th:if="${#fields.hasErrors('title')}" th:each="err : ${#fields.errors('title')}">
+										<strong> Error</strong>: <span th:text="${err}">Input is incorrect</span>
+									</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="url">Url</label>
+								<div class="controls">
+									<input id="url" name="url" type="text" class="input-xlarge" placeholder="article url" th:value="*{url}"></input>
+									<span class="text-error" th:if="${#fields.hasErrors('url')}" th:each="err : ${#fields.errors('url')}">
+										<strong> Error</strong>: <span th:text="${err}">Input is incorrect</span>
+									</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="author">Author</label>
+								<div class="controls">
+									<input id="author" name="author" type="text" class="input-xlarge" placeholder="article author" th:value="*{author}"></input>
+									<span class="text-error" th:if="${#fields.hasErrors('author')}" th:each="err : ${#fields.errors('author')}">
+										<strong> Error</strong>: <span th:text="${err}">Input is incorrect</span>
+									</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="date">Date</label>
+								<div class="controls">
+									<input id="date" name="date" type="text" class="input-small" placeholder="article date" th:value="*{date}"></input>
+									<span class="text-error" th:if="${#fields.hasErrors('date')}" th:each="err : ${#fields.errors('date')}">
+										<strong> Error</strong>: <span th:text="${err}">Input is incorrect</span>
+									</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="summary">Summary</label>
+								<div class="controls">
+									<textarea id="summary" name="summary" rows="4" class="input-xxlarge" placeholder="article summary" th:text="*{summary}"></textarea>
+									<span class="text-error" th:if="${#fields.hasErrors('summary')}" th:each="err : ${#fields.errors('summary')}">
+										<strong> Error</strong>: <span th:text="${err}">Input is incorrect</span>
+									</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="keywords">Keywords</label>
+								<div class="controls">
+									<div id="keywordList">
+										<input type="hidden" th:each="kw, stat : *{keywords}" th:field="*{keywords[__${stat.index}__]}" />
+									</div>
+									<!-- fix ul.tagit style -->
+									<ul id="keywords" style="margin-left: 0px;">
+										<li th:each="a : *{keywords}" th:text="${a}">java</li>
+										<li th:remove="all">C#</li>
+									</ul>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Skills</label>
+								<div class="controls">
+									<div>
+										<table id="currentProvidedSkills" class="table table-condensed">
+											<caption class="pull-left">Provided Skills</caption>
+											<tbody><tr th:unless="*{#lists.isEmpty(providedSkills)}" th:each="rs: *{providedSkills}">
+													<td>
+														<span style="display: none" th:text="${rs.categoryBranch.code}">Informatica.LenguajesDeProgramacion</span>
+														<span th:text="${rs.categoryBranch.name}">Informática/Lenguajes de Programación</span>
+													</td>
+													<td>
+														<span style="display: none" th:text="${rs.level}">1</span>
+														<span th:text="${rs.levelName}">Basic</span>
+													</td>
+													<td>
+														<span style="display: none" th:text="${rs.categoryBranch.code + '.' + rs.level}">Informatica.LenguajesDeProgramacion.1</span>
+														<span class="removeSkillBtn close" style="float: none">&times;</span>
+													</td>
+												</tr></tbody>
+										</table>
+										<div id="providedSkillList"><input type="hidden" th:each="rs, stat : *{providedSkills}" th:field="*{providedSkills[__${stat.index}__]}" /></div>
+									</div>
+									<div>
+										<table id="currentRequiredSkills" class="table table-condensed">
+											<caption class="pull-left">Required Skills</caption>
+											<tbody><tr th:unless="*{#lists.isEmpty(requiredSkills)}" th:each="rs : *{requiredSkills}">
+													<td>
+														<span style="display: none" th:text="${rs.categoryBranch.code}">Informatica.LenguajesDeProgramacion</span>
+														<span th:text="${rs.categoryBranch.name}">Informática/Lenguajes de Programación</span>
+													</td>
+													<td>
+														<span style="display: none" th:text="${rs.level}">1</span>
+														<span th:text="${rs.levelName}">Basic</span>
+													</td>
+													<td>
+														<span style="display: none" th:text="${rs.categoryBranch.code + '.' + rs.level}">Informatica.LenguajesDeProgramacion.1</span>
+														<span class="removeSkillBtn close" style="float: none">&times;</span>
+													</td>
+												</tr></tbody>
+										</table>
+										<div id="requiredSkillList"><input type="hidden" th:each="rs, stat : *{requiredSkills}" th:field="*{requiredSkills[__${stat.index}__]}" /></div>
+									</div>
+									
+									<span class="help-block">Category tree:</span>
+									<div class="input-append">
+										  <input id="searchTreeInput" class="input-small" type="text" placeholder="Category" />
+										  <button id="searchTree" class="btn" type="button">Search</button>
+										  <button id="resetSearchTree" class="btn" type="button">Reset</button>
+									</div>
+									<div id="categoryTree"></div>
+								</div>
+							</div>
+							<div class="control-group">
+								<div class="controls">
+									<button type="submit" name="submit" value="submit" class="btn btn-primary">Submit</button>
+									<button type="submit" name="cancel" value="cancel" class="btn">Cancel</button>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+
+					<!-- dialog -->
+					<div id="newSkillModal" class="modal hide fade">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h3>New Skill</h3>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal" action="">
+								<fieldset>
+									<div class="control-group">
+										<label class="control-label">Category</label>
+										<div class="controls" style="padding-top: 5px">
+											<strong id="newSkillName">Informática/Lenguajes de Programación</strong>
+											<input id="newSkillCode" type="hidden" value="Informatica.LenguajesDeProgramacion" />
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="newSkillRequired">Relation type</label>
+										<div class="controls">
+											<label class="radio"><input id="newSkillRequired" type="radio" name="relationType" checked = "checked" /> Required</label>
+											<label class="radio"><input id="newSkillProvided" type="radio" name="relationType" /> Provided</label>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="newSkillLevel">Skill Level</label>
+										<div class="controls">
+											<select id="newSkillLevel" class="input-small">
+												<option label="Basic" value="1">Basic</option>
+												<option label="Medium" value="2">Medium</option>
+												<option label="Advanced" value="3">Advanced</option>
+										</select>
+										</div>
+									</div>
+								</fieldset>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<a id="newSkillSave" href="#" class="btn btn-primary">Add Skill</a>
+							<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr/>
+			<footer class="pull-right" th:substituteby="layout :: footer">
+				<small class="muted">Yarquen, a focused, semantic, distributed crawler :)</small>
+			</footer>
+		</div>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+//Keywords
+$(document).ready(function() {
+	$("#keywords").tagit({
+		allowSpaces: true,
+		caseSensitive: true,
+		placeholderText: "new keyword",
+		afterTagAdded: addKeywordHiddenField,
+		afterTagRemoved: removeKeywordHidddenField,
+		availableTags: /*[[ ${keywords} ]]*/ ["Java", "C#", "Haskell"]
+	});
+});
+
+function addKeywordHiddenField(event, ui) {
+	var c = $("#keywordList").children().size();
+
+	//check to handle page loading
+	if(c < $("#keywords").tagit("assignedTags").length) {
+		$("#keywordList").append("<input type=\"hidden\" id=\"keywords" + c + "\" name=\"keywords[" + c + "]\" value=\"" + ui.tagLabel + "\">");
+	}
+}
+
+function removeKeywordHidddenField(event, ui) {
+	var c = $("#keywordList").children().size();
+	var i = 0;
+	//locate and remove the keyword element
+	for(; i < c; i++) {
+		var selector = "#keywordList input:nth-child(" + ( i + 1 ) + ")";
+		if($(selector).attr("value") == ui.tagLabel) {
+			$(selector).remove();
+			break;
+		}
+	}
+	//fix remaining elements
+	for(; i < c; i++) {
+		var selector = "#keywordList input:nth-child(" + ( i + 1 ) + ")";
+		$(selector).attr("id","keywords" + i);
+		$(selector).attr("name","keywords[" + i + "]");
+	}
+}
+
+//Skills
+$(document).ready(function() {
+	$("#searchTree").click(function () {
+		$("#categoryTree").jstree("search",$("#searchTreeInput").val());
+	});
+	$("#resetSearchTree").click(function () {
+		$("#searchTreeInput").val("");
+		$("#categoryTree").jstree("close_all",$("#categoryTree"));
+		
+	});
+	//avoid submit on hit enter 
+	$("#searchTreeInput").keypress(function(e) {
+		if(e.which == 13) {
+			//prevent submit
+			e.preventDefault();
+			
+			$("#categoryTree").jstree("search",$("#searchTreeInput").val());
+		}
+	});
+	$("#categoryTree").jstree({
+		core: { animation: 0 },
+		plugins: [ "themes", "json_data", "ui", "search" ],
+		themes: { theme: "classic", dots: true, icons: false },
+		json_data: {
+			data: /*[[ ${categories} ]]*/ [ { data: "Software", metadata: { code: "Software", name: "Software" }, children: [ { data: "Eclipse", metadata: { code: "Software.Eclipse", name: "Software/Eclipse" } } ] } ]
+		}
+	}).bind("select_node.jstree", showNewSkillModal)
+
+	$("#currentRequiredSkills").on("click", ".close", function() {
+		removeSkill("#requiredSkillList", "requiredSkills", $(this).parent());
+	});
+	$("#currentProvidedSkills").on("click", ".close", function() {
+		removeSkill("#providedSkillList", "providedSkills", $(this).parent());
+	});
+});
+
+function showNewSkillModal(e, data) {
+	//setup modal
+	$("#newSkillName").text(data.rslt.obj.data("name"));
+	$("#newSkillCode").attr("value", data.rslt.obj.data("code"));
+	
+	//show it
+	$("#newSkillModal").modal("show");
+}
+
+$("#newSkillSave").click(function() {
+	$("#newSkillModal").modal("hide");
+	
+	var code = $("#newSkillCode").attr("value");
+	var name = $("#newSkillName").text();
+	
+	var listSelector =  "#providedSkillList";
+	var collection = "providedSkills";
+	var tableSelector = "#currentProvidedSkills";
+	if($("#newSkillRequired").is(":checked")) {
+		listSelector = "#requiredSkillList";
+		collection = "requiredSkills";
+		tableSelector = "#currentRequiredSkills";
+	}
+
+ 	if($(listSelector + " input[value=\"" + code + "\"]").length != 0) {
+		alert("The category " + name + " is already selected");
+		return false;
+	}
+	else {
+		tableSelector += " tbody";
+		$(tableSelector).append("<tr></tr>");
+
+		tableSelector += " tr:last-child";
+
+		var levelCode = $("#newSkillLevel").val();
+		var levelName = $("#newSkillLevel option:selected").attr("label");
+
+		$(tableSelector).append("<td><span style=\"display: none\">" + code + "</span><span>" + name + "</span></td>");
+		$(tableSelector).append("<td><span style=\"display: none\">" + levelCode + "</span><span>" + levelName + "</span></td>");
+		$(tableSelector).append("<td><span style=\"display: none\">" + code + "." + levelCode + "</span><span class=\"removeSkillBtn close\" style=\"float: none\">&times;</span></td>");
+
+		var c = $(listSelector).children().size();
+		var id = collection + c;
+		var name = collection + "[" + c + "]";
+		var skill = code + "." + levelCode;
+		$(listSelector).append("<input type=\"hidden\" id=\"" + id + "\" name=\"" + name + "\" value=\"" + skill + "\">");
+		
+		return false;
+	}
+});
+
+function removeSkill(selector, collectionProperty, skillTd) {	
+	skillTd.parent().remove();
+	
+	var skillCode = skillTd.children().first().text();
+	console.log("skillCode: " + skillCode);
+	var c = $(selector).children().size();
+	console.log("children count: " + c);
+	var i = 0;
+	//locate and remove the skill element
+	for(; i < c; i++) {
+		var sel = selector + " input:nth-child(" + ( i + 1 ) + ")";
+		console.log("sel: " + selector + " = " + $(selector).attr("value"));
+		if($(sel).attr("value") == skillCode) {
+			$(sel).remove();
+			break;
+		}
+	}
+	//fix remaining elements
+	for(; i < c; i++) {
+		var sel = selector + " input:nth-child(" + ( i + 1 ) + ")";
+		$(sel).attr("id", collectionProperty + i);
+		$(sel).attr("name", collectionProperty + "[" + i + "]");
+	}
+}
+
+//date
+$(function() {
+  $("#date").datepicker();
+});
+
+//authors
+$(function() {
+	var authors = /*[[ ${authors} ]]*/ ["Nostromo", "Charles Gould", "Captain Mitchell"];
+	$("#author").autocomplete({
+		source: authors
+	});
+});
+
+/*]]>*/
+</script>
+	</body>
+</html>

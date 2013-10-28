@@ -1,0 +1,173 @@
+/**
+ * yarquen-web build script
+ *
+ * author: Jorge Riquelme
+ * date: 26/11/2012
+ */
+
+apply plugin: "war"
+apply plugin: "eclipse-wtp"
+
+ext {
+	thymeleafVersion = "2.0.16"
+	thymeleafSpringVersion = "2.0.16"
+	thymeleafSpringSecurityVersion = "2.0.0"
+	luceneVersion = "4.1.0"
+	springSecurity = "3.1.3.RELEASE"
+	seleniumVersion ="2.31.0"
+}
+
+//exclude jrebel
+if (hasProperty("production")) {
+	war.exclude "rebel.xml"
+}
+
+dependencies {
+	providedCompile "javax.servlet:javax.servlet-api:3.0.1"
+
+    compile fileTree(dir: 'lib', includes: ['*.jar']) 
+	compile project(":yarquen-common")
+	compile "org.springframework:spring-webmvc:$springVersion"
+	compile "org.springframework:spring-web:$springVersion"
+	compile "org.springframework.security:spring-security-config:$springSecurity"
+	compile ("org.springframework.security:spring-security-web:$springSecurity") {
+		exclude group: "org.springframework", module: "spring-jdbc"
+	}
+	compile ("org.springframework.security:spring-security-taglibs:$springSecurity") {
+		exclude group: "org.springframework", module: "spring-jdbc"
+	}
+	compile "org.thymeleaf.extras:thymeleaf-extras-springsecurity3:$thymeleafSpringSecurityVersion"
+	compile "org.thymeleaf:thymeleaf:$thymeleafVersion"
+	compile "org.thymeleaf:thymeleaf-spring3:$thymeleafSpringVersion"
+
+	compile "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+
+	compile "org.apache.lucene:lucene-core:$luceneVersion"
+	compile "org.apache.lucene:lucene-analyzers-common:$luceneVersion"
+	compile "org.apache.lucene:lucene-queryparser:$luceneVersion"
+	compile "org.apache.lucene:lucene-facet:$luceneVersion"
+	compile "commons-io:commons-io:2.4"
+	compile "org.codehaus.jackson:jackson-mapper-asl:1.6.4"
+	compile "com.google.guava:guava:14.0.1"
+
+	runtime "ch.qos.logback:logback-classic:1.0.9"
+}
+
+//distribution
+task unpackTomcat(type: Copy) {
+	from tarTree(tomcatPath)
+	into "$buildDir"
+	exclude "**/webapps/docs/**"
+	exclude "**/webapps/examples/**"
+	exclude "**/webapps/host-manager/**"
+	exclude "**/webapps/manager/**"
+}
+
+task copyDistBin(type: Copy, dependsOn: unpackTomcat) {
+	from "src/main/distribution/bin"
+	into "$buildDir/$tomcatDir/bin"
+}
+task copyDistLogback(type: Copy, dependsOn: unpackTomcat) {
+	from "src/main/distribution/conf/logback.xml"
+	into "$buildDir/$tomcatDir/conf"
+}
+task copyDistYarquenProps(type: Copy, dependsOn: unpackTomcat) {
+	from "src/main/distribution/conf/yarquen.properties"
+	into "$buildDir/$tomcatDir/conf"
+	expand (indexDirectory: indexDirectory, taxoDirectory: taxoDirectory, 
+		mongoHost: mongoHost, mongoPort: mongoPort, mongoDb: mongoDb, 
+		mailHost: mailHost, mailPort: mailPort, mailUsername: mailUsername, mailPassword: mailPassword)
+}
+task copyDistServer(type: Copy, dependsOn: unpackTomcat) {
+	from "src/main/distribution/conf/server.xml"
+	into "$buildDir/$tomcatDir/conf"
+	expand (shutdownPort: shutdownPort, connectorPort: connectorPort, redirectPort: redirectPort, ajpPort: ajpPort)
+}
+task copyWar(type: Copy, dependsOn: [unpackTomcat, war]) {
+	from war.archivePath
+	into "$buildDir/$tomcatDir/webapps"
+	rename(war.archiveName, "yarquen.war")
+}
+
+task dist(type: Tar, dependsOn: [
+	copyDistBin,
+	copyDistLogback,
+	copyDistYarquenProps,
+	copyDistServer,
+	copyWar
+]) {
+	compression = Compression.GZIP
+	from "$buildDir/$tomcatDir"
+}
+
+//tests aceptacion
+if (hasProperty("test-groups") && getProperty("test-groups").split(",").contains("ftests")) {
+	ext {
+		rnd = new Random(new Date().time)
+		n = rnd.nextInt(10000)
+	}
+
+	sourceSets {
+		test { resources { srcDir "src/main/webapp" } }
+	}
+
+	test {
+		dependsOn "launchSystem"
+
+		systemProperty "test-groups", "ftests"
+		systemProperty "dbFunctionalUrl", "$testMongoHost:$testMongoPort/yarquentest"
+		systemProperty "spring.profiles.active", "chrome"
+		systemProperty "webdriver.chrome.driver", "$chromeDriver"
+
+		testResultsDir file("$buildDir/ftest-results")
+
+		doFirst { logger.info("db ftests generada: yarquentest") }
+
+		doLast { shutdownSystem.execute() }
+	}
+
+	task dropDb(type: Exec) {
+		commandLine "mongo"
+		args "$testMongoDb", "--eval='db.dropDatabase()'"
+	}
+
+	task loadDump(type: Exec, dependsOn: dropDb) {
+		commandLine "mongorestore"
+		args "--drop", "src/test/resources/yarquentest", "--verbose"
+	}
+
+	task unpackDist(type: Copy, dependsOn: dist) {
+		doFirst {
+			new File("$buildDir/yarquen").mkdirs()
+		}
+
+		from tarTree("$buildDir/distributions/yarquen-web-0.4.0-SNAPSHOT.tgz")
+		into "$buildDir/yarquen"
+
+		doLast {
+			Properties props = new Properties()
+			File propsFile = new File("$buildDir/yarquen/conf/yarquen.properties")
+			props.load(propsFile.newDataInputStream())
+
+			//guardo
+			props.setProperty("mongoHost", "$testMongoHost")
+			props.setProperty("mongoPort", "$testMongoPort")
+			props.setProperty("mongoDb", "$testMongoDb")
+
+			props.store(propsFile.newWriter(), null)
+		}
+	}
+	task launchSystem(type: Exec, dependsOn: [loadDump, unpackDist]) {
+		workingDir "$buildDir/yarquen"
+		commandLine "bin/startup.sh"
+
+		doLast { //time to deploy the application, 15 seconds aprox.
+			sleep(15000) }
+	}
+	task shutdownSystem(type: Exec, dependsOn: launchSystem) {
+		workingDir "$buildDir/yarquen"
+		commandLine "bin/shutdown.sh"
+	}
+}
+
+

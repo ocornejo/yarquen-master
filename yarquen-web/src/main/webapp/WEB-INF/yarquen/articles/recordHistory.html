@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:substituteby="layout :: header">
+		<meta charset="UTF-8" />
+			<title>Yarquen Crawler</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
+		<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
+		<link href="../../../css/yarquen.css" rel="stylesheet" />
+		<link href="../../../bootstrap/css/bootstrap-responsive.css"
+			rel="stylesheet" />
+		
+		<script src="../../../js/jquery.js"></script>
+	<script src="../../../bootstrap/js/bootstrap.min.js"></script>
+	</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" th:substituteby="layout :: navbar">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" th:href="@{/}" href="../home.html">Yarquen</a>
+				<div class="nav-collapse collapse">
+					<p class="navbar-text pull-right"
+						th:substituteby="layout :: logout">
+						Logged in as <a href="#" class="navbar-link">admin</a>
+					</p>
+					<ul class="nav">
+						<li><a th:href="@{/}" href="home.html">Home</a></li>
+						<li sec:authorize="hasRole('PERM_READ_USER')"><a
+							th:href="@{/account/}" href="account/list.html">Accounts</a></li>
+						<li sec:authorize="hasRole('PERM_WRITE_CATEGORY')"><a
+							th:href="@{/category/setupCategory}" href="category/edit.html">Category</a></li>
+						<li><a th:href="@{/pathfinder/setup}"
+							href="path/shohPaths.html">Path Finder</a></li>
+						<li class="active"><a th:href="@{/articles}"
+							href="articles.html">Search Articles</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul th:substituteby="layout :: login"></ul>
+				</div>
+			</div>
+		</div>
+		<ul class="breadcrumb">
+			<li><a th:href="@{/}" href="../home.html">Home</a> <span
+				class="divider">/</span></li>
+			<li class="active">Article Record</li>
+		</ul>
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<fieldset>
+				<legend th:text="'Article History Changes'"></legend>
+				<div class="span4">
+					<table class="table" th:if="${articleRecords != null}">
+						<thead>
+							<tr>
+								<th style="text-align: right;">User</th>
+								<th>Change Date</th>
+							</tr>
+						</thead>
+						<tbody id="historyRecordsByUser">
+							<tr th:each="aR : ${articleRecords}">
+								<td style="text-align: right;"
+									th:text="${aR.value.firstName + ' ' + aR.value.familyName}">Pedro
+									Fernandez</td>
+								<td><a
+									th:href="@{'/articles/record/'}+${aR.key.articleId}+'/'+${aR.key.versionDate.getTime()+'/'+false}"
+									th:text="${#dates.format(aR.key.versionDate, 'dd/MMM/yyyy HH:mm')}"></a></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div th:if="${articleRecords == null}">
+
+						<p>
+							No changes made to the article. <a
+								th:href="@{'/articles/record/articleView/'}+${articleId}">
+								See the original</a>
+						</p>
+
+					</div>
+
+					<div id="goBack">
+						<p>
+							Back to <a th:href="${referer}"> search.</a>
+						</p>
+					</div>
+				</div>
+			</fieldset>
+
+		</div>
+
+		<hr />
+		<footer class="pull-right" th:substituteby="layout :: footer">
+			<small class="muted">Yarquen, a focused, semantic,
+				distributed crawler :)</small>
+		</footer>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+/**
+ * yarquen build script
+ *
+ * author: Jorge Riquelme
+ * date: 26/11/2012
+ */
+
+allprojects {
+	apply plugin: "java"
+	apply plugin: "maven"
+
+	group = "org.yarquen"
+	version = "0.5.0-dev"
+	sourceCompatibility = "1.7"
+}
+
+subprojects {
+	apply plugin: "eclipse"
+
+	eclipse {
+		classpath {
+			downloadSources = true
+			downloadJavadoc = true
+		}
+	}
+
+	ext {
+		springVersion = "3.2.1.RELEASE"
+		slf4jVersion = "1.7.2"
+	}
+
+	dependencies {
+		compile "org.slf4j:slf4j-api:$slf4jVersion"
+
+		testCompile "junit:junit:4.11"
+		testCompile "org.springframework:spring-test:$springVersion"
+		testCompile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+		testCompile "org.slf4j:slf4j-log4j12:$slf4jVersion"
+	}
+
+	repositories {
+		mavenCentral()
+
+		//crawler repos
+		mavenRepo(url: "http://bixo.github.com/repo/")
+		mavenRepo(url: "http://conjars.org/repo/")
+		mavenRepo(url: "http://maven.jenkins-ci.org/content/repositories/releases/")
+
+		//spring
+		mavenRepo(url: "http://repo.springsource.org/milestone")
+		mavenRepo(url: "http://repo.springsource.org/release")
+	}
+}

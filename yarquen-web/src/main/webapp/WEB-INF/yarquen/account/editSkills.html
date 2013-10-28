@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Yarquen Crawler</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		
+		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
+		<link th:href="@{/static/bootstrap/css/bootstrap.min.css}" href="../../../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+		<link th:href="@{/static/css/yarquen.css}" href="../../../css/yarquen.css" rel="stylesheet" />
+		<link th:href="@{/static/bootstrap/css/bootstrap-responsive.min.css}" href="../../../bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+		<link th:href="@{/static/css/flick/jquery-ui-1.10.0.custom.min.css}" href="../../../css/flick/jquery-ui-1.10.0.custom.min.css" rel="stylesheet" />
+		<link th:href="@{/static/css/jquery.tagit.css}" href="../../../css/jquery.tagit.css" rel="stylesheet" />
+
+		<script th:src="@{/static/js/jquery.js}" src="../../../js/jquery.js"></script>
+		<script th:src="@{/static/bootstrap/js/bootstrap.min.js}" src="../../../bootstrap/js/bootstrap.min.js"></script>
+		<script th:src="@{/static/js/jquery-ui-1.10.0.custom.min.js}" src="../../../js/jquery-ui-1.10.0.custom.min.js"></script>
+		<script th:src="@{/static/js/tag-it.min.js}" src="../../../js/tag-it.min.js" charset="utf-8"></script>
+		<script th:src="@{/static/jstree/jquery.jstree.js}" src="../../../jstree/jquery.jstree.js"></script>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" th:substituteby="layout :: navbar">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" th:href="@{/}" href="../home.html">Yarquen</a>
+				<div class="nav-collapse collapse">
+					<p class="navbar-text pull-right"
+						th:substituteby="layout :: logout">
+						Logged in as <a href="#" class="navbar-link">admin</a>
+					</p>
+					<ul class="nav">
+						<li><a th:href="@{/}" href="home.html">Home</a></li>
+						<li sec:authorize="hasRole('PERM_READ_USER')" class="active"><a
+							th:href="@{/account/}" href="account/list.html">Accounts</a></li>
+						<li sec:authorize="hasRole('PERM_WRITE_CATEGORY')"><a
+							th:href="@{/category/setupCategory}" href="category/edit.html">Category</a></li>
+						<li><a th:href="@{/pathfinder/setup}"
+							href="path/shohPaths.html">Path Finder</a></li>
+						<li><a th:href="@{/articles}" href="articles.html">Search
+								Articles</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul th:substituteby="layout :: login"></ul>
+				</div>
+			</div>
+		</div>
+				<ul class="breadcrumb">
+					<li><a th:href="@{/}" href="../home.html">Home</a> <span class="divider">/</span></li>
+					<li class="active">Edit Skills</li>
+				</ul>
+		</div>
+		
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div>
+					<form id="enrichmentForm" class="form-horizontal" method="POST" th:object="${account}"
+							action="show.html" th:action="@{'/account/skills/'}">
+							
+					<input type="hidden" th:field="*{id}" id="id" name="id"/>
+
+					<input type="hidden" th:field="*{firstName}" id="firstName" name="firstName"/>
+
+					<input type="hidden" th:field="*{familyName}" id="familyName" name="familyName"/>
+
+					<input type="hidden" th:field="*{email}" id="email" name="email" />
+
+					<input type="hidden" th:field="*{username}" id="username" name="username" />
+
+					<input type="hidden" th:field="*{password}" id="password" name="password" />
+					
+					<input type="hidden" th:field="*{roleId}" id="roleId" name="roleId"/>		
+							
+						<fieldset>
+							<div th:if="${#fields.hasErrors('*')}" id="errors" class="alert alert-error">
+								<button type="button" class="close" data-dismiss="alert">x</button>
+						        <ul >
+						            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+						        </ul>
+						    </div>
+						
+							<div class="alert alert-error" th:each="err: ${#fields.errors('username')}">
+								<button type="button" class="close" data-dismiss="alert">×</button>
+								<strong>Categories Error</strong>: <span th:text="${err}">cannot be empty</span>
+							</div>
+							<legend><span th:text="${account.firstName}+' '+${account.familyName}">Kathleen Byrne</span> skill details</legend>
+							<div class="row">
+								<div class="span4 offset1">
+									<div class="alert alert-info no-reports help-block" style="display: block;">
+										<span>Please select category to add</span>
+									</div>	
+									<br/>
+									<div class="input-append">
+										  <input id="searchTreeInput" class="input-small" type="text" placeholder="Category" />
+										  <button id="searchTree" class="btn" type="button">Search</button>
+										  <button id="resetSearchTree" class="btn" type="button">Reset</button>
+									</div>
+									<div id="categoryTree"></div>
+								</div>
+							
+								<div class="span6">
+									<div>
+										<table class="table table-hover">
+											<thead>
+												<tr>
+													<th>Skill</th>
+													<th>Level</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody id="skillBodyTable">
+												<tr id="Informatica/LenguajesDeProgramación" th:each="skill, stat: *{skills}" th:id="${skill.categoryBranch.code}">
+													<td><span th:text="${skill.categoryBranch.name}">Informática/Lenguajes de Programación</span></td>
+													<td>
+														<select class="input-small" th:field="*{skills[__${stat.index}__].level}">
+														    <option label="Basic" value="1">Basic</option>
+														    <option label="Medium" value="2">Medium</option>
+														    <option label="Advanced" value="3">Advanced</option>
+													    </select>
+													</td>
+													<td><span class="categoryCloseBtn close" style="float: none">x</span></td>
+												</tr>
+											</tbody>
+										</table>
+										<div id="categoryList">
+											<input type="hidden" th:each="cat, stat : *{skills}" th:field="*{skills[__${stat.index}__].categoryBranch}"/>
+										</div>
+										
+										<br/>
+										<div class="control-group">
+											<div class="controls">
+												<button type="submit" class="btn btn-primary">Submit</button>
+												<a th:href="@{/articles}" href="search.html" class="btn">Cancel</a>
+											</div>
+										</div>
+									</div>
+									
+									
+									<div class="modal hide fade" id="modalSkill">
+										  <div class="modal-header">
+										    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+										    <h3 id="modalSkillHeader"></h3>
+										  </div>
+										  <div class="modal-body">
+										    <p>Select your level skill:</p>
+										    <select id="modalSkillLevel" class="input-small">
+											    <option label="Basic" value="1">Basic</option>
+											    <option label="Medium" value="2">Medium</option>
+											    <option label="Advanced" value="3">Advanced</option>
+										    </select>
+										    <input id="modalSkillCode" type="hidden"/>
+										    <input id="modalSkillName" type="hidden"/>
+										  </div>
+										  <div class="modal-footer">
+										    <a id="modalSkillSave" href="#" class="btn btn-primary">Save changes</a>
+										  </div>
+										</div>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+
+			<hr/>
+			<footer class="pull-right" th:substituteby="layout :: footer">
+				<small class="muted">Yarquen, a focused, semantic, distributed crawler :)</small>
+			</footer>
+		</div>
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+	$("#skillBodyTable").on("click", ".close", function() {
+		removeCategoryFields($(this).parent().parent())
+	});
+	
+	$("#searchTree").click(function () {
+		$("#categoryTree").jstree("search",$("#searchTreeInput").val());
+	});
+	$("#resetSearchTree").click(function () {
+		$("#searchTreeInput").val('');
+		$("#categoryTree").jstree("close_all",$("#categoryTree"));
+		$("#modalSkill").modal("hide");
+		
+	});
+	//avoid submit on hit enter 
+	$("#searchTreeInput").keypress(function(e) {
+		if(e.which == 13) {
+			//prevent submit
+			e.preventDefault();
+			
+			$("#categoryTree").jstree("search",$("#searchTreeInput").val());
+		}
+	});
+	
+	$("#modalSkillSave").click(function () {
+		var code=$("#modalSkillCode").val();
+		var name=$("#modalSkillName").val();
+		$("#skillBodyTable").append("<tr id=\"" + code + "\"><td><span>" + name + "</span></td><td></td><td><span class=\"categoryCloseBtn close\" style=\"float: none\">x</span></td></tr>");
+		var c = $("#categoryList").children().size();
+		$("#categoryList").append("<input type=\"hidden\" id=\"skills" + c + ".categoryBranch\" name=\"skills[" + c + "].categoryBranch\" value=\"" + code + "\">");
+		
+		$("#modalSkill").modal("hide");
+		var jcode=code.replace(/\./g,'\\.')
+		var levelValue = $("#modalSkillLevel").val();
+		$("#modalSkillLevel").clone(true).attr('id', "skills" + c + ".level").appendTo('#'+jcode+'>td:nth-child(2)');
+		var selectSelector= "#skills" + c + "\\.level";
+		$(selectSelector).val(levelValue);
+		$(selectSelector).attr("name","skills["+c+"].level");
+		$("#modalSkillLevel").val(1);
+	});
+	
+	$("#categoryTree").jstree({
+		core: { animation: 0 },
+		plugins: [ "themes", "json_data", "ui", "search" ],
+		themes: { theme: "classic", dots: true, icons: false },
+		json_data: {
+			data: /*[[ ${categories} ]]*/ [ { data: "Software", metadata: { code: "Software", name: "Software" }, children: [ { data: "Eclipse", metadata: { code: "Software.Eclipse", name: "Software/Eclipse" } } ] } ]
+		}
+	}).bind("select_node.jstree", showModalSkill)
+});
+
+
+
+function showModalSkill(e, data) {
+	var code = data.rslt.obj.data("code");
+	var name= data.rslt.obj.data("name");
+	
+	if($("#categoryList input[value=\"" + code + "\"]").length != 0) {
+		alert("The Skill " + name + " is already selected, please change in list");
+	}
+	else {
+		$("#modalSkill").modal("show");
+		$("#modalSkillHeader").text(name);
+		$("#modalSkillCode").val(code);
+		$("#modalSkillName").val(name);
+	}
+}
+
+function removeCategoryFields(categoryLi) {
+	var code = categoryLi.attr("id");
+	
+	categoryLi.remove();
+	
+	var c = $("#categoryList").children().size();
+	var i = 0;
+	//locate and remove the category element
+	for(; i < c; i++) {
+		var selector = "#categoryList input:nth-child(" + ( i + 1 ) + ")";
+		if($(selector).attr("value") == code) {
+			$(selector).remove();
+			break;
+		}
+	}
+	//fix remaining elements
+	for(; i < c; i++) {
+		var selector = "#categoryList input:nth-child(" + ( i + 1 ) + ")";
+		$(selector).attr("id","skills" + i+".categoryBranch");
+		$(selector).attr("name","skills[" + i + "].categoryBranch");
+		
+		var levelSelector= "#skills"+ ( i + 1 ) +"\\.level";
+		$(levelSelector).attr("name","skills[" + i + "].level");
+		$(levelSelector).attr("id","skills" + i + ".level");
+		
+	}
+}
+
+
+$(function() {
+  $("#date").datepicker();
+});
+
+$(function() {
+	var authors = /*[[ ${authors} ]]*/ ["Nostromo", "Charles Gould", "Captain Mitchell"];
+	$( "#author" ).autocomplete({
+		source: authors
+	});
+});
+
+/*$("#enrichmentForm").submit(function(event) {
+	
+	return true;
+});*/
+/*]]>*/
+</script>
+	</body>
+</html>

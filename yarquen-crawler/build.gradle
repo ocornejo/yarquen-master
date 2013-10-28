@@ -1,0 +1,65 @@
+/**
+ * yarquen-crawler build script 
+ *
+ * author: Jorge Riquelme
+ * date: 26/11/2012
+ */
+
+apply plugin:"application"
+
+mainClassName = "org.yarquen.crawler.Crawler"
+
+dependencies {
+	compile project(":yarquen-common")
+
+	compile ("org.apache.hadoop:hadoop-core:0.20.2") {
+		exclude group: "ant", module: "ant"
+	}
+
+	compile "bixo:bixo-core:0.8.0"
+	compile "dom4j:dom4j:1.6.1"
+
+	runtime ("jaxen:jaxen:1.1.4") {
+		exclude group: "xerces", module: "xercesImpl"
+	}
+}
+
+jar {
+	exclude "crawler.sh", "log4j.properties", "seeds.txt", "yarquen-crawler.properties"
+
+	//exclude jrebel
+	if (project.hasProperty("production")) {
+		exclude "rebel.xml"
+	}
+
+	manifest {
+		//runtime dependencies will be copied to lib, so the Class-Path entry is created according to that
+		def classpath = configurations.runtime.collect { "lib/" + it.getName() }.join(" ")
+		attributes(["Main-Class": "org.yarquen.crawler.Crawler", "Class-Path": classpath])
+	}
+}
+
+//distribution
+task copyLibs(type: Copy) {
+	from configurations.runtime
+	into "$buildDir/dist/lib"
+}
+task copyJar(type: Copy, dependsOn: jar) {
+	from jar.archivePath
+	into "$buildDir/dist"
+	rename(jar.archiveName, "yarquen-crawler.jar")
+}
+task copyDistResources(type: Copy) {
+	from "src/main/resources"
+	into "$buildDir/dist"
+	exclude "context.xml", "rebel.xml"
+}
+task dist(type: Tar, dependsOn: [
+	copyLibs,
+	copyJar,
+	copyDistResources
+]) {
+	compression = Compression.GZIP
+	from "$buildDir/dist"
+}
+

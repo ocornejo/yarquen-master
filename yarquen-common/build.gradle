@@ -1,0 +1,27 @@
+/**
+ * yarquen-common build script 
+ *
+ * author: Jorge Riquelme
+ * date: 26/11/2012
+ */
+
+//exclude jrebel
+if (hasProperty("production")) {
+	jar.exclude "rebel.xml"
+}
+
+dependencies {
+	compile "org.springframework.data:spring-data-mongodb:1.1.1.RELEASE"
+	compile "org.mongodb:mongo-java-driver:2.10.1"
+	compile "org.apache.commons:commons-lang3:3.1"
+	
+	compile "org.springframework:spring-context-support:$springVersion"
+	compile "javax.mail:mail:1.4"
+	compile "org.apache.httpcomponents:httpclient:4.2.3" //4.2.2
+	
+	compile "com.google.guava:guava:14.0.1"
+	
+	compile "org.hibernate:hibernate-validator:4.3.1.Final"
+	compile "commons-codec:commons-codec:1.7"
+	testCompile "org.apache.jena:jena-arq:2.10.0"
+}

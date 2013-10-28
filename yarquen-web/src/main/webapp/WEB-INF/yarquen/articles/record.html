@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+	<head th:substituteby="layout :: header">
+		<meta charset="UTF-8" />
+			<title>Yarquen Crawler</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
+		<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
+		<link href="../../../css/yarquen.css" rel="stylesheet" />
+		<link href="../../../bootstrap/css/bootstrap-responsive.css"
+			rel="stylesheet" />
+		
+		<script src="../../../js/jquery.js"></script>
+		<script src="../../../bootstrap/js/bootstrap.min.js"></script>
+		<script src="../../../js/diff-match-patch.js"></script>
+	</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner" th:substituteby="layout :: navbar">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" th:href="@{/}" href="../home.html">Yarquen</a>
+				<div class="nav-collapse collapse">
+					<p class="navbar-text pull-right"
+						th:substituteby="layout :: logout">
+						Logged in as <a href="#" class="navbar-link">admin</a>
+					</p>
+					<ul class="nav">
+						<li><a th:href="@{/}" href="home.html">Home</a></li>
+						<li sec:authorize="hasRole('PERM_READ_USER')"><a
+							th:href="@{/account/}" href="account/list.html">Accounts</a></li>
+						<li sec:authorize="hasRole('PERM_WRITE_CATEGORY')"><a
+							th:href="@{/category/setupCategory}" href="category/edit.html">Category</a></li>
+						<li><a th:href="@{/pathfinder/setup}"
+							href="path/shohPaths.html">Path Finder</a></li>
+						<li class="active"><a th:href="@{/articles}"
+							href="articles.html">Search Articles</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul th:substituteby="layout :: login"></ul>
+				</div>
+			</div>
+		</div>
+		<ul class="breadcrumb">
+			<li><a th:href="@{/}" href="../home.html">Home</a> <span
+				class="divider">/</span></li>
+			<li class="active">Article Record</li>
+		</ul>
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span3">
+
+				<div th:if="${accountPrev != null}">
+					<div th:if="${accountPrev == null}" style="float: right;">
+						<span class="icon-step-backward"></span>Previous Change
+					</div>
+					<a th:if="${accountPrev != null}"
+						th:href="@{'/articles/record/'}+${article.id}+'/'+${prevRecord.versionDate.getTime()}+'/'+${diffMode}"
+						href="record.html" rel="tooltip" title="previous change"
+						style="float: right;"><span class="icon-step-backward">
+					</span>Previous Change </a> <br />
+					<div style="text-align: right;">
+						User: <strong th:if="${accountPrev != null}"
+							th:text="${accountPrev.firstName + ' ' + accountPrev.familyName}">Usuario
+							A</strong><strong th:if="${accountPrev == null}"> - </strong>
+					</div>
+					<div style="text-align: right;">
+						Change Date: <strong th:if="${prevRecord != null}"
+							th:text="${#dates.format(prevRecord.versionDate, 'dd/MMM/yyyy')}">21/12/2012</strong><strong
+							th:if="${accountPrev == null}"> - </strong>
+					</div>
+				</div>
+			</div>
+			<div class="span6">
+				<div th:if="${actualRecord != null}" style="float: left;">
+					<span class="icon-user"> </span> <small
+						th:text="${actualAccount.firstName + ' ' + actualAccount.familyName}">Choon</small>
+					<span class="icon-calendar"> </span> <small
+						th:text="${#dates.format(actualRecord.versionDate, 'dd/MMM/yyyy HH:mm')}">21/12/2013</small>
+					<small> - <a th:if="${!diffMode}"
+						th:href="@{'/articles/record/'}+${article.id}+'/'+${actualRecord.versionDate.getTime()}+'/true'"
+						th:text="'see differences'"></a></small> <small><a
+						th:if="${diffMode}"
+						th:href="@{'/articles/record/'}+${article.id}+'/'+${actualRecord.versionDate.getTime()}+'/false'"
+						th:text="'hide differences'"></a></small> -&nbsp;
+				</div>
+				<small><a th:href="@{'/articles/record/'}+${article.id}"
+					th:text="'back to list'"></a></small>
+				<table class="table" th:if="${!diffMode}">
+					<tbody>
+						<tr>
+							<td style="text-align: right;"><strong>Title</strong></td>
+							<td th:text="${article.title}">Title of the document</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Author</strong></td>
+							<td th:text="${article.author}">Stanley Cooper</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Date</strong></td>
+							<td th:text="${article.date}">20/12/2012</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>URL</strong></td>
+							<td th:text="${article.url}">www.site.cl</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Summary</strong></td>
+							<td><p align="justify"
+									th:text="${!article.summary.isEmpty() ? article.summary : 'No summary found'}">Summary
+								</p></td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Keywords</strong></td>
+							<td><span th:each="kw : ${article.keywords}"> <span
+									th:text="${kw}" class="label"></span>
+							</span></td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Provided
+									Skills</strong></td>
+							<td><span
+								th:if="${article.providedSkills != null and !article.providedSkills.isEmpty()}"
+								th:each="pS : ${article.providedSkills}"> <span
+									th:text="${pS.friendlyName()}" class="label"></span></span><span
+								th:if="${article.providedSkills == null or article.providedSkills.isEmpty()}">No
+									Provided Skills found.</span></td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Required
+									Skills</strong></td>
+							<td><span
+								th:if="${article.requiredSkills != null and !article.requiredSkills.isEmpty() and article.requiredSkills.size() > 0}"
+								th:each="rS : ${article.requiredSkills}"> <span
+									th:text="${rS.friendlyName()}" class="label"></span>
+							</span><span
+								th:if="${article.requiredSkills == null or article.requiredSkills.isEmpty()}">No
+									Required Skills found.</span></td>
+						</tr>
+					</tbody>
+				</table>
+
+
+				<table class="table" th:if="${diffMode}">
+					<tbody>
+						<tr>
+							<td style="text-align: right;"><strong>Title</strong></td>
+							<td th:if="${actualRecord == null}" th:text="${article.title}">Title
+								of the document</td>
+							<td id="diff-title"
+								th:if="${actualRecord != null and actualRecord.newTitle != null}">
+								<input id="oldTitle" type="hidden"
+								th:value="${actualRecord.oldTitle}" /> <input id="newTitle"
+								type="hidden" th:value="${actualRecord.newTitle}" />
+							</td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newTitle == null}"
+								th:text="${article.title}">Same Title</td>
+
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Author</strong></td>
+							<td th:if="${actualRecord == null}" th:text="${article.author}">Stanley
+								Cooper</td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newAuthor != null}"><span
+								th:text="${actualRecord.oldAuthor + ' -> ' + actualRecord.newAuthor}"></span></td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newAuthor == null}"
+								th:text="${article.author}">Same Author</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Date</strong></td>
+							<td th:if="${actualRecord == null}" th:text="${article.date}">20/12/2012</td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newDate != null}"><span
+								th:text="${actualRecord.oldDate + ' -> ' + actualRecord.newDate}"></span></td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newDate == null}"
+								th:text="${article.date}">Same Date</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>URL</strong></td>
+							<td th:if="${actualRecord == null}" th:text="${article.url}">www.site.cl</td>
+							<td id="diff-url"
+								th:if="${actualRecord != null and actualRecord.newUrl != null}"><input
+								id="oldUrl" type="hidden" th:value="${actualRecord.oldUrl}" />
+								<input id="newUrl" type="hidden"
+								th:value="${actualRecord.newUrl}" /></td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newUrl == null}"
+								th:text="${article.url}">Same Url</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Summary</strong></td>
+							<td th:if="${actualRecord == null}"><p align="justify"
+									th:text="${!article.summary.isEmpty() ? article.summary : 'No summary found'}">Summary
+								</p></td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newSummary != null}"><input
+								id="oldSummary" type="hidden"
+								th:value="${actualRecord.oldSummary}" /> <input id="newSummary"
+								type="hidden" th:value="${actualRecord.newSummary}" />
+								<div id="diff-summary" style="text-align: justify"
+									th:text="${!actualRecord.oldSummary.isEmpty() ? actualRecord.oldSummary : 'No summary found'}">Old
+									Summary</div></td>
+							<td
+								th:if="${actualRecord != null and actualRecord.newSummary == null}"><p
+									align="justify"
+									th:text="${!article.summary.isEmpty() ? article.summary : 'No summary found'}">Same
+									Summary</p></td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Keywords</strong></td>
+							<td th:if="${actualRecord == null}"><span
+								th:each="kw : ${article.keywords}"> <span th:text="${kw}"
+									class="label"></span></span></td>
+							<td th:if="${actualRecord != null}"><span
+								th:each="kw : ${article.keywords}"> <span th:text="${kw}"
+									class="label"></span></span> <span
+								th:each="akw : ${actualRecord.addedKeywords}"> <span
+									th:text="${akw}" class="label label-info">Programming
+										Language</span>
+							</span> <span th:each="rkw : ${actualRecord.removedKeywords}"> <span
+									th:text="${rkw}" class="label label-important">C#</span></span></td>
+
+							<td th:remove="all"><span class="label">C++</span> <span
+								class="label">Java</span> <span class="label label-important">C#</span><span
+								class="label label-info">Programming Language</span></td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Provided
+									Skills</strong></td>
+							<td th:if="${actualRecord == null}"><span
+								th:if="${article.providedSkills != null and !article.providedSkills.isEmpty()}"
+								th:each="pS : ${article.providedSkills}"> <span
+									th:text="${pS.friendlyName()}" class="label"></span></span> <span
+								th:if="${article.providedSkills == null or article.providedSkills.isEmpty()}">No
+									Provided Skills found.</span></td>
+							<td th:if="${actualRecord != null}"><span
+								th:if="${article.providedSkills != null and !article.providedSkills.isEmpty()}"
+								th:each="ps : ${article.providedSkills}"> <span
+									th:text="${ps.friendlyName()}" class="label"></span>
+							</span> <span
+								th:if="${actualRecord.addedProvidedSkills != null and !actualRecord.addedProvidedSkills.isEmpty()}"
+								th:each="aps : ${actualRecord.addedProvidedSkills}"> <span
+									th:text="${aps.friendlyName()}" class="label label-info">Programming
+										Language</span>
+							</span> <span
+								th:if="${actualRecord.removedProvidedSkills != null and !actualRecord.removedProvidedSkills.isEmpty()}"
+								th:each="rps : ${actualRecord.removedProvidedSkills}"> <span
+									th:text="${rps.friendlyName()}" class="label label-important">C#</span></span>
+								<span id="noProvidedSkills"
+								th:if="${(actualRecord.addedProvidedSkills == null or actualRecord.addedProvidedSkills.isEmpty()) and (actualRecord.removedProvidedSkills == null or actualRecord.removedProvidedSkills.isEmpty()) and (article.providedSkills == null or article.providedSkills.isEmpty())}">No
+									Provided Skills found.</span></td>
+						</tr>
+						<tr>
+							<td style="text-align: right;"><strong>Required
+									Skills</strong></td>
+							<td th:if="${actualRecord == null}"><span
+								th:if="${article.requiredSkills != null and !article.requiredSkills.isEmpty()}"
+								th:each="pS : ${article.requiredSkills}"> <span
+									th:text="${pS.friendlyName()}" class="label"></span></span> <span
+								th:if="${article.requiredSkills == null or article.requiredSkills.isEmpty()}">No
+									Required Skills found.</span></td>
+							<td th:if="${actualRecord != null}"><span
+								th:if="${article.requiredSkills != null and !article.requiredSkills.isEmpty()}"
+								th:each="rs : ${article.requiredSkills}"> <span
+									th:text="${rs.friendlyName()}" class="label"></span>
+							</span> <span
+								th:if="${actualRecord.addedRequiredSkills != null and !actualRecord.addedRequiredSkills.isEmpty()}"
+								th:each="ars : ${actualRecord.addedRequiredSkills}"> <span
+									th:text="${ars.friendlyName()}" class="label label-info">Programming
+										Language</span>
+							</span> <span
+								th:if="${actualRecord.removedRequiredSkills != null and !actualRecord.removedRequiredSkills.isEmpty()}"
+								th:each="rrs : ${actualRecord.removedRequiredSkills}"> <span
+									th:text="${rrs.friendlyName()}" class="label label-important">C#</span></span><span
+								id="noRequiredSkills"
+								th:if="${(actualRecord.addedRequiredSkills == null or actualRecord.addedRequiredSkills.isEmpty()) and (actualRecord.removedRequiredSkills == null or actualRecord.removedRequiredSkills.isEmpty()) and (article.requiredSkills == null or article.requiredSkills.isEmpty())}">No
+									Required Skills found.</span></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div th:if="${diffMode}" style="float: right;">
+					<strong><small>Legend: </small></strong> <span class="label">Not
+						Changed</span> <span class="label label-info">Added</span> <span
+						class="label label-important">Removed</span>
+				</div>
+			</div>
+			<div class="span3">
+				<div th:if="${accountNext != null}">
+					<div th:if="${accountNext == null}">
+						Next Change <span class="icon-step-forward"></span>
+					</div>
+					<a th:if="${accountNext != null}"
+						th:href="@{'/articles/record/'}+${article.id}+'/'+${nextRecord.versionDate.getTime()}+'/'+${diffMode}"
+						href="record.html" rel="tooltip" title="next change">Next
+						Change <span class="icon-step-forward"> </span>
+					</a>
+					<div>
+						User: <strong th:if="${accountNext != null}"
+							th:text="${accountNext.firstName + ' ' + accountNext.familyName}">Usuario
+							B</strong><strong th:if="${accountNext == null}"> - </strong>
+					</div>
+					<div>
+						Change Date: <strong th:if="${accountNext != null}"
+							th:text="${#dates.format(nextRecord.versionDate, 'dd/MMM/yyyy')}">
+							21/04/2012</strong><strong th:if="${accountNext == null}"> - </strong>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<hr />
+		<footer class="pull-right" th:substituteby="layout :: footer">
+			<small class="muted">Yarquen, a focused, semantic,
+				distributed crawler :)</small>
+		</footer>
+	</div>
+
+	<script type="text/javascript" th:inline="javascript">
+		var dmp = new diff_match_patch();
+		$(document).ready(function() {
+			console.log("Checking differences between old and new article");
+			dmp.Diff_Timeout = 1;
+			dmp.Diff_EditCost = 4;
+			var oldTitle = document.getElementById("oldTitle");
+			var newTitle = document.getElementById("newTitle");
+			if (oldTitle == null || newTitle == null) {
+				console.log("no difference in title");
+			} else {
+				var d = dmp.diff_main(oldTitle.value, newTitle.value);
+				dmp.diff_cleanupSemantic(d);
+				var ds = dmp.diff_prettyHtml(d);
+				document.getElementById('diff-title').innerHTML = ds;
+			}
+
+			var oldUrl = document.getElementById("oldUrl");
+			var newUrl = document.getElementById("newUrl");
+			if (oldUrl == null || newUrl == null) {
+				console.log("no difference in url");
+			} else {
+				var d = dmp.diff_main(oldUrl.value, newUrl.value);
+				dmp.diff_cleanupSemantic(d);
+				var ds = dmp.diff_prettyHtml(d);
+				document.getElementById('diff-url').innerHTML = ds;
+			}
+
+			var oldSummary = document.getElementById("oldSummary");
+			var newSummary = document.getElementById("newSummary");
+			if (oldSummary == null || newSummary == null) {
+				console.log("no difference in summary");
+			} else {
+				var d = dmp.diff_main(oldSummary.value, newSummary.value);
+				dmp.diff_cleanupSemantic(d);
+				var ds = dmp.diff_prettyHtml(d);
+				document.getElementById('diff-summary').innerHTML = ds;
+			}
+
+		});
+	</script>
+
+</body>
+</html>
