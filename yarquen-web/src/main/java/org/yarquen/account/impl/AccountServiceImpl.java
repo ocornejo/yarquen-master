@@ -64,8 +64,10 @@ public class AccountServiceImpl implements AccountService {
 				hashedPassword);
 	}
 
-	public Account register(Account account) {
-		LOGGER.info("registering account {}", account.getUsername());
+	public Account register(Account account){
+		Account temp;
+		LOGGER.info("registering account {} id {}", account.getUsername(),
+					account.getId());
 		final Set<String> violations = validate(account);
 		if (violations != null) {
 			throw new BeanValidationException(account, violations);
@@ -73,9 +75,10 @@ public class AccountServiceImpl implements AccountService {
 			final String hashedPassword = PasswordUtils
 					.getHashedPassword(account.getPassword());
 			account.setPassword(hashedPassword);
+			temp = accountRepository.save(account);
 			trustUser = new Trust();
-			trustUser.createUser(account.getUsername());
-			return accountRepository.save(account);
+			trustUser.createUser(temp.getId());
+			return temp;
 		}
 	}
 

@@ -53,21 +53,21 @@ public class Trust {
 
 	}
 	
-	public void createUser(String id) {
+	public void createUser(String accountID) {
 		// TODO Auto-generated method stub
-		LOGGER.info("registering account {} in Neo4j DB", id);
+		LOGGER.info("registering account {} in Neo4j DB", accountID);
 		
 		Map<String, Object> props = new HashMap<String, Object>();
-		props.put("id", id);
+		props.put("accountID", accountID);
 		Node node = api.createNode(props);
-		System.out.println(node.getProperty("id"));
+		System.out.println(node.getProperty("accountID"));
 
-		people.add(node,"id",node.getProperty("id"));
+		people.add(node,"accountID",node.getProperty("accountID"));
 	}
 	
-	public Node getNode(String id){
+	public Node getNode(String accountID){
 		
-		IndexHits<Node> hit1 = people.get("id",id);
+		IndexHits<Node> hit1 = people.get("accountID",accountID);
 		Node node = hit1.getSingle();
 		return node;
 	}
@@ -127,7 +127,7 @@ public class Trust {
 
 			if(checkAdjacency(currentNode, sink)){
 
-				cachedRating.put(currentNode.getProperty("id")+"_"+sink.getProperty("id"), (double) getAdjacencyTrust(currentNode,sink));
+				cachedRating.put(currentNode.getProperty("accountID")+"_"+sink.getProperty("accountID"), (double) getAdjacencyTrust(currentNode,sink));
 				//maxdepth = depth;
 				//se agrega a sink como adyacente al currentNode
 				children.put(currentNode, sink);
@@ -135,7 +135,7 @@ public class Trust {
 			else{
 
 				QueryEngine engine=new RestCypherQueryEngine(api);  
-				QueryResult<Map<String,Object>> result= engine.query("START n=node:people('id:"+currentNode.getProperty("id")+"') match n-[TRUSTS]->m RETURN m", Collections.EMPTY_MAP);
+				QueryResult<Map<String,Object>> result= engine.query("START n=node:people('accountID:"+currentNode.getProperty("accountID")+"') match n-[TRUSTS]->m RETURN m", Collections.EMPTY_MAP);
 				Iterator<Map<String, Object>> iterator=result.iterator(); 
 
 				while(iterator.hasNext()) {  
@@ -174,9 +174,9 @@ public class Trust {
 					while (iterator.hasNext()) { //foreach children de currentNode
 						Node childNode= iterator.next();
 
-						if(cachedRating.get(childNode.getProperty("id")+"_"+sink.getProperty("id"))!=null){
+						if(cachedRating.get(childNode.getProperty("accountID")+"_"+sink.getProperty("accountID"))!=null){
 
-							ratingTemp = cachedRating.get(childNode.getProperty("id")+"_"+sink.getProperty("id"));
+							ratingTemp = cachedRating.get(childNode.getProperty("accountID")+"_"+sink.getProperty("accountID"));
 
 						}
 						else
@@ -191,15 +191,15 @@ public class Trust {
 					}
 				}
 				if(denominator > 0){
-					cachedRating.put(currentNode.getProperty("id")+"_"+sink.getProperty("id"), numerator/denominator);
+					cachedRating.put(currentNode.getProperty("accountID")+"_"+sink.getProperty("accountID"), numerator/denominator);
 				}
 				else 
-					if(cachedRating.get(currentNode.getProperty("id")+"_"+sink.getProperty("id"))!=null
+					if(cachedRating.get(currentNode.getProperty("accountID")+"_"+sink.getProperty("accountID"))!=null
 					&& !checkAdjacency(currentNode,sink))
 					{
 
-						cachedRating.put(currentNode.getProperty("id")+"_"+sink.getProperty("id"), (double) -9999);
-						System.out.println(currentNode.getProperty("id")+"_"+sink.getProperty("id")+99);
+						cachedRating.put(currentNode.getProperty("accountID")+"_"+sink.getProperty("accountID"), (double) -9999);
+						System.out.println(currentNode.getProperty("accountID")+"_"+sink.getProperty("accountID")+99);
 
 					}
 			}
@@ -212,8 +212,8 @@ public class Trust {
 		//		      for(Map.Entry e : cachedRating.entrySet()) {
 		//			      System.out.println(e.getKey() + " -> " + e.getValue());
 		//			  }
-		return cachedRating.get(source.getProperty("id")+"_"+sink.getProperty("id")) != null ? 
-				cachedRating.get(source.getProperty("id")+"_"+sink.getProperty("id")) : 0;
+		return cachedRating.get(source.getProperty("accountID")+"_"+sink.getProperty("accountID")) != null ? 
+				cachedRating.get(source.getProperty("accountID")+"_"+sink.getProperty("accountID")) : 0;
 	}
 	
 	private Queue<Node> copyQueue(Queue<Node> tempQe) {
