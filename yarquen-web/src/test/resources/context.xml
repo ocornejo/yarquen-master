@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/data/mongo
-		http://www.springframework.org/schema/data/mongo/spring-mongo-1.1.xsd">
+		http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
 	<!-- FIXME: spring-mongo-1.1.xsd don't let me use spring-context-3.2.xsd, 
 		it causes eclipse validation errors -->
 

@@ -15,7 +15,7 @@
 		http://www.springframework.org/schema/task
 		http://www.springframework.org/schema/task/spring-task-3.2.xsd
 		http://www.springframework.org/schema/data/mongo
-		http://www.springframework.org/schema/data/mongo/spring-mongo-1.1.xsd">
+		http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
 	<util:properties id="config"
 		location="file:${catalina.base}/conf/yarquen.properties" />
 

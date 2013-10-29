@@ -271,9 +271,8 @@ public class ArticleSearcher {
 				searchResult.setScore(score);
 				
 
-				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",
-						searchResult.getTitle(), searchResult.getUrl(), searchResult.getScore());
-
+				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",searchResult.getTitle(),String.valueOf(searchResult.getScore()));
+				
 				results.add(searchResult);
 			}
 		}
