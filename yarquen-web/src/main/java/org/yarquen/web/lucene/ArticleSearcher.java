@@ -248,7 +248,6 @@ public class ArticleSearcher {
 		//get user information
 		Account userDetails = (Account) SecurityContextHolder.getContext()
 				.getAuthentication().getDetails();
-		LOGGER.debug("userdetails {}", userDetails.getId());
 		
 		String accountId = userDetails.getId();
 		//neo4j data
@@ -272,8 +271,8 @@ public class ArticleSearcher {
 				searchResult.setScore(score);
 				
 
-				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{}",
-						searchResult.getTitle(), searchResult.getUrl());
+				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",
+						searchResult.getTitle(), searchResult.getUrl(), searchResult.getScore());
 
 				results.add(searchResult);
 			}

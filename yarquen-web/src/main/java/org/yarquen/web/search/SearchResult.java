@@ -61,15 +61,11 @@ public class SearchResult {
 		double rate = 0;
 		
 		if(ratings.size()>0){
-			LOGGER.info("Here I am");
 			for(Rating rt: ratings){				
 				Node sink = trustAction.getNode(rt.getId());
-				if(trustAction.checkAdjacency(source, sink)){
-					rate = Double.parseDouble(rt.getRating()) * trustAction.getTrust(source, sink);
-				}
+				rate = Double.parseDouble(rt.getRating()) * trustAction.getTrust(source, sink);
 				this.ratingFinal+=rate;
 			}
-			LOGGER.info("Rating final {}", this.ratingFinal);
 			this.ratingFinal = (double)(ratingFinal/10);
 		}
 		else
