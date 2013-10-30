@@ -3,6 +3,7 @@ package org.yarquen.web.account;
 import java.beans.PropertyEditorSupport;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,10 +33,14 @@ import org.yarquen.account.PasswordChange;
 import org.yarquen.account.PasswordChangeRepository;
 import org.yarquen.account.Role;
 import org.yarquen.account.RoleService;
+import org.yarquen.article.Article;
+import org.yarquen.article.ArticleRepository;
 import org.yarquen.category.CategoryBranch;
 import org.yarquen.category.CategoryService;
 import org.yarquen.validation.BeanValidationException;
 import org.yarquen.web.enricher.CategoryTreeBuilder;
+import org.yarquen.web.enricher.EnrichmentRecord;
+import org.yarquen.web.enricher.EnrichmentRecordRepository;
 
 @Controller
 @RequestMapping("/account")
@@ -46,7 +52,11 @@ public class AccountController {
 	private static final int EXPIRATION_MINUTES = 15;
 
 	@Resource
+	private ArticleRepository articleRepository;
+	@Resource
 	private AccountService accountService;
+	@Resource
+	private EnrichmentRecordRepository enrichmentRecordRepository;
 	@Resource
 	private RoleService roleService;
 	@Resource
@@ -174,6 +184,29 @@ public class AccountController {
 		LOGGER.debug("userDetail: {}", userDetails);
 		Account account = accountService.findOne(userDetails.getId());
 		model.addAttribute("account", account);
+		
+		
+		//enrichment history
+		
+		final List<EnrichmentRecord> articleHistory = enrichmentRecordRepository
+				.findByAccountId(account.getId(), new Sort(new Sort.Order(
+						Sort.Direction.DESC, "versionDate")));
+		final Map<EnrichmentRecord, Article> historyWrapper = new LinkedHashMap<EnrichmentRecord, Article>();
+
+		for (EnrichmentRecord enrichmentRecord : articleHistory) {
+			final Article article = articleRepository
+					.findOne(enrichmentRecord.getArticleId());
+			historyWrapper.put(enrichmentRecord, article);
+		}
+		if (articleHistory != null && !articleHistory.isEmpty()) {
+			model.addAttribute("articleRecords", historyWrapper);
+		}
+
+		LOGGER.debug("Account ID: [{}] has {} enrichment records.",
+				account.getId(), articleHistory.size());
+//		model.addAttribute("articleId", articleId);
+		
+		
 		return "account/show";
 	}
 

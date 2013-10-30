@@ -20,11 +20,15 @@ public interface EnrichmentRecordRepository extends
 			String articleId);
 
 	List<EnrichmentRecord> findByArticleId(String articleId, Sort sort);
+	
+	List<EnrichmentRecord> findByAccountId(
+			String accountId, Sort sort);
 
 	List<EnrichmentRecord> findByArticleIdAndVersionDateBetween(
 			String articleId, Date versionDate1, Date versionDate2, Sort sort);
 
 	List<EnrichmentRecord> findByArticleIdAndVersionDateBefore(
 			String articleId, Date versionDate, Sort sort);
+
 
 }

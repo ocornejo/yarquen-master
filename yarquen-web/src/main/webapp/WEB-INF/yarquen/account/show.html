@@ -96,7 +96,39 @@
 									</div>
 								</div>
 							</div>
+							<fieldset>
+				<legend th:text="'User History Enrichments'"></legend>
+				<div class="span4">
+					<table class="table" th:if="${articleRecords != null}">
+						<thead>
+							<tr>
+								<th style="text-align: right;">Article</th>
+								<th>Change Date</th>
+							</tr>
+						</thead>
+						<tbody id="historyRecordsByUser">
+							<tr th:each="aR : ${articleRecords}">
+								<td style="text-align: right;"
+									th:text="${aR.value.title}">Pedro
+									Fernandez</td>
+								<td><a
+									th:href="@{'/articles/record/'}+${aR.key.articleId}+'/'+${aR.key.versionDate.getTime()+'/'+false}"
+									th:text="${#dates.format(aR.key.versionDate, 'dd/MMM/yyyy HH:mm')}"></a></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div th:if="${articleRecords == null}">
+
+						<p>
+							No article enrichments were found for this user. 
+						</p>
+
+					</div>
+				</div>
+			</fieldset>
 						</div>
+						
 						<div class="span5">
 							<div id="reports" class="well">
 								<h3 class="modal-header">
@@ -119,6 +151,7 @@
 								</div>
 								<ul class="nav nav-list"></ul>
 							</div>
+							
 						</div>
 					</div>
 				</div>
