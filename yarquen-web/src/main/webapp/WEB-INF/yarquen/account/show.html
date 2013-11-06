@@ -235,25 +235,15 @@
 										<fieldset>
 											<legend>Trust this user</legend>
 											
-											<div>
-												<div class="slider slider-horizontal" style="width: 140px;">
-													<div class="slider-track">
-													<div class="slider-selection" style="left: 0%; width: 40%;"/>
-													<div class="slider-handle round" style="left: 40%;"/>
-													<div class="slider-handle round hide" style="left: 0%;"/>
-												</div>
-												<div class="tooltip top" style="top: -40px; left: 9px;">
-													<div class="tooltip-arrow"/>
-													<div class="tooltip-inner">Current value: 4</div>
-												</div>
-												<input type="text" class="span2" value="4" id="sl1" style=""/>
-												</div>
+											<div class="slider slider-horizontal"> 
+												<input type="text" class="slider" value="" id="sl1" style=""/>
 											</div>
+											
 																	
 											<div class="control-group">
 												<label class="control-label">Trust</label>
 												<div class="controls">
-													<input type="text" class="input-large" id="trust" name="trust" 
+													<input type="text" class="input-large" id="trustControl" name="trustControl" 
 														rel="popover" data-content="How do you much trust this user?"
 														data-original-title="Verification Email" />
 												</div>
@@ -288,9 +278,15 @@
 $(document).ready(function() {
 
 	 $('#sl1').slider({
+		 min: 1,
+		 max: 10,
+		 value: [[${trustValue}]],
          formater: function(value) {
            return 'Current value: '+value;
          }
+       }
+       ).on('slideStop', function(ev){
+    	   console.log(ev.value);
        });
 
 

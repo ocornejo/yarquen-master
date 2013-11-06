@@ -254,6 +254,8 @@ public class AccountController {
 	@RequestMapping("/show/{accountId}")
 	public String showAccount(@PathVariable("accountId") String accountId,
 			Model model) {
+		Account userDetails = (Account) SecurityContextHolder.getContext()
+				.getAuthentication().getDetails();
 		Account account = accountService.findOne(accountId);
 		LOGGER.debug("userDetail: {}", accountId);
 		model.addAttribute("account", account);
@@ -318,6 +320,13 @@ public class AccountController {
 			model.addAttribute("trustersDirect", accountWrapperDirectTrusters);
 			model.addAttribute("trustersInferred", accountWrapperInferredTrusters);
 		}
+		
+		Node me = trustAction.getNode(userDetails.getId());
+		if(trustAction.checkAdjacency(me,user))
+			model.addAttribute("trustValue",trustAction.getAdjacencyTrust(me,user));
+		else
+			model.addAttribute("trustValue",5);
+		
 		model.addAttribute("user",accountId);
 		model.addAttribute("trust","enabled");
 		
@@ -327,7 +336,7 @@ public class AccountController {
 
 	
 	
-	@RequestMapping(value="/addTrust/{user}",method = RequestMethod.POST)
+	@RequestMapping(value="/addTrust/{user}",method = RequestMethod.GET)
 	public void addTrust(
 			@PathVariable("user") String user,
 			@RequestParam(value = "trust", required = true) String trust){
