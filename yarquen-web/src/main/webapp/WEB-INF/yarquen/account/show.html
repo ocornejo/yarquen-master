@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-	<head th:substituteby="layout :: header">
-		<meta charset="UTF-8" />
-			<title>Yarquen Crawler</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		
-		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
-		<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
-		<link href="../../../css/yarquen.css" rel="stylesheet" />
-		<link href="../../../bootstrap/css/bootstrap-responsive.css"
-			rel="stylesheet" />
-		
-		<script src="../../../js/jquery.js"></script>
-		<script src="../../../js/jquery.validate.js"></script>
-		<script src="../../../bootstrap/js/bootstrap.min.js"></script>
-		
-		<!-- Include Bootstrap Asserts JavaScript Files. -->
-		<script type="text/javascript" src="jquery.validate.js"></script>
-	</head>
+<head th:substituteby="layout :: header">
+<meta charset="UTF-8" />
+<title>Yarquen Crawler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="icon" type="image/png"
+	th:href="@{/static/images/favicon.png}"
+	href="../../../images/favicon.png" />
+<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
+<link href="../../../css/yarquen.css" rel="stylesheet" />
+<link href="../../../bootstrap/css/bootstrap-responsive.css"
+	rel="stylesheet" />
+<link href="../../../bootstrap/css/bootstrap.min.css"
+	rel="stylesheet" />
+<link href="../../../bootstrap/css/slider.css"
+	rel="stylesheet" />
+
+<script src="../../../js/jquery.js"></script>
+<script src="../../../js/jquery.validate.js"></script>
+
+
+<!-- Include Bootstrap Asserts JavaScript Files. -->
+<script type="text/javascript" src="jquery.validate.js"></script>
+</head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner" th:substituteby="layout :: navbar">
@@ -97,38 +103,107 @@
 								</div>
 							</div>
 							<fieldset>
-				<legend th:text="'User History Enrichments'"></legend>
-				<div class="span4">
-					<table class="table" th:if="${articleRecords != null}">
-						<thead>
-							<tr>
-								<th style="text-align: right;">Article</th>
-								<th>Change Date</th>
-							</tr>
-						</thead>
-						<tbody id="historyRecordsByUser">
-							<tr th:each="aR : ${articleRecords}">
-								<td style="text-align: right;"
-									th:text="${aR.value.title}">Pedro
-									Fernandez</td>
-								<td><a
-									th:href="@{'/articles/record/'}+${aR.key.articleId}+'/'+${aR.key.versionDate.getTime()+'/'+false}"
-									th:text="${#dates.format(aR.key.versionDate, 'dd/MMM/yyyy HH:mm')}"></a></td>
-							</tr>
-						</tbody>
-					</table>
+								<legend th:text="'User History Enrichments'"></legend>
+								<div class="span4">
+									<table class="table" th:if="${articleRecords != null}">
+										<thead>
+											<tr>
+												<th style="text-align: right;">Article</th>
+												<th>Change Date</th>
+											</tr>
+										</thead>
+										<tbody id="historyRecordsByUser">
+											<tr th:each="aR : ${articleRecords}">
+												<td style="text-align: right;" th:text="${aR.value.title}">Pedro
+													Fernandez</td>
+												<td><a
+													th:href="@{'/articles/record/'}+${aR.key.articleId}+'/'+${aR.key.versionDate.getTime()+'/'+false}"
+													th:text="${#dates.format(aR.key.versionDate, 'dd/MMM/yyyy HH:mm')}"></a></td>
+											</tr>
+										</tbody>
+									</table>
 
-					<div th:if="${articleRecords == null}">
+									<div th:if="${articleRecords == null}">
 
-						<p>
-							No article enrichments were found for this user. 
-						</p>
+										<p>No article enrichments were found for this user.</p>
 
-					</div>
-				</div>
-			</fieldset>
+									</div>
+								</div>
+							</fieldset>
+							
+							<fieldset>
+								<legend th:text="'Trustees'"></legend>
+								<div class="span4">
+									<table class="table" th:if="${trusteesInferred != null || trusteesDirect!= null}">
+										<thead>
+											<tr>
+												<th style="text-align: right;">User</th>
+												<th>Trust rate</th>
+											</tr>
+										</thead>
+										<tbody id="userTrustees">
+											<tr th:each="trInf : ${trusteesInferred}">
+												<td style="text-align: right;"><a 
+														th:text="${trInf.key.firstName+' '+trInf.key.familyName}"
+														th:href="@{'/account/show/'}+${trInf.key.id}">Pedro
+													Fernandez</a></td>
+												<td th:text="${trInf.value}"></td>
+											</tr>
+											<tr th:each="trDir : ${trusteesDirect}">
+												<td style="text-align: right;"><a 
+														th:text="${trDir.key.firstName+' '+trDir.key.familyName}"
+														th:href="@{'/account/show/'}+${trDir.key.id}">Pedro
+													Fernandez</a></td>
+												<td th:text="${trDir.value}"></td>
+											</tr>
+										</tbody>
+									</table>
+
+									<div th:if="${trusteesInferred == null and trusteesDirect == null}">
+
+										<p>This user doesn't trust anyone.</p>
+
+									</div>
+								</div>
+							</fieldset>
+							
+							<fieldset>
+								<legend th:text="'Trusters'"></legend>
+								<div class="span4">
+									<table class="table" th:if="${trustersInferred != null || trustersDirect!= null}">
+										<thead>
+											<tr>
+												<th style="text-align: right;">User</th>
+												<th>Trust rate</th>
+											</tr>
+										</thead>
+										<tbody id="userTrusters">
+											<tr th:each="trrInf : ${trustersInferred}">
+												<td style="text-align: right;"><a 
+														th:text="${trrInf.key.firstName+' '+trrInf.key.familyName}"
+														th:href="@{'/account/show/'}+${trrInf.key.id}">Pedro
+													Fernandez</a></td>
+												<td th:text="${trrInf.value}"></td>
+											</tr>
+											<tr th:each="trrDir : ${trustersDirect}">
+												<td style="text-align: right;"><a 
+														th:text="${trrDir.key.firstName+' '+trrDir.key.familyName}"
+														th:href="@{'/account/show/'}+${trrDir.key.id}">Pedro
+													Fernandez</a></td>
+												<td th:text="${trrDir.value}"></td>
+											</tr>
+										</tbody>
+									</table>
+
+									<div th:if="${trustersInferred == null and trustersDirect == null}">
+
+										<p>This user doesn't trust anyone.</p>
+
+									</div>
+								</div>
+							</fieldset>
 						</div>
-						
+
 						<div class="span5">
 							<div id="reports" class="well">
 								<h3 class="modal-header">
@@ -151,7 +226,51 @@
 								</div>
 								<ul class="nav nav-list"></ul>
 							</div>
+				
+							<div>
+								<div th:if="${trust != null}">
+
+									<form class="form-horizontal" id="addTrust" method='post'
+										action='success.html' th:action='@{/account/addTrust/}+${user}'>
+										<fieldset>
+											<legend>Trust this user</legend>
+											
+											<div>
+												<div class="slider slider-horizontal" style="width: 140px;">
+													<div class="slider-track">
+													<div class="slider-selection" style="left: 0%; width: 40%;"/>
+													<div class="slider-handle round" style="left: 40%;"/>
+													<div class="slider-handle round hide" style="left: 0%;"/>
+												</div>
+												<div class="tooltip top" style="top: -40px; left: 9px;">
+													<div class="tooltip-arrow"/>
+													<div class="tooltip-inner">Current value: 4</div>
+												</div>
+												<input type="text" class="span2" value="4" id="sl1" style=""/>
+												</div>
+											</div>
+																	
+											<div class="control-group">
+												<label class="control-label">Trust</label>
+												<div class="controls">
+													<input type="text" class="input-large" id="trust" name="trust" 
+														rel="popover" data-content="How do you much trust this user?"
+														data-original-title="Verification Email" />
+												</div>
+											</div>
 							
+											<div class="control-group">
+												<label class="control-label"></label>
+												<div class="controls">
+													<button type="submit" class="btn btn-success">Trust</button>
+												</div>
+											</div>
+										</fieldset>
+									</form>
+
+								</div>
+							</div>
+
 						</div>
 					</div>
 				</div>
@@ -165,4 +284,20 @@
 		</footer>
 	</div>
 </body>
+<script type="text/javascript" th:inline="javascript">
+$(document).ready(function() {
+
+	 $('#sl1').slider({
+         formater: function(value) {
+           return 'Current value: '+value;
+         }
+       });
+
+
+});
+
+</script>
 </html>
+
+
+

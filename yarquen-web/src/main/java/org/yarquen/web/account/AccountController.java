@@ -12,6 +12,7 @@ import java.util.TimeZone;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -37,6 +38,7 @@ import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
 import org.yarquen.category.CategoryBranch;
 import org.yarquen.category.CategoryService;
+import org.yarquen.trust.Trust;
 import org.yarquen.validation.BeanValidationException;
 import org.yarquen.web.enricher.CategoryTreeBuilder;
 import org.yarquen.web.enricher.EnrichmentRecord;
@@ -185,6 +187,76 @@ public class AccountController {
 		Account account = accountService.findOne(userDetails.getId());
 		model.addAttribute("account", account);
 		
+		//enrichment history
+		
+		final List<EnrichmentRecord> articleHistory = enrichmentRecordRepository
+				.findByAccountId(account.getId(), new Sort(new Sort.Order(
+						Sort.Direction.DESC, "versionDate")));
+		final Map<EnrichmentRecord, Article> historyWrapper = new LinkedHashMap<EnrichmentRecord, Article>();
+
+		for (EnrichmentRecord enrichmentRecord : articleHistory) {
+			final Article article = articleRepository
+					.findOne(enrichmentRecord.getArticleId());
+			historyWrapper.put(enrichmentRecord, article);
+		}
+		if (articleHistory != null && !articleHistory.isEmpty()) {
+			model.addAttribute("articleRecords", historyWrapper);
+		}
+
+		LOGGER.debug("Account ID: [{}] has {} enrichment records.",
+				account.getId(), articleHistory.size());
+		
+		Trust trustAction = new Trust();
+		Node user = trustAction.getNode(account.getId());
+		
+		List<String> idTrustees = trustAction.getTrustees(account.getId());
+		
+		Map<Account, Double> accountWrapperDirect = new LinkedHashMap<Account, Double>();
+		Map<Account, Double> accountWrapperInferred = new LinkedHashMap<Account, Double>();
+		for(String accounts : idTrustees){
+			Node sink = trustAction.getNode(accounts);
+			if(trustAction.checkAdjacency(user, sink)){
+				accountWrapperDirect.put(accountService.findOne(accounts),trustAction.getTrust(user, sink));
+			}
+			else
+				accountWrapperInferred.put(accountService.findOne(accounts),trustAction.getTrust(user, sink));
+
+		}
+		
+		if (idTrustees != null && !idTrustees.isEmpty()) {
+			model.addAttribute("trusteesDirect", accountWrapperDirect);
+			model.addAttribute("trusteesInferred", accountWrapperInferred);
+		}
+		
+		Map<Account, Double> accountWrapperDirectTrusters = new LinkedHashMap<Account, Double>();
+		Map<Account, Double> accountWrapperInferredTrusters = new LinkedHashMap<Account, Double>();
+
+		List<String> idTrusters = trustAction.getTrusters(account.getId());
+
+		for(String accounts : idTrusters){
+			Node sink = trustAction.getNode(accounts);
+			if(trustAction.checkAdjacency(sink,user)){
+				accountWrapperDirectTrusters.put(accountService.findOne(accounts),trustAction.getTrust(sink,user));
+			}
+			else
+				accountWrapperInferredTrusters.put(accountService.findOne(accounts),trustAction.getTrust(sink,user));
+
+		}
+		
+		if (idTrusters != null && !idTrusters.isEmpty()) {
+			model.addAttribute("trustersDirect", accountWrapperDirectTrusters);
+			model.addAttribute("trustersInferred", accountWrapperInferredTrusters);
+		}
+		
+		return "account/show";
+	}
+
+	@RequestMapping("/show/{accountId}")
+	public String showAccount(@PathVariable("accountId") String accountId,
+			Model model) {
+		Account account = accountService.findOne(accountId);
+		LOGGER.debug("userDetail: {}", accountId);
+		model.addAttribute("account", account);
 		
 		//enrichment history
 		
@@ -204,19 +276,80 @@ public class AccountController {
 
 		LOGGER.debug("Account ID: [{}] has {} enrichment records.",
 				account.getId(), articleHistory.size());
-//		model.addAttribute("articleId", articleId);
 		
+		Trust trustAction = new Trust();
+		Node user = trustAction.getNode(account.getId());
+		
+		List<String> idTrustees = trustAction.getTrustees(account.getId());
+		
+		Map<Account, Double> accountWrapperDirect = new LinkedHashMap<Account, Double>();
+		Map<Account, Double> accountWrapperInferred = new LinkedHashMap<Account, Double>();
+		for(String accounts : idTrustees){
+			Node sink = trustAction.getNode(accounts);
+			if(trustAction.checkAdjacency(user, sink)){
+				accountWrapperDirect.put(accountService.findOne(accounts),trustAction.getTrust(user, sink));
+			}
+			else
+				accountWrapperInferred.put(accountService.findOne(accounts),trustAction.getTrust(user, sink));
+
+		}
+		
+		if (idTrustees != null && !idTrustees.isEmpty()) {
+			model.addAttribute("trusteesDirect", accountWrapperDirect);
+			model.addAttribute("trusteesInferred", accountWrapperInferred);
+		}
+		
+		Map<Account, Double> accountWrapperDirectTrusters = new LinkedHashMap<Account, Double>();
+		Map<Account, Double> accountWrapperInferredTrusters = new LinkedHashMap<Account, Double>();
+
+		List<String> idTrusters = trustAction.getTrusters(account.getId());
+
+		for(String accounts : idTrusters){
+			Node sink = trustAction.getNode(accounts);
+			if(trustAction.checkAdjacency(sink,user)){
+				accountWrapperDirectTrusters.put(accountService.findOne(accounts),trustAction.getTrust(sink,user));
+			}
+			else
+				accountWrapperInferredTrusters.put(accountService.findOne(accounts),trustAction.getTrust(sink,user));
+
+		}
+		
+		if (idTrusters != null && !idTrusters.isEmpty()) {
+			model.addAttribute("trustersDirect", accountWrapperDirectTrusters);
+			model.addAttribute("trustersInferred", accountWrapperInferredTrusters);
+		}
+		model.addAttribute("user",accountId);
+		model.addAttribute("trust","enabled");
 		
 		return "account/show";
 	}
+	
 
-	@RequestMapping("/show/{accountId}")
-	public String showAccount(@PathVariable("accountId") String accountId,
-			Model model) {
-		Account account = accountService.findOne(accountId);
-		LOGGER.debug("userDetail: {}", accountId);
-		model.addAttribute("account", account);
-		return "account/show";
+	
+	
+	@RequestMapping(value="/addTrust/{user}",method = RequestMethod.POST)
+	public void addTrust(
+			@PathVariable("user") String user,
+			@RequestParam(value = "trust", required = true) String trust){
+		boolean op;
+		LOGGER.debug("Setting trust");
+		Account userDetails = (Account) SecurityContextHolder.getContext()
+				.getAuthentication().getDetails();
+		
+		Trust trustAction = new Trust();
+		Node source = trustAction.getNode(userDetails.getId());
+		Node sink = trustAction.getNode(user);
+
+		
+		op = trustAction.setTrust(Integer.parseInt(trust), source, sink);
+		
+		if(op){
+			LOGGER.info("The user {} was trusted by {} sucessfully",user,userDetails.getId());
+		}
+		else{
+			LOGGER.error("Error adding trust");
+		}
+				
 	}
 
 	@RequestMapping(value = "/edit/{accountId}", method = RequestMethod.GET)

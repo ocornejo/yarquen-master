@@ -1,12 +1,15 @@
 package org.yarquen.trust;
 
+import java.util.ArrayList;
 import java.util.Collections;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
+import javax.annotation.Resource;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicRelationshipType;
@@ -23,6 +26,9 @@ import org.neo4j.rest.graphdb.query.RestCypherQueryEngine;
 import org.neo4j.rest.graphdb.util.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yarquen.account.Account;
+import org.yarquen.account.AccountService;
+import org.yarquen.skill.Skill;
 import org.neo4j.graphdb.index.IndexHits;
 
 /**
@@ -60,7 +66,6 @@ public class Trust {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put("accountID", accountID);
 		Node node = api.createNode(props);
-		System.out.println(node.getProperty("accountID"));
 
 		people.add(node,"accountID",node.getProperty("accountID"));
 	}
@@ -79,9 +84,7 @@ public class Trust {
 		if(rel==null) return false;
 		
 		for(Relationship r :start.getRelationships(Direction.OUTGOING,rel)) {
-			LOGGER.info("search of node {}",start);
 			if(r.getOtherNode(start).equals(end)){
-				LOGGER.info("founding friends called {}",end);
 				return true;
 			}
 		}
@@ -106,6 +109,53 @@ public class Trust {
 		else
 			total = tidalTrust(source,sink);
 		return total;
+	}
+	
+	public boolean setTrust(int trust, Node n1, Node n2)
+	{
+		RelationshipType rel = DynamicRelationshipType.withName("TRUSTS");
+
+		for(Relationship r :n1.getRelationships(Direction.OUTGOING,rel)) {
+			if (r.getOtherNode(n1).equals(n2)){ 
+				r.setProperty("value", trust);
+				return true;
+			}
+		}
+		Relationship relationship = n1.createRelationshipTo(n2, rel);
+		relationship.setProperty("value", trust);
+		trustRel.add(relationship,"value",relationship.getProperty("value") );
+		return true;
+	}
+	
+	//confiadores
+	public List<String> getTrusters (String user) {
+		List<String> users = new ArrayList<String>();
+
+		QueryEngine engine=new RestCypherQueryEngine(api);  
+		QueryResult<Map<String,Object>> result= engine.query("START n=node(*) MATCH p=n-[r:TRUSTS*1..4]->m WHERE m.accountID! = '"+user+"' and n.accountID! <> '"+user+"' RETURN DISTINCT n.accountID as accountID;", Collections.EMPTY_MAP);
+		Iterator<Map<String, Object>> iterator=result.iterator(); 	
+
+		while(iterator.hasNext()) {  
+			Map<String,Object> row= iterator.next();  
+			users.add(row.get("accountID").toString());
+		}
+		return users;
+	}
+	
+	//confio en
+	public List<String> getTrustees (String user) {
+		
+		List<String> users = new ArrayList<String>();
+
+		QueryEngine engine=new RestCypherQueryEngine(api);
+		QueryResult<Map<String,Object>> result= engine.query("START n=node(*) MATCH p=n-[r:TRUSTS*1..4]->m WHERE n.accountID! = '"+user+"' and m.accountID! <> '"+user+"' RETURN DISTINCT m.accountID as accountID;", Collections.EMPTY_MAP);
+		
+		Iterator<Map<String, Object>> iterator=result.iterator(); 	
+		while(iterator.hasNext()) {  
+			Map<String,Object> row= iterator.next();	
+			users.add(row.get("accountID").toString());
+		}
+		return users;
 	}
 	
 	public double tidalTrust(Node source, Node sink){
@@ -211,13 +261,7 @@ public class Trust {
 			}
 			depth-= 1;
 		}
-
-		//		      for(Map.Entry e : children.entrySet()) {
-		//			      System.out.println(e.getKey() + " -> " + e.getValue());
-		//			  }
-		//		      for(Map.Entry e : cachedRating.entrySet()) {
-		//			      System.out.println(e.getKey() + " -> " + e.getValue());
-		//			  }
+		
 		return cachedRating.get(source.getProperty("accountID")+"_"+sink.getProperty("accountID")) != null ? 
 				cachedRating.get(source.getProperty("accountID")+"_"+sink.getProperty("accountID")) : 0;
 	}
