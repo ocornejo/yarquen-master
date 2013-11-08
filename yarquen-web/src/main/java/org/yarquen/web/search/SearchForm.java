@@ -98,11 +98,6 @@ public class SearchForm {
 		}
 	}
 
-//	@RequestMapping(value="/addTrust",method = RequestMethod.GET)
-//	public void addTrust(
-//			@RequestParam("user") String user,
-//			@RequestParam("trust") String trust, HttpServletResponse rsp) 
-//					throws IOException {
 	
 	@RequestMapping(value="/articles/rate",method = RequestMethod.GET)
 	public void addNewRating(

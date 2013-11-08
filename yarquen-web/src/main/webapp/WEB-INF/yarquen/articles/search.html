@@ -182,13 +182,8 @@
 									
 						  <br/>					   
 							<div class="rating">	
-								<input class="rating" th:id="${result.id}" data-max="5" data-min="1" type="number" />
-							</div>
-							
-<!-- 							<form id="rating-form" class="form-horizontal" method="GET" th:object="${result}" -->
-<!-- 							action="search.html" th:action="@{'/articles/rate/' + ${result.id}}"> -->
-							
-							      
+								<input class="rating" th:id="${result.id}" th:value="3.0" data-max="5" data-min="1" type="number" />
+							</div> 
 							
 							<br /> <small><a href="#"
 								class="resultDetailsLink muted">+ more details</a></small>

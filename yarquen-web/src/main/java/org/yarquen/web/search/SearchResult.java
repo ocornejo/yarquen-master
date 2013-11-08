@@ -61,7 +61,11 @@ public class SearchResult {
 		double rate = 0;
 		
 		if(ratings.size()>0){
-			for(Rating rt: ratings){				
+			for(Rating rt: ratings){
+				if(source.getProperty("accountID").toString().compareTo(rt.getId())==0){
+					this.ratingFinal = Double.parseDouble(rt.getRating());
+					return;
+				}
 				Node sink = trustAction.getNode(rt.getId());
 				rate = Double.parseDouble(rt.getRating()) * trustAction.getTrust(source, sink);
 				this.ratingFinal+=rate;
