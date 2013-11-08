@@ -13,10 +13,8 @@
 <link href="../../../css/yarquen.css" rel="stylesheet" />
 <link href="../../../bootstrap/css/bootstrap-responsive.css"
 	rel="stylesheet" />
-<link href="../../../bootstrap/css/bootstrap.min.css"
-	rel="stylesheet" />
-<link href="../../../bootstrap/css/slider.css"
-	rel="stylesheet" />
+<link href="../../../bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="../../../bootstrap/css/slider.css" rel="stylesheet" />
 
 <script src="../../../js/jquery.js"></script>
 <script src="../../../js/jquery.validate.js"></script>
@@ -25,6 +23,7 @@
 <!-- Include Bootstrap Asserts JavaScript Files. -->
 <script type="text/javascript" src="jquery.validate.js"></script>
 </head>
+
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner" th:substituteby="layout :: navbar">
@@ -130,11 +129,12 @@
 									</div>
 								</div>
 							</fieldset>
-							
+
 							<fieldset>
 								<legend th:text="'Trustees'"></legend>
 								<div class="span4">
-									<table class="table" th:if="${trusteesInferred != null || trusteesDirect!= null}">
+									<table class="table"
+										th:if="${trusteesInferred != null || trusteesDirect!= null}">
 										<thead>
 											<tr>
 												<th style="text-align: right;">User</th>
@@ -143,34 +143,36 @@
 										</thead>
 										<tbody id="userTrustees">
 											<tr th:each="trInf : ${trusteesInferred}">
-												<td style="text-align: right;"><a 
-														th:text="${trInf.key.firstName+' '+trInf.key.familyName}"
-														th:href="@{'/account/show/'}+${trInf.key.id}">Pedro
-													Fernandez</a></td>
+												<td style="text-align: right;"><a
+													th:text="${trInf.key.firstName+' '+trInf.key.familyName}"
+													th:href="@{'/account/show/'}+${trInf.key.id}">Pedro
+														Fernandez</a></td>
 												<td th:text="${trInf.value}"></td>
 											</tr>
 											<tr th:each="trDir : ${trusteesDirect}">
-												<td style="text-align: right;"><a 
-														th:text="${trDir.key.firstName+' '+trDir.key.familyName}"
-														th:href="@{'/account/show/'}+${trDir.key.id}">Pedro
-													Fernandez</a></td>
+												<td style="text-align: right;"><a
+													th:text="${trDir.key.firstName+' '+trDir.key.familyName}"
+													th:href="@{'/account/show/'}+${trDir.key.id}">Pedro
+														Fernandez</a></td>
 												<td th:text="${trDir.value}"></td>
 											</tr>
 										</tbody>
 									</table>
 
-									<div th:if="${trusteesInferred == null and trusteesDirect == null}">
+									<div
+										th:if="${trusteesInferred == null and trusteesDirect == null}">
 
 										<p>This user doesn't trust anyone.</p>
 
 									</div>
 								</div>
 							</fieldset>
-							
+
 							<fieldset>
 								<legend th:text="'Trusters'"></legend>
 								<div class="span4">
-									<table class="table" th:if="${trustersInferred != null || trustersDirect!= null}">
+									<table class="table"
+										th:if="${trustersInferred != null || trustersDirect!= null}">
 										<thead>
 											<tr>
 												<th style="text-align: right;">User</th>
@@ -179,23 +181,24 @@
 										</thead>
 										<tbody id="userTrusters">
 											<tr th:each="trrInf : ${trustersInferred}">
-												<td style="text-align: right;"><a 
-														th:text="${trrInf.key.firstName+' '+trrInf.key.familyName}"
-														th:href="@{'/account/show/'}+${trrInf.key.id}">Pedro
-													Fernandez</a></td>
+												<td style="text-align: right;"><a
+													th:text="${trrInf.key.firstName+' '+trrInf.key.familyName}"
+													th:href="@{'/account/show/'}+${trrInf.key.id}">Pedro
+														Fernandez</a></td>
 												<td th:text="${trrInf.value}"></td>
 											</tr>
 											<tr th:each="trrDir : ${trustersDirect}">
-												<td style="text-align: right;"><a 
-														th:text="${trrDir.key.firstName+' '+trrDir.key.familyName}"
-														th:href="@{'/account/show/'}+${trrDir.key.id}">Pedro
-													Fernandez</a></td>
+												<td style="text-align: right;"><a
+													th:text="${trrDir.key.firstName+' '+trrDir.key.familyName}"
+													th:href="@{'/account/show/'}+${trrDir.key.id}">Pedro
+														Fernandez</a></td>
 												<td th:text="${trrDir.value}"></td>
 											</tr>
 										</tbody>
 									</table>
 
-									<div th:if="${trustersInferred == null and trustersDirect == null}">
+									<div
+										th:if="${trustersInferred == null and trustersDirect == null}">
 
 										<p>This user doesn't trust anyone.</p>
 
@@ -226,37 +229,20 @@
 								</div>
 								<ul class="nav nav-list"></ul>
 							</div>
-				
+
 							<div>
 								<div th:if="${trust != null}">
 
-									<form class="form-horizontal" id="addTrust" method='post'
-										action='success.html' th:action='@{/account/addTrust/}+${user}'>
-										<fieldset>
-											<legend>Trust this user</legend>
-											
-											<div class="slider slider-horizontal"> 
-												<input type="text" class="slider" value="" id="sl1" style=""/>
-											</div>
-											
-																	
-											<div class="control-group">
-												<label class="control-label">Trust</label>
-												<div class="controls">
-													<input type="text" class="input-large" id="trustControl" name="trustControl" 
-														rel="popover" data-content="How do you much trust this user?"
-														data-original-title="Verification Email" />
-												</div>
-											</div>
-							
-											<div class="control-group">
-												<label class="control-label"></label>
-												<div class="controls">
-													<button type="submit" class="btn btn-success">Trust</button>
-												</div>
-											</div>
-										</fieldset>
-									</form>
+									<fieldset>
+										<legend>Trust this user</legend>
+
+										<div class="slider slider-horizontal">
+											<input type="text" class="slider" value="" id="sl1" style="" />
+										</div>
+
+
+									</fieldset>
+
 
 								</div>
 							</div>
@@ -276,7 +262,7 @@
 </body>
 <script type="text/javascript" th:inline="javascript">
 $(document).ready(function() {
-
+	 
 	 $('#sl1').slider({
 		 min: 1,
 		 max: 10,
@@ -285,12 +271,27 @@ $(document).ready(function() {
            return 'Current value: '+value;
          }
        }
-       ).on('slideStop', function(ev){
-    	   console.log(ev.value);
+       ).on('slideStop', function(ev){    	   
+    	   var user=[[${user}]];
+    	   var trust=ev.value;
+    	   
+	   		$.ajax({
+		        type: "GET",
+		        url: /*[[@{'/account/addTrust'}]]*/ "http://localhost:8080/yarquen/account/addTrust",
+		        data: {user: user, trust: trust},
+		        complete: function(e, xhr, settings){
+		            if(e.status === 200){
+		            	console.log("trust rating added successfully"+e.responseText);
+		            }else{
+		            	alert(e.responseText);	
+		            }
+		        }
+		        });
        });
 
 
 });
+
 
 </script>
 </html>

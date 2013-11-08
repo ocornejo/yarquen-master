@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-	<head th:substituteby="layout :: header">
-		<meta charset="UTF-8" />
-			<title>Yarquen Crawler</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/png" th:href="@{/static/images/favicon.png}" href="../../../images/favicon.png"/>
-		<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
-		<link href="../../../css/yarquen.css" rel="stylesheet" />
-		<link href="../../../bootstrap/css/bootstrap-responsive.css"
-			rel="stylesheet" />
-		
-		<script src="../../../js/jquery.js"></script>
-		<script src="../../../bootstrap/js/bootstrap.min.js"></script>
-		<script src="../../../js/diff-match-patch.js"></script>
-	</head>
+<head th:substituteby="layout :: header">
+<meta charset="UTF-8" />
+<title>Yarquen Crawler</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png"
+	th:href="@{/static/images/favicon.png}"
+	href="../../../images/favicon.png" />
+<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet" />
+<link href="../../../css/yarquen.css" rel="stylesheet" />
+<link href="../../../bootstrap/css/bootstrap-responsive.css"
+	rel="stylesheet" />
+
+<script src="../../../js/jquery.js"></script>
+<script src="../../../bootstrap/js/bootstrap.min.js"></script>
+<script src="../../../js/diff-match-patch.js"></script>
+</head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner" th:substituteby="layout :: navbar">
@@ -295,6 +297,24 @@
 				</div>
 			</div>
 			<div class="span3">
+
+				<div>
+					<div>
+
+						<fieldset>
+							<legend>Trust this user</legend>
+
+							<div class="slider slider-horizontal">
+								<input type="text" class="slider" value="" id="sl1" style="" />
+							</div>
+
+
+						</fieldset>
+
+
+					</div>
+				</div>
+
 				<div th:if="${accountNext != null}">
 					<div th:if="${accountNext == null}">
 						Next Change <span class="icon-step-forward"></span>
@@ -329,6 +349,36 @@
 	<script type="text/javascript" th:inline="javascript">
 		var dmp = new diff_match_patch();
 		$(document).ready(function() {
+			
+			$('#sl1').slider({
+				 min: 1,
+				 max: 10,
+				 value: [[${trustValue}]],
+		         formater: function(value) {
+		           return 'Current value: '+value;
+		         }
+		       }
+		       ).on('slideStop', function(ev){    	   
+		    	   var user=[[${user}]];
+		    	   var trust=ev.value;
+		    	   
+			   		$.ajax({
+				        type: "GET",
+				        url: /*[[@{'/account/addTrust'}]]*/ "http://localhost:8080/yarquen/account/addTrust",
+				        data: {user: user, trust: trust},
+				        complete: function(e, xhr, settings){
+				            if(e.status === 200){
+				            	console.log("trust rating added successfully"+e.responseText);
+				            }else{
+				            	alert(e.responseText);	
+				            }
+				        }
+				        });
+		       });
+			
+			
+			
+			
 			console.log("Checking differences between old and new article");
 			dmp.Diff_Timeout = 1;
 			dmp.Diff_EditCost = 4;

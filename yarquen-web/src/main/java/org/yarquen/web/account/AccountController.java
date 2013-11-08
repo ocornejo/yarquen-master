@@ -1,6 +1,7 @@
 package org.yarquen.web.account;
 
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -10,6 +11,7 @@ import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.neo4j.graphdb.Node;
@@ -325,7 +327,7 @@ public class AccountController {
 		if(trustAction.checkAdjacency(me,user))
 			model.addAttribute("trustValue",trustAction.getAdjacencyTrust(me,user));
 		else
-			model.addAttribute("trustValue",5);
+			model.addAttribute("trustValue","5");
 		
 		model.addAttribute("user",accountId);
 		model.addAttribute("trust","enabled");
@@ -334,12 +336,11 @@ public class AccountController {
 	}
 	
 
-	
-	
-	@RequestMapping(value="/addTrust/{user}",method = RequestMethod.GET)
+	@RequestMapping(value="/addTrust",method = RequestMethod.GET)
 	public void addTrust(
-			@PathVariable("user") String user,
-			@RequestParam(value = "trust", required = true) String trust){
+			@RequestParam("user") String user,
+			@RequestParam("trust") String trust, HttpServletResponse rsp) 
+					throws IOException {
 		boolean op;
 		LOGGER.debug("Setting trust");
 		Account userDetails = (Account) SecurityContextHolder.getContext()
@@ -349,14 +350,17 @@ public class AccountController {
 		Node source = trustAction.getNode(userDetails.getId());
 		Node sink = trustAction.getNode(user);
 
-		
 		op = trustAction.setTrust(Integer.parseInt(trust), source, sink);
 		
 		if(op){
 			LOGGER.info("The user {} was trusted by {} sucessfully",user,userDetails.getId());
+			rsp.setStatus(HttpServletResponse.SC_OK);
+			rsp.getWriter().print("TRANSACTION_OK");
 		}
 		else{
 			LOGGER.error("Error adding trust");
+			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			rsp.getWriter().print("TRANSACTION_ERROR");
 		}
 				
 	}

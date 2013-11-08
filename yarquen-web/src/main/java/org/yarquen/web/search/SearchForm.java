@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.slf4j.Logger;
@@ -96,10 +97,18 @@ public class SearchForm {
 			}
 		}
 	}
+
+//	@RequestMapping(value="/addTrust",method = RequestMethod.GET)
+//	public void addTrust(
+//			@RequestParam("user") String user,
+//			@RequestParam("trust") String trust, HttpServletResponse rsp) 
+//					throws IOException {
 	
-	@RequestMapping(value="/articles/rate/{id}",method = RequestMethod.GET)
-	public String addNewRating(@PathVariable String id, 
-			@RequestParam("rating") String rating, Model model, SearchFields sf){
+	@RequestMapping(value="/articles/rate",method = RequestMethod.GET)
+	public void addNewRating(
+			@RequestParam("id") String id, 
+			@RequestParam("rating") String rating,
+			HttpServletResponse rsp) throws IOException{
 		
 		LOGGER.trace("setup new rating for article id={}", id);
 		
@@ -124,15 +133,16 @@ public class SearchForm {
 				rate.setRating(rating);
 				String code = articleService.addRating(id,rate);
 				LOGGER.info("Rating added with state = {}",code);
+				rsp.setStatus(HttpServletResponse.SC_OK);
+				rsp.getWriter().print(code);
 
 			} catch (Exception e) {
 				LOGGER.error("can't add rating", e);
+				rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				rsp.getWriter().print("Error");
 
 			}
 		}
-
-		model.addAttribute("searchFields",sf);
-		return "articles/search";
 	}
 
 	@RequestMapping(value = "/articles/search", method = RequestMethod.GET)

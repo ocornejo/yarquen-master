@@ -179,22 +179,14 @@
 							<br/>
 							<small>Rating: </small>
 							<small th:text= "${result.ratingFinal}"></small>
-<!-- 								<table> -->
-<!-- 								<tr th:each="rt : ${result.ratings}"> -->
-<!-- 									<td th:text="${rt.rating}">0.0</td> -->
-<!-- 								</tr> -->
-<!-- 								</table> -->
 									
 						  <br/>					   
-								
+							<div class="rating">	
+								<input class="rating" th:id="${result.id}" data-max="5" data-min="1" type="number" />
+							</div>
 							
-							<form id="rating-form" class="form-horizontal" method="GET" th:object="${result}"
-							action="search.html" th:action="@{'/articles/rate/' + ${result.id}}">
-							
-								<br/><small>Rate the article utility: </small> 
-								<input id="rating" name="rating" type="text" class="input-large" th:value="*{ratings}"></input>
-								<button type="submit" name="submit" value="submit" class="btn btn-primary">Submit</button>
-							</form>
+<!-- 							<form id="rating-form" class="form-horizontal" method="GET" th:object="${result}" -->
+<!-- 							action="search.html" th:action="@{'/articles/rate/' + ${result.id}}"> -->
 							
 							      
 							
@@ -235,6 +227,28 @@
 						</div></li>
 					<script type="text/javascript">
 						/*<![CDATA[*/
+						            
+						$('#results').on('change','input[type=hidden]', function(ev){    	   
+							
+							var rateValue = $(this).val();
+							if(rateValue!=""){
+								var articleId = $(this).attr('id');
+								
+								$.ajax({
+							        type: "GET",
+							        url: /*[[@{'/articles/rate'}]]*/ "http://localhost:8080/yarquen/articles/rate",
+							        data: {id: articleId, rating: rateValue},
+							        complete: function(e, xhr, settings){
+							            if(e.status === 200){
+							            	console.log("rating added successfully"+e.responseText);
+							            }else{
+							            	alert(e.responseText);	
+							            }
+							        }
+							        });
+							}
+						});	
+						           
 						$('#results').on(
 								'click',
 								'.resultDetailsLink',
@@ -272,12 +286,16 @@
 			<small class="muted">Yarquen, a focused, semantic,
 				distributed crawler :)</small>
 		</footer>
+		
 	</div>
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(document)
 				.ready(
 						function() {
+							
+											
+							
 							if (document.location.search.length) {
 								$("#searchResultsText").show();
 								$("#facetsSection").show();
