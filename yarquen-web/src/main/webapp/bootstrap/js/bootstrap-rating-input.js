@@ -27,7 +27,7 @@
         originalInput = $(this[element]),
         max = originalInput.data('max') || 5,
         min = originalInput.data('min') || 0,
-        clearable = originalInput.data('clearable') || null,
+        clearable = originalInput.data('clearable') || null,
         stars = '';
 
       // HTML element construction

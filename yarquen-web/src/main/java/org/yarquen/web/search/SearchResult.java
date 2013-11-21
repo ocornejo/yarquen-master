@@ -59,23 +59,25 @@ public class SearchResult {
 	public void setRatingFinal(List<Rating> ratings, String id, Trust trustAction, Node source) {
 		
 		double rate = 0;
-		
+		double trust = 0;
 		if(ratings.size()>0){
 			for(Rating rt: ratings){
-				if(source.getProperty("accountID").toString().compareTo(rt.getId())==0){
-					this.ratingFinal = Double.parseDouble(rt.getRating());
-					return;
-				}
 				Node sink = trustAction.getNode(rt.getId());
-				rate = Double.parseDouble(rt.getRating()) * trustAction.getTrust(source, sink);
+				double trustTemp = trustAction.getTrust(source, sink);
+				rate = Double.parseDouble(rt.getRating()) * trustTemp;
 				this.ratingFinal+=rate;
+				trust += trustTemp;
 			}
-			this.ratingFinal = (double)(ratingFinal/10);
+			double value = (ratingFinal/trust);
+			this.ratingFinal = trust > 0 ? (double)Math.round( value* 10)/10  : 0;
 		}
 		else
 			this.ratingFinal= 0;
 	}
-
+	
+	public int getRatingFinalInt(){
+		return (int) this.ratingFinal;
+	}
 
 	public String getAuthor() {
 		return author;

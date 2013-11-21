@@ -180,10 +180,11 @@
 							<small>Rating: </small>
 							<small th:text= "${result.ratingFinal}"></small>
 									
-						  <br/>					   
-							<div class="rating">	
-								<input class="rating" th:id="${result.id}" th:value="3.0" data-max="5" data-min="1" type="number" />
-							</div> 
+						  <br/>
+						  <div class="basic" data-average="12" data-id="1"></div>		   
+<!-- 							<div class="rating">	 -->
+<!-- 								<input class="rating" th:id="${result.id}" th:value="${result.ratingFinalInt}" data-max="5" data-min="0" type="number" /> -->
+<!-- 							</div>  -->
 							
 							<br /> <small><a href="#"
 								class="resultDetailsLink muted">+ more details</a></small>
@@ -222,7 +223,9 @@
 						</div></li>
 					<script type="text/javascript">
 						/*<![CDATA[*/
-						            
+						           
+						//$(".basic").jRating(); 
+						
 						$('#results').on('change','input[type=hidden]', function(ev){    	   
 							
 							var rateValue = $(this).val();
@@ -287,9 +290,7 @@
 		/*<![CDATA[*/
 		$(document)
 				.ready(
-						function() {
-							
-											
+						function() {			
 							
 							if (document.location.search.length) {
 								$("#searchResultsText").show();
