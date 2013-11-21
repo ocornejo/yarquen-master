@@ -31,7 +31,7 @@
 p.jRatingInfos {
 	position:		absolute;
 	z-index:9999;
-	background:	transparent url('../icons/bg_jRatingInfos.png') no-repeat;
+	background:	transparent url('icons/bg_jRatingInfos.png') no-repeat;
 	color:			#FFF;
 	display:		none;
 	width:			91px;

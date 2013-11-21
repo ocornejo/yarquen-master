@@ -160,41 +160,41 @@
 
 					if(opts.onClick) opts.onClick( element, rate );
 
-					if(opts.sendRequest) {
-						$.post(opts.phpPath,{
-								idBox : idBox,
-								rate : rate,
-								action : 'rating'
-							},
-							function(data) {
-								if(!data.error)
-								{
-									/** ONLY FOR THE DEMO, YOU CAN REMOVE THIS CODE **/
-										$('.serverResponse p').html(data.server);
-									/** END ONLY FOR THE DEMO **/
-
-
-									/** Here you can display an alert box,
-										or use the jNotify Plugin :) http://www.myqjqueryplugins.com/jNotify
-										exemple :	*/
-									if(opts.onSuccess) opts.onSuccess( element, rate );
-								}
-								else
-								{
-
-									/** ONLY FOR THE DEMO, YOU CAN REMOVE THIS CODE **/
-										$('.serverResponse p').html(data.server);
-									/** END ONLY FOR THE DEMO **/
-
-									/** Here you can display an alert box,
-										or use the jNotify Plugin :) http://www.myqjqueryplugins.com/jNotify
-										exemple :	*/
-									if(opts.onError) opts.onError( element, rate );
-								}
-							},
-							'json'
-						);
-					}
+//					if(opts.sendRequest) {
+//						$.post(opts.phpPath,{
+//								idBox : idBox,
+//								rate : rate,
+//								action : 'rating'
+//							},
+//							function(data) {
+//								if(!data.error)
+//								{
+//									/** ONLY FOR THE DEMO, YOU CAN REMOVE THIS CODE **/
+//										$('.serverResponse p').html(data.server);
+//									/** END ONLY FOR THE DEMO **/
+//
+//
+//									/** Here you can display an alert box,
+//										or use the jNotify Plugin :) http://www.myqjqueryplugins.com/jNotify
+//										exemple :	*/
+//									if(opts.onSuccess) opts.onSuccess( element, rate );
+//								}
+//								else
+//								{
+//
+//									/** ONLY FOR THE DEMO, YOU CAN REMOVE THIS CODE **/
+//										$('.serverResponse p').html(data.server);
+//									/** END ONLY FOR THE DEMO **/
+//
+//									/** Here you can display an alert box,
+//										or use the jNotify Plugin :) http://www.myqjqueryplugins.com/jNotify
+//										exemple :	*/
+//									if(opts.onError) opts.onError( element, rate );
+//								}
+//							},
+//							'json'
+//						);
+//					}
 
 				}
 			});

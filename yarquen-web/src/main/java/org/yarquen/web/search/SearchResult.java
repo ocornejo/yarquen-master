@@ -60,6 +60,7 @@ public class SearchResult {
 		
 		double rate = 0;
 		double trust = 0;
+		this.ratingFinal = 0;
 		if(ratings.size()>0){
 			for(Rating rt: ratings){
 				Node sink = trustAction.getNode(rt.getId());
@@ -68,11 +69,11 @@ public class SearchResult {
 				this.ratingFinal+=rate;
 				trust += trustTemp;
 			}
-			double value = (ratingFinal/trust);
-			this.ratingFinal = trust > 0 ? (double)Math.round( value* 10)/10  : 0;
+			if(trust>0){			
+				double value = (ratingFinal/trust);
+				this.ratingFinal = (double)Math.round( value* 10)/10;
+			}
 		}
-		else
-			this.ratingFinal= 0;
 	}
 	
 	public int getRatingFinalInt(){

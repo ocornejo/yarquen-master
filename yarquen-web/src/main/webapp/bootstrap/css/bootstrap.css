@@ -573,6 +573,28 @@ a:hover {
   *zoom: 1;
 }
 
+.container-fluid > .sidebar {
+    position: relative;
+    top: 0;
+    left:auto;
+    
+}
+
+.left {
+    float:left;
+    width: 180px; /* width of sidebar */
+}
+
+.right {
+    float:right;
+    width: 260px;
+}
+
+.container-fluid > .content {
+    margin: 0 180px; /* width of sidebars + 10px of margin */
+    width: 700px;
+}
+
 .container-fluid:before,
 .container-fluid:after {
   display: table;
