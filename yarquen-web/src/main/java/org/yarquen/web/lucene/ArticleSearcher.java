@@ -3,11 +3,13 @@ package org.yarquen.web.lucene;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -47,10 +49,14 @@ import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.yarquen.account.Account;
 import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
+import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
 import org.yarquen.category.CategoryBranch;
 import org.yarquen.category.CategoryService;
@@ -149,6 +155,139 @@ public class ArticleSearcher {
 		indexWriter.commit();
 	}
 
+	public List<SearchResult> searchWT(SearchFields searchFields, YarquenFacets facetsCount, boolean loggedIn) throws IOException, ParseException {
+		final String queryString = searchFields.getQuery();
+		LOGGER.debug("searching: {}", queryString);
+
+		boolean recreateIndexSearcher = false;
+		// check for index changes
+		final DirectoryReader newIndexReader = DirectoryReader.openIfChanged(
+				indexReader, indexWriter, true);
+		if (newIndexReader != null) {
+			LOGGER.trace("reopening index reader...");
+			DirectoryReader oldIndexReader = indexReader;
+			indexReader = newIndexReader;
+			oldIndexReader.close();
+
+			recreateIndexSearcher = true;
+		}
+		// check for taxo index changes
+		final TaxonomyReader newTaxoReader = TaxonomyReader
+				.openIfChanged(taxoReader);
+		if (newTaxoReader != null) {
+			LOGGER.trace("reopening taxo reader...");
+			taxoReader.close();
+			taxoReader = newTaxoReader;
+
+			recreateIndexSearcher = true;
+		}
+
+		if (recreateIndexSearcher) {
+			searcher = new IndexSearcher(indexReader);
+		}
+
+		LOGGER.trace("max results: {}", searchFields.getResults());
+		final int numberOfResults = searchFields.getResults() == null ? MAX_RESULTS
+				: searchFields.getResults();
+		final TopScoreDocCollector collector = TopScoreDocCollector.create(
+				numberOfResults, true);
+
+		// facets to gather
+		LOGGER.trace("max facets: {}", searchFields.getFacets());
+		final int numberOfFacets = searchFields.getFacets() == null ? MAX_FACETS
+				: searchFields.getFacets();
+		final FacetSearchParams facetSearchParams = createFacetSearchParams(
+				numberOfFacets, searchFields);
+		final FacetsCollector facetsCollector = new FacetsCollector(
+				facetSearchParams, indexReader, taxoReader);
+
+		// query construction
+		// text query
+		final Query textQuery = new MultiFieldQueryParser(Version.LUCENE_41,
+				new String[] { Article.Fields.PLAIN_TEXT.toString(),
+						Article.Fields.TITLE.toString(),
+						Article.Fields.URL.toString() }, analyzer)
+				.parse(queryString);
+		// faceted query
+		final Query facetedQuery = createFacetedQuery(textQuery, searchFields,
+				facetSearchParams);
+
+		// search
+		searcher.search(facetedQuery != null ? facetedQuery : textQuery,
+				MultiCollector.wrap(collector, facetsCollector));
+
+		// populate facetsCount
+		final List<FacetResult> facetResults = facetsCollector
+				.getFacetResults();
+		populateFacets(facetsCount, facetResults);
+		// active selected skill facets
+		if (searchFields.getRequiredSkill() != null) {
+			activeSelectedFacetsOnTree(facetsCount.getRequiredSkillTree(),
+					searchFields.getRequiredSkill());
+		}
+		if (searchFields.getProvidedSkill() != null) {
+			activeSelectedFacetsOnTree(facetsCount.getProvidedSkillTree(),
+					searchFields.getProvidedSkill());
+		}
+		if (LOGGER.isDebugEnabled()) {
+			for (YarquenFacet fc : facetsCount.getAuthor()) {
+				LOGGER.debug("author: {} = {}", fc.getValue(), fc.getCount());
+			}
+			for (YarquenFacet fc : facetsCount.getKeyword()) {
+				LOGGER.debug("keyword: {} = {}", fc.getValue(), fc.getCount());
+			}
+			for (YarquenFacet fc : facetsCount.getYear()) {
+				LOGGER.debug("year: {} = {}", fc.getValue(), fc.getCount());
+			}
+			LOGGER.debug("providedSkills:\n{}", facetsCount
+					.getProvidedSkillTree().toPrettyString());
+			LOGGER.debug("requiredSkills:\n{}", facetsCount
+					.getRequiredSkillTree().toPrettyString());
+		}
+
+		final ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		List<SearchResult> results = new ArrayList<SearchResult>(
+				hits.length);
+		LOGGER.debug("{} results from index", hits.length);
+		
+	
+			Account userDetails = (Account) SecurityContextHolder.getContext()
+					.getAuthentication().getDetails();
+			
+			String accountId = userDetails.getId();
+			//neo4j data
+			Trust trustAction = new Trust();
+			Node source = trustAction.getNode(accountId);
+		
+		
+		for (ScoreDoc scoreDoc : hits) {
+			final Document doc = searcher.doc(scoreDoc.doc);
+			final IndexableField idField = doc.getField(Article.Fields.ID
+					.toString());
+			final String id = idField.stringValue();
+			final Article article = articleRepository.findOne(id);
+			if (article == null) {
+				LOGGER.warn(
+						"the article {} is indexed but doesn't exists in the database",
+						id);
+			} else {
+				
+				final SearchResult searchResult = createSearchResult(article,trustAction, source);
+			
+				float score = (float) (Math.round(scoreDoc.score * 10.0) / 10.0);
+				searchResult.setScore(score);
+				
+
+				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",searchResult.getTitle(),String.valueOf(searchResult.getScore()));
+				
+				results.add(searchResult);
+			}
+		}
+		
+		return results;
+	}
+	
+	//sin trust
 	public List<SearchResult> search(SearchFields searchFields,
 			YarquenFacets facetsCount) throws IOException, ParseException {
 		final String queryString = searchFields.getQuery();
@@ -241,18 +380,10 @@ public class ArticleSearcher {
 		}
 
 		final ScoreDoc[] hits = collector.topDocs().scoreDocs;
-		final List<SearchResult> results = new ArrayList<SearchResult>(
+		List<SearchResult> results = new ArrayList<SearchResult>(
 				hits.length);
 		LOGGER.debug("{} results from index", hits.length);
 		
-		//get user information
-		Account userDetails = (Account) SecurityContextHolder.getContext()
-				.getAuthentication().getDetails();
-		
-		String accountId = userDetails.getId();
-		//neo4j data
-		Trust trustAction = new Trust();
-		Node source = trustAction.getNode(accountId);
 		
 		for (ScoreDoc scoreDoc : hits) {
 			final Document doc = searcher.doc(scoreDoc.doc);
@@ -265,8 +396,9 @@ public class ArticleSearcher {
 						"the article {} is indexed but doesn't exists in the database",
 						id);
 			} else {
-				final SearchResult searchResult = createSearchResult(article,accountId,trustAction, source);
-
+				
+				final SearchResult searchResult = createSearchResult(article);
+			
 				float score = (float) (Math.round(scoreDoc.score * 10.0) / 10.0);
 				searchResult.setScore(score);
 				
@@ -276,6 +408,7 @@ public class ArticleSearcher {
 				results.add(searchResult);
 			}
 		}
+		
 		return results;
 	}
 
@@ -519,7 +652,7 @@ public class ArticleSearcher {
 	}
 	
 	//this method fills the searchResult properties
-	private SearchResult createSearchResult(Article article, String id, Trust trustAction, Node source) {
+	private SearchResult createSearchResult(Article article, Trust trustAction, Node source) {
 		final SearchResult searchResult = new SearchResult();
 		searchResult.setId(article.getId());
 		searchResult.setUrl(article.getUrl());
@@ -540,10 +673,45 @@ public class ArticleSearcher {
 			}
 		}
 		searchResult.setKeywords(keywords);
+		
+		final List<KeywordTrust> keyTrust = new ArrayList<KeywordTrust>();
+		if (article.getKeywordsTrust() != null) {
+			for (KeywordTrust kwt : article.getKeywordsTrust()) {
+				keyTrust.add(kwt);
+			}
+		}
+		searchResult.setKeywordsTrust(keyTrust,trustAction,source);
+		
 		if(article.getRatings().size()>0)
-			searchResult.setRatingFinal(article.getRatings(),id,trustAction, source);
+			searchResult.setRatingFinal(article.getRatings(),trustAction, source);
 		else
 			searchResult.setRatingFinalDirect(0);
+	
+		return searchResult;
+	}
+	
+	private SearchResult createSearchResult(Article article) {
+		final SearchResult searchResult = new SearchResult();
+		searchResult.setId(article.getId());
+		searchResult.setUrl(article.getUrl());
+		searchResult.setTitle(article.getTitle());
+		searchResult.setDate(article.getDate());
+		searchResult.setAuthor(article.getAuthor());
+		final String summary = article.getSummary();
+		if (summary == null || summary.trim().length() == 0) {
+			searchResult.setSummary("No summary was found for this result :(");
+		} else {
+			searchResult.setSummary(summary);
+		}
+
+		final List<String> keywords = new ArrayList<String>();
+		if (article.getKeywords() != null) {
+			for (String kw : article.getKeywords()) {
+				keywords.add(kw);
+			}
+		}
+		searchResult.setKeywords(keywords);
+		searchResult.setRatingFinalDirect(0);
 	
 		return searchResult;
 	}

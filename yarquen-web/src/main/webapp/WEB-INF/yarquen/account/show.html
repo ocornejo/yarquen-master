@@ -63,7 +63,7 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			<div id="content" class="span12&gt;">
+			<div id="content" class="span10&gt;">
 				<div>
 					<div class="row">
 						<div id="details" class="span7">
@@ -71,11 +71,11 @@
 								<!-- <p>
 									<img src="pics/Kathleen_Byrne.jpg" width="160" height="160">
 								</p> -->
-								<h1>
+								<h2>
 									<span th:text="${account.firstName}+' '+${account.familyName}">Kathleen
 										Byrne</span> <small><a href="/account/edit.html"
 										th:href="@{/account/edit/}+${account.id}">edit</a></small>
-								</h1>
+								</h2>
 								<h3 th:text="${account.username}">kathleen</h3>
 
 								<br />
@@ -103,7 +103,7 @@
 							</div>
 							<fieldset>
 								<legend th:text="'User History Enrichments'"></legend>
-								<div class="span4">
+								<div class="span5">
 									<table class="table" th:if="${articleRecords != null}">
 										<thead>
 											<tr>
@@ -129,90 +129,15 @@
 									</div>
 								</div>
 							</fieldset>
-
-							<fieldset>
-								<legend th:text="'Trustees'"></legend>
-								<div class="span4">
-									<table class="table"
-										th:if="${trusteesInferred != null || trusteesDirect!= null}">
-										<thead>
-											<tr>
-												<th style="text-align: right;">User</th>
-												<th>Trust rate</th>
-											</tr>
-										</thead>
-										<tbody id="userTrustees">
-											<tr th:each="trInf : ${trusteesInferred}">
-												<td style="text-align: right;"><a
-													th:text="${trInf.key.firstName+' '+trInf.key.familyName}"
-													th:href="@{'/account/show/'}+${trInf.key.id}">Pedro
-														Fernandez</a></td>
-												<td th:text="${trInf.value}"></td>
-											</tr>
-											<tr th:each="trDir : ${trusteesDirect}">
-												<td style="text-align: right;"><a
-													th:text="${trDir.key.firstName+' '+trDir.key.familyName}"
-													th:href="@{'/account/show/'}+${trDir.key.id}">Pedro
-														Fernandez</a></td>
-												<td th:text="${trDir.value}"></td>
-											</tr>
-										</tbody>
-									</table>
-
-									<div
-										th:if="${trusteesInferred == null and trusteesDirect == null}">
-
-										<p>This user doesn't trust anyone.</p>
-
-									</div>
-								</div>
-							</fieldset>
-
-							<fieldset>
-								<legend th:text="'Trusters'"></legend>
-								<div class="span4">
-									<table class="table"
-										th:if="${trustersInferred != null || trustersDirect!= null}">
-										<thead>
-											<tr>
-												<th style="text-align: right;">User</th>
-												<th>Trust rate</th>
-											</tr>
-										</thead>
-										<tbody id="userTrusters">
-											<tr th:each="trrInf : ${trustersInferred}">
-												<td style="text-align: right;"><a
-													th:text="${trrInf.key.firstName+' '+trrInf.key.familyName}"
-													th:href="@{'/account/show/'}+${trrInf.key.id}">Pedro
-														Fernandez</a></td>
-												<td th:text="${trrInf.value}"></td>
-											</tr>
-											<tr th:each="trrDir : ${trustersDirect}">
-												<td style="text-align: right;"><a
-													th:text="${trrDir.key.firstName+' '+trrDir.key.familyName}"
-													th:href="@{'/account/show/'}+${trrDir.key.id}">Pedro
-														Fernandez</a></td>
-												<td th:text="${trrDir.value}"></td>
-											</tr>
-										</tbody>
-									</table>
-
-									<div
-										th:if="${trustersInferred == null and trustersDirect == null}">
-
-										<p>No one trusts this user.</p>
-
-									</div>
-								</div>
-							</fieldset>
+							
 						</div>
 
-						<div class="span5">
+						<div class="span4">
 							<div id="reports" class="well">
-								<h3 class="modal-header">
+								<h4 class="modal-header">
 									Skill Details <small><a href="editSkills.html"
 										th:href="@{/account/setupSkills/}+${account.id}">edit</a></small>
-								</h3>
+								</h4>
 								<ul id="currentCategories">
 									<li id="Informatica/LenguajesDeProgramación"
 										th:each="skill: *{account.skills}"
@@ -224,27 +149,113 @@
 								<div class="alert alert-info no-reports" style="display: block;"
 									th:if="${account.skills.empty}">
 									<h4 class="alert-heading">Info</h4>
-									<span th:text="${account.firstName}+' '+${account.familyName}">Kathleen
+									<span th:text="${account.username}">Kathleen
 										Byrne</span> has no skill details
 								</div>
 								<ul class="nav nav-list"></ul>
 							</div>
+							<div id="symbology" class="well">
+								<h5>
+									Trust symbology: <small>
+									<font color="#1FB924">&#9632; &#8594; Inferred</font>
+									<font color="#000000">&#9632; &#8594; Direct</font></small>
 
-							<div>
-								<div th:if="${trust != null}">
+								</h5>
+							</div>
+							<div id="trustees" class="well">
+								<h4 class="modal-header">
+									Web of Trust
+								</h4>
+									<table class="table"
+										th:if="${trusteesInferred != null || trusteesDirect!= null}">
+										<thead>
+											<tr>
+												<th style="text-align: center;" >User</th>
+												<th style="text-align: center;" th:if="${trust == null}">Trust rate</th>
+											</tr>
+										</thead>
+										<tbody id="userTrustees">
+											<tr th:each="trInf : ${trusteesInferred}">
+												<td style="text-align: center;"><a
+													th:text="${trInf.key.firstName+' '+trInf.key.familyName}"
+													th:href="@{'/account/show/'}+${trInf.key.id}"
+													style="color: #1FB924;">Pedro
+														Fernandez</a></td>
+												<td th:if="${trust == null}" th:text="${trInf.value}" style="text-align: center; color: #1FB924;"></td>
+											</tr>
+											<tr th:each="trDir : ${trusteesDirect}">
+												<td style="text-align: center;"><a
+													th:text="${trDir.key.firstName+' '+trDir.key.familyName}"
+													th:href="@{'/account/show/'}+${trDir.key.id}">Pedro
+														Fernandez</a></td>
+												<td th:if="${trust == null}" th:text="${trDir.value}" style="text-align: center;"></td>
+												<td><a th:if="${trust == null}"
+													th:href="@{'/account/deleteTrust/'+${trDir.key.id}}"
+													th:id="${'delete'}" href="current.html"
+													rel="tooltip" title="Don't trust anymore this user"><span
+														class="icon-remove-circle"></span></a> </td>
+											</tr>
+										</tbody>
 
-									<fieldset>
-										<legend>Trust this user</legend>
+									</table>
 
-										<div class="slider slider-horizontal">
-											<input type="text" class="slider" value="" id="sl1" style="" />
-										</div>
+									<div
+										th:if="${trusteesInferred == null and trusteesDirect == null}">
+
+										<p>This user doesn't trust anyone.</p>
+
+									</div>
+							</div>
+
+							<div id="trusters" class="well">
+								<h4 class="modal-header"
+									th:text="'People who trust this user'">
+								</h4>
+									<table class="table"
+										th:if="${trustersInferred != null || trustersDirect!= null}">
+										<thead>
+											<tr>
+												<th style="text-align: center;">User</th>
+											</tr>
+										</thead>
+										<tbody id="userTrusters">
+											<tr th:each="trrInf : ${trustersInferred}">
+												<td style="text-align: center; "><a
+													th:text="${trrInf.key.firstName+' '+trrInf.key.familyName}"
+													th:href="@{'/account/show/'}+${trrInf.key.id}"
+													style="color: #1FB924;">Pedro
+														Fernandez</a></td>
+											</tr>
+											<tr th:each="trrDir : ${trustersDirect}">
+												<td style="text-align: center; "><a
+													th:text="${trrDir.key.firstName+' '+trrDir.key.familyName}"
+													th:href="@{'/account/show/'}+${trrDir.key.id}">Pedro
+														Fernandez</a></td>
+											</tr>
+										</tbody>
+									</table>
+
+									<div
+										th:if="${trustersInferred == null and trustersDirect == null}">
+
+										<p>No one trusts this user</p>
+
+									</div>
+							</div>
 
 
-									</fieldset>
+							<div id="trust" class="well" th:if="${trust}">
+									<h4 class="modal-header"
+										th:text="'Trust this user'">
+									</h4>
+									<p id="trustText" 
+										th:if="${knows != null}" th:text="'Your current trust value is: '+${trustValue}"></p>
+									<p id="trustText" 
+										th:if="${knows == null}" th:text="'You don\'t have trusted this user yet'"></p>
 
-
-								</div>
+									<div class="slider slider-horizontal">
+										<input type="text" class="slider" value="" id="sl1" style="" />
+									</div>
 							</div>
 
 						</div>
@@ -282,6 +293,7 @@ $(document).ready(function() {
 		        complete: function(e, xhr, settings){
 		            if(e.status === 200){
 		            	console.log("trust rating added successfully"+e.responseText);
+		            	$("#trustText").text('Your current value is: '+trust);
 		            }else{
 		            	alert(e.responseText);	
 		            }

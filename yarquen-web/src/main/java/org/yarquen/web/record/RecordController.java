@@ -10,9 +10,11 @@ import java.util.TimeZone;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ import org.yarquen.account.AccountRepository;
 import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
 import org.yarquen.skill.Skill;
+import org.yarquen.trust.Trust;
 import org.yarquen.web.enricher.EnricherController;
 import org.yarquen.web.enricher.EnrichmentRecord;
 import org.yarquen.web.enricher.EnrichmentRecordRepository;
@@ -127,6 +130,23 @@ public class RecordController {
 			model.addAttribute("actualRecord", actualRecord);
 			model.addAttribute("actualAccount",
 					accountRepository.findOne(actualRecord.getAccountId()));
+			
+			/* Trust operations */
+			Trust trustAction = new Trust();
+			Node user = trustAction.getNode(accountRepository.findOne(actualRecord.getAccountId()).getId());
+			
+			Account userDetails = (Account) SecurityContextHolder.getContext()
+					.getAuthentication().getDetails();
+			
+			Node me = trustAction.getNode(userDetails.getId());
+			
+			if(trustAction.checkAdjacency(me,user)){
+				model.addAttribute("trustValue",trustAction.getAdjacencyTrust(me,user));
+				model.addAttribute("knows",true);
+			}
+			else{
+				model.addAttribute("trustValue","5");
+			}
 		}
 
 		Article article = articleRepository.findOne(articleId);

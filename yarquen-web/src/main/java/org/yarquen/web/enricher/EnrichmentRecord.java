@@ -36,8 +36,11 @@ public class EnrichmentRecord {
 	private boolean changedSummary;
 	private String newSummary;
 	private String oldSummary;
-
+	
+	private boolean changedAddedKey;
 	private List<String> addedKeywords;
+	
+	private boolean changedRemovedKey;
 	private List<String> removedKeywords;
 
 	private List<Skill> addedProvidedSkills;
@@ -217,6 +220,22 @@ public class EnrichmentRecord {
 
 	public void setChangedDate(boolean changedDate) {
 		this.changedDate = changedDate;
+	}
+	
+	public void setChangedAddedKeywords(boolean changedAddedKey){
+		this.changedAddedKey = changedAddedKey;
+	}
+	
+	public void setChangedRemovedKeywords(boolean changedRemovedKey){
+		this.changedRemovedKey = changedRemovedKey;
+	}
+	
+	public boolean isChangedAddedKeywords(){
+		return changedAddedKey;
+	}
+	
+	public boolean isChangedRemovedKeywords(){
+		return changedRemovedKey;
 	}
 
 	public String getNewDate() {

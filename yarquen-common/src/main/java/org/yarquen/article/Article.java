@@ -8,7 +8,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
-import org.yarquen.category.SubCategory;
 import org.yarquen.skill.Skill;
 
 /**
@@ -58,6 +57,9 @@ public class Article {
 	private String id;
 	// FIXME: use Keyword instances
 	private List<String> keywords;
+	
+	private List<KeywordTrust> keywordsTrust;
+	
 	@NotEmpty(groups = FullArticle.class)
 	private String plainText;
 	@Valid
@@ -176,6 +178,17 @@ public class Article {
 			ratings = new ArrayList<Rating>();
 		}
 		return ratings;
+	}
+
+	public List<KeywordTrust> getKeywordsTrust() {
+		if (keywordsTrust == null) {
+			keywordsTrust = new ArrayList<KeywordTrust>();
+		}		
+		return keywordsTrust;
+	}
+
+	public void setKeywordsTrust(List<KeywordTrust> keywordsTrust) {
+		this.keywordsTrust = keywordsTrust;
 	}
 
 }

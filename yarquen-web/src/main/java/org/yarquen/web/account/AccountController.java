@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.yarquen.account.Account;
 import org.yarquen.account.AccountService;
 import org.yarquen.account.PasswordChange;
@@ -253,6 +254,7 @@ public class AccountController {
 		return "account/show";
 	}
 
+	
 	@RequestMapping("/show/{accountId}")
 	public String showAccount(@PathVariable("accountId") String accountId,
 			Model model) {
@@ -324,13 +326,18 @@ public class AccountController {
 		}
 		
 		Node me = trustAction.getNode(userDetails.getId());
-		if(trustAction.checkAdjacency(me,user))
+		if(trustAction.checkAdjacency(me,user)){
 			model.addAttribute("trustValue",trustAction.getAdjacencyTrust(me,user));
-		else
+			model.addAttribute("knows",true);
+		}
+		else{
 			model.addAttribute("trustValue","5");
+		}
+
 		
 		model.addAttribute("user",accountId);
-		model.addAttribute("trust","enabled");
+		model.addAttribute("trust",true);
+
 		
 		return "account/show";
 	}
@@ -364,6 +371,38 @@ public class AccountController {
 		}
 				
 	}
+	
+	
+	@RequestMapping(value="/deleteTrust/{user}",method = RequestMethod.GET)
+	public ModelAndView deleteTrust(
+			@PathVariable("user") String user,
+		    HttpServletResponse rsp, Model model) 
+					throws IOException {
+		boolean op;
+		LOGGER.debug("Deleting trust");
+		Account userDetails = (Account) SecurityContextHolder.getContext()
+				.getAuthentication().getDetails();
+		
+		Trust trustAction = new Trust();
+		Node source = trustAction.getNode(userDetails.getId());
+		Node sink = trustAction.getNode(user);
+
+		op = trustAction.deleteRelationship(source, sink);
+
+		if(op){
+			LOGGER.info("The relationship {} was deleted sucessfully",user);
+			 return new ModelAndView("redirect:" + "/account/current.html");
+		}
+		else{
+			LOGGER.error("Error deleting trust");
+			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			rsp.getWriter().print("TRANSACTION_ERROR");
+			return new ModelAndView("redirect:" + "error.html");
+		}
+				
+	}
+	
+	
 
 	@RequestMapping(value = "/edit/{accountId}", method = RequestMethod.GET)
 	public String edit(@PathVariable("accountId") String accountId, Model model) {

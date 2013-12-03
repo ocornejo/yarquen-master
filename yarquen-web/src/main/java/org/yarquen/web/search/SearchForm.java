@@ -2,6 +2,9 @@ package org.yarquen.web.search;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +35,7 @@ import org.yarquen.skill.Skill;
 import org.yarquen.web.article.ArticleService;
 import org.yarquen.web.enricher.SkillPropertyEditorSupport;
 import org.yarquen.web.lucene.ArticleSearcher;
+import org.yarquen.web.lucene.CustomComparator;
 
 /**
  * Search form
@@ -54,6 +59,8 @@ public class SearchForm {
 	private ArticleRepository articleRepository;
 	@Resource
 	private AccountService accountService;
+	
+	private static final int MAX_RECOMMENDATIONS = 5;
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -70,10 +77,26 @@ public class SearchForm {
 			return "articles/search";
 		} else {
 			try {
-				final YarquenFacets facetsCount = new YarquenFacets();
-				final List<SearchResult> results = articleSearcher.search(
-						searchFields, facetsCount);
+				Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+				boolean loggedIn = true; 
+				for (GrantedAuthority it : authorities){ 
+					if (it.toString().compareTo("ROLE_ANONYMOUS")==0) 
+						loggedIn = false;
+				}
 
+				final YarquenFacets facetsCount = new YarquenFacets();
+				
+				final List<SearchResult> results;	
+				
+				//con trust
+				if(loggedIn){
+					results = articleSearcher.searchWT(
+						searchFields, facetsCount,loggedIn);
+				}
+				else{
+					results = articleSearcher.search(
+							searchFields, facetsCount);
+				}			
 				// send back applied facets
 				addAppliedFacetsToModel(searchFields, facetsCount, model);
 
@@ -87,6 +110,24 @@ public class SearchForm {
 				// result
 				if (!results.isEmpty()) {
 					model.addAttribute("results", results);
+					List<SearchResult> bestResults = new ArrayList<SearchResult>(results);
+					
+					Collections.sort(bestResults, new CustomComparator());
+					int size = MAX_RECOMMENDATIONS;
+					
+					if(results.size()<MAX_RECOMMENDATIONS)
+						size = results.size();
+					
+					bestResults = bestResults.subList(0, size);
+					
+					Iterator<SearchResult> i = bestResults.iterator();
+					while(i.hasNext()){
+						SearchResult sr = i.next();
+						if(sr.getRatingFinal()==0)
+							i.remove();
+					}
+					if(!bestResults.isEmpty())
+						model.addAttribute("bestResults",bestResults);
 				}
 
 				return "articles/search";

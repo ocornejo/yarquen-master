@@ -77,6 +77,25 @@ public class Trust {
 		return node;
 	}
 	
+	public boolean deleteUser(){
+		//TO-DO!
+		return false;
+	}
+	
+	public boolean deleteRelationship(Node n1, Node n2){
+		RelationshipType rel = DynamicRelationshipType.withName("TRUSTS");
+	
+		for(Relationship r :n1.getRelationships(Direction.OUTGOING,rel)) {
+			if(r.getOtherNode(n1).equals(n2)){
+				r.delete();
+				trustRel.remove(r);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	public boolean checkAdjacency(Node start, Node end){  
 		
 		RelationshipType rel = DynamicRelationshipType.withName("TRUSTS");

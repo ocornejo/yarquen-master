@@ -20,6 +20,11 @@
 		<!-- Security zones -->
 		<intercept-url pattern="/account/current.html" access="isAuthenticated()" />
 		<intercept-url pattern="/articles/enricher/**" access="isAuthenticated()" />
+		<intercept-url pattern="/articles/rate/**" access="isAuthenticated()" />
+		<intercept-url pattern="/articles/record/**" access="isAuthenticated()" />
+		<intercept-url pattern="/account/addTrust/**" access="isAuthenticated()" />
+		<intercept-url pattern="/account/deleteTrust/**" access="isAuthenticated()" />
+		<intercept-url pattern="/account/show/**" access="isAuthenticated()" />
 		<intercept-url pattern="/report**" access="isAuthenticated()" />
 		<intercept-url pattern="/report/viewReports.html"
 			access="hasRole('ROLE_ADMIN')" />

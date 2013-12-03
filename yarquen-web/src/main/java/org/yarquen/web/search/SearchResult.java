@@ -1,5 +1,6 @@
 package org.yarquen.web.search;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -7,9 +8,8 @@ import javax.annotation.Resource;
 import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.yarquen.account.Account;
 import org.yarquen.account.AccountService;
+import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
 import org.yarquen.trust.Trust;
 
@@ -32,6 +32,7 @@ public class SearchResult {
 	private String date;
 	private String id;
 	private List<String> keywords;
+	private List<KeywordTrust> keywordsTrust;
 	private float score;
 	private String summary;
 	private String title;
@@ -39,6 +40,25 @@ public class SearchResult {
     private double ratingFinal;
 	
 	private List<Rating> ratings;
+	
+	
+	public List<KeywordTrust> getKeywordsTrust() {
+		return keywordsTrust;
+	}
+
+	public void setKeywordsTrust(List<KeywordTrust> keywordsTrust, Trust trustAction, Node source) {
+		
+		this.keywordsTrust = new ArrayList<KeywordTrust>();
+		
+		if(keywordsTrust.size()>0){
+			for(KeywordTrust kw : keywordsTrust){
+				Node sink = trustAction.getNode(kw.getId());
+				kw.setTrust(trustAction.getTrust(source, sink));
+				kw.setColor();
+				this.keywordsTrust.add(kw);
+			}
+		}	
+	}
 
 	public List<Rating> getRatings() {
 		return ratings;
@@ -51,12 +71,8 @@ public class SearchResult {
 	public double getRatingFinal() {
 		return this.ratingFinal;
 	}
-
-	public void setRatingFinalDirect(double rate){
-		this.ratingFinal = rate;
-	}
 	
-	public void setRatingFinal(List<Rating> ratings, String id, Trust trustAction, Node source) {
+	public void setRatingFinal(List<Rating> ratings, Trust trustAction, Node source) {
 		
 		double rate = 0;
 		double trust = 0;
@@ -74,10 +90,6 @@ public class SearchResult {
 				this.ratingFinal = (double)Math.round( value* 10)/10;
 			}
 		}
-	}
-	
-	public int getRatingFinalInt(){
-		return (int) this.ratingFinal;
 	}
 
 	public String getAuthor() {
@@ -142,6 +154,11 @@ public class SearchResult {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public void setRatingFinalDirect(int i) {
+		// TODO Auto-generated method stub
+		this.ratingFinal=i;
 	}
 	
 }

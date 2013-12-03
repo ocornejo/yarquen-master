@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,12 +33,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.yarquen.account.Account;
 import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
+import org.yarquen.article.KeywordTrust;
 import org.yarquen.author.Author;
 import org.yarquen.author.AuthorRepository;
 import org.yarquen.category.CategoryService;
 import org.yarquen.keyword.Keyword;
 import org.yarquen.keyword.KeywordRepository;
+import org.yarquen.keyword.KeywordService;
 import org.yarquen.skill.Skill;
+import org.yarquen.web.article.ArticleService;
 import org.yarquen.web.lucene.ArticleSearcher;
 
 /**
@@ -66,6 +70,8 @@ public class EnricherController {
 	@Resource
 	private ArticleSearcher articleSearcher;
 	@Resource
+	private ArticleService articleService;
+	@Resource
 	private AuthorRepository authorRepository;
 	@Resource
 	private CategoryService categoryService;
@@ -73,6 +79,8 @@ public class EnricherController {
 	private CategoryTreeBuilder categoryTreeBuilder;
 	@Resource
 	private KeywordRepository keywordRepository;
+	@Resource
+	private KeywordService keywordService;
 	@Resource
 	private EnrichmentRecordRepository enrichmentRecordRepository;
 
@@ -110,7 +118,6 @@ public class EnricherController {
 			// save referer
 			final String referer = request.getHeader("Referer");
 			LOGGER.trace("referer: {}", referer);
-			// model.addAttribute(REFERER, referer);
 			model.addAttribute(REFERER, referer);
 
 			// article to enrich
@@ -186,15 +193,16 @@ public class EnricherController {
 			}
 
 			// get persisted article
-			final Article persistedArticle = articleRepository.findOne(id);
+			Article persistedArticle = articleRepository.findOne(id);
+			EnrichmentRecord er;
 			if (persistedArticle == null) {
 				throw new RuntimeException("Article " + id + " not found");
 			} else {
-				// update
+				//update
 				LOGGER.trace("saving new version of article id {}", id);
-				saveArticleDiff(persistedArticle, article);
-
-				LOGGER.trace("updating article {}", id);
+				er = saveArticleDiff(persistedArticle, article);	
+				
+				LOGGER.trace("updating article {} hoola {} ", id,persistedArticle.getKeywordsTrust());
 				persistedArticle.setAuthor(article.getAuthor());
 				persistedArticle.setDate(article.getDate());
 				persistedArticle.setKeywords(article.getKeywords());
@@ -203,11 +211,39 @@ public class EnricherController {
 				persistedArticle.setUrl(article.getUrl());
 				persistedArticle.setProvidedSkills(article.getProvidedSkills());
 				persistedArticle.setRequiredSkills(article.getRequiredSkills());
-				final Article updatedArticle = articleRepository
-						.save(persistedArticle);
 
+				Article updatedArticle = articleRepository
+						.save(persistedArticle);
+				
+				//trust keywords enrichment				
+				if(er.isChangedAddedKeywords()){
+					for(String kwd: er.getAddedKeywords()){
+						try{
+							KeywordTrust kwt = new KeywordTrust();
+							kwt.setId(er.getAccountId());
+							kwt.setName(kwd);
+							String code = articleService.addKeywordTrust(er.getArticleId(), kwt);
+							LOGGER.info("KeywordTrust added with state = {}",code);
+						} catch (Exception e) {
+							LOGGER.error("can't add KeywordTrust", e);
+						}
+					}
+					
+				}
+				if(er.isChangedRemovedKeywords()){
+					for(String kwd: er.getRemovedKeywords()){
+						try{
+							String code = articleService.removeKeywordTrust(er.getArticleId(),kwd);
+							LOGGER.info("KeywordTrust removed with state = {}",code);
+						} catch (Exception e) {
+							LOGGER.error("can't remove KeywordTrust", e);
+						}
+					}
+				}	
+					
 				// reindex
 				LOGGER.trace("reindexing article {}", id);
+				
 				try {
 					articleSearcher.reindexArticle(updatedArticle);
 					addAuthorAndKeywords(updatedArticle);
@@ -223,6 +259,9 @@ public class EnricherController {
 				LOGGER.trace("adding flash paramenter: enrichmentMessage={}",
 						message);
 				redirAtts.addFlashAttribute("enrichmentMessage", message);
+
+
+				
 				if (referer != null) {
 					LOGGER.trace("update => referer: '{}'", referer.toString());
 					final int i = referer.indexOf('?');
@@ -254,7 +293,7 @@ public class EnricherController {
 	 * @param updatedArticle
 	 *            Updated Article
 	 */
-	private void saveArticleDiff(Article persistedArticle,
+	private EnrichmentRecord saveArticleDiff(Article persistedArticle,
 			Article updatedArticle) {
 
 		LOGGER.trace("finding differences between articles");
@@ -268,18 +307,26 @@ public class EnricherController {
 		enrichmentRecord.setAccountId(userDetails.getId());
 
 		// Finds the diff between articles and saves it in the enrichmentRecord
-		final boolean changed = findDiffBetweenArticles(persistedArticle,
+		boolean changed = findDiffBetweenArticles(persistedArticle,
 				updatedArticle, enrichmentRecord);
 
 		if (changed) {
+
 			enrichmentRecordRepository.save(enrichmentRecord);
 			LOGGER.trace("enrichment record saved for article id: {}",
 					enrichmentRecord.getArticleId());
+			
+			
+			
 		} else {
 			LOGGER.trace("enrichment record not created, there was no change");
 		}
+		return enrichmentRecord;
 
 	}
+	
+	
+	
 
 	/**
 	 * Compares every field of a persisted and updated article and keeps the
@@ -368,9 +415,17 @@ public class EnricherController {
 		}
 		if (!addedKeywords.isEmpty()) {
 			enrichmentRecord.setAddedKeywords(addedKeywords);
+			enrichmentRecord.setChangedAddedKeywords(true);
+		}
+		else{
+			enrichmentRecord.setChangedAddedKeywords(false);
 		}
 		if (!removedKeywords.isEmpty()) {
 			enrichmentRecord.setRemovedKeywords(removedKeywords);
+			enrichmentRecord.setChangedRemovedKeywords(true);
+		}
+		else{
+			enrichmentRecord.setChangedRemovedKeywords(false);
 		}
 
 		// Comparing Title
