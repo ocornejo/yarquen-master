@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import javax.annotation.Resource;
-
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
@@ -26,9 +24,6 @@ import org.neo4j.rest.graphdb.query.RestCypherQueryEngine;
 import org.neo4j.rest.graphdb.util.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yarquen.account.Account;
-import org.yarquen.account.AccountService;
-import org.yarquen.skill.Skill;
 import org.neo4j.graphdb.index.IndexHits;
 
 /**

@@ -110,7 +110,7 @@ public class EnricherController {
 		if (article == null) {
 			throw new RuntimeException("Article " + id + " not found");
 		} else {
-			LOGGER.debug("enriching article id={} title={}", article.getId(),
+			LOGGER.info("enriching article id={} title={}", article.getId(),
 					article.getTitle());
 
 			// FIXME: find a better way to achieve this, this mechanism may fail
@@ -194,18 +194,18 @@ public class EnricherController {
 
 			// get persisted article
 			Article persistedArticle = articleRepository.findOne(id);
-			EnrichmentRecord er;
+			
 			if (persistedArticle == null) {
 				throw new RuntimeException("Article " + id + " not found");
 			} else {
 				//update
 				LOGGER.trace("saving new version of article id {}", id);
-				er = saveArticleDiff(persistedArticle, article);	
+				EnrichmentRecord er = saveArticleDiff(persistedArticle, article);	
 				
 				LOGGER.trace("updating article {} hoola {} ", id,persistedArticle.getKeywordsTrust());
 				persistedArticle.setAuthor(article.getAuthor());
 				persistedArticle.setDate(article.getDate());
-				persistedArticle.setKeywords(article.getKeywords());
+				//persistedArticle.setKeywords(article.getKeywords());
 				persistedArticle.setSummary(article.getSummary());
 				persistedArticle.setTitle(article.getTitle());
 				persistedArticle.setUrl(article.getUrl());
@@ -530,16 +530,18 @@ public class EnricherController {
 		}
 
 		// add inexistent keywords
-		final List<String> keywords = article.getKeywords();
-		for (String kw : keywords) {
-			final Keyword keywordFound = keywordRepository.findByName(kw);
+		final List<KeywordTrust> keywords = article.getKeywordsTrust();
+		for (KeywordTrust kw : keywords) {
+			final Keyword keywordFound = keywordRepository.findByName(kw.getName());
 			if (keywordFound == null) {
 				final Keyword keyword = new Keyword();
-				keyword.setName(kw);
+				keyword.setName(kw.getName());
 				LOGGER.trace("adding keyword {}", kw);
 				keywordRepository.save(keyword);
 			}
 		}
+	
+
 	}
 
 	private List<String> getAuthors() {

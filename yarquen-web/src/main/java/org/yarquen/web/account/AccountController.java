@@ -189,6 +189,7 @@ public class AccountController {
 		LOGGER.debug("userDetail: {}", userDetails);
 		Account account = accountService.findOne(userDetails.getId());
 		model.addAttribute("account", account);
+		model.addAttribute("currentAccount", userDetails.getId());
 		
 		//enrichment history
 		
@@ -260,9 +261,11 @@ public class AccountController {
 			Model model) {
 		Account userDetails = (Account) SecurityContextHolder.getContext()
 				.getAuthentication().getDetails();
+		
 		Account account = accountService.findOne(accountId);
 		LOGGER.debug("userDetail: {}", accountId);
 		model.addAttribute("account", account);
+		model.addAttribute("currentAccount", userDetails.getId());
 		
 		//enrichment history
 		

@@ -174,11 +174,13 @@
 												<th style="text-align: center;" th:if="${trust == null}">Trust rate</th>
 											</tr>
 										</thead>
+										
+										
 										<tbody id="userTrustees">
 											<tr th:each="trInf : ${trusteesInferred}">
 												<td style="text-align: center;"><a
 													th:text="${trInf.key.firstName+' '+trInf.key.familyName}"
-													th:href="@{'/account/show/'}+${trInf.key.id}"
+													th:href="${trInf.key.id} == ${currentAccount} ? @{/account/current.html} : @{'/account/show/'}+${trInf.key.id}"
 													style="color: #1FB924;">Pedro
 														Fernandez</a></td>
 												<td th:if="${trust == null}" th:text="${trInf.value}" style="text-align: center; color: #1FB924;"></td>
@@ -186,7 +188,7 @@
 											<tr th:each="trDir : ${trusteesDirect}">
 												<td style="text-align: center;"><a
 													th:text="${trDir.key.firstName+' '+trDir.key.familyName}"
-													th:href="@{'/account/show/'}+${trDir.key.id}">Pedro
+													th:href="${trDir.key.id} == ${currentAccount} ? @{/account/current.html} : @{'/account/show/'}+${trDir.key.id}">Pedro
 														Fernandez</a></td>
 												<td th:if="${trust == null}" th:text="${trDir.value}" style="text-align: center;"></td>
 												<td><a th:if="${trust == null}"
@@ -222,14 +224,14 @@
 											<tr th:each="trrInf : ${trustersInferred}">
 												<td style="text-align: center; "><a
 													th:text="${trrInf.key.firstName+' '+trrInf.key.familyName}"
-													th:href="@{'/account/show/'}+${trrInf.key.id}"
+													th:href="${trrInf.key.id} == ${currentAccount} ? @{/account/current.html} : @{'/account/show/'}+${trrInf.key.id}"
 													style="color: #1FB924;">Pedro
 														Fernandez</a></td>
 											</tr>
 											<tr th:each="trrDir : ${trustersDirect}">
 												<td style="text-align: center; "><a
 													th:text="${trrDir.key.firstName+' '+trrDir.key.familyName}"
-													th:href="@{'/account/show/'}+${trrDir.key.id}">Pedro
+													th:href="${trrDir.key.id} == ${currentAccount} ? @{/account/current.html} : @{'/account/show/'}+${trrDir.key.id}">Pedro
 														Fernandez</a></td>
 											</tr>
 										</tbody>
@@ -251,7 +253,7 @@
 									<p id="trustText" 
 										th:if="${knows != null}" th:text="'Your current trust value is: '+${trustValue}"></p>
 									<p id="trustText" 
-										th:if="${knows == null}" th:text="'You don\'t have trusted this user yet'"></p>
+										th:if="${knows == null}" th:text="'You haven\'t trusted this user yet'"></p>
 
 									<div class="slider slider-horizontal">
 										<input type="text" class="slider" value="" id="sl1" style="" />

@@ -123,7 +123,7 @@
 								<label class="control-label" for="keywords">Keywords</label>
 								<div class="controls">
 									<div id="keywordList">
-										<input type="hidden" th:each="kw, stat : *{keywords}" th:field="*{keywords[__${stat.index}__]}" />
+										<input type="hidden" th:each="kw, stat : *{keywordsTrust}" th:field="*{keywordsTrust[__${stat.index}__]}" />
 									</div>
 									<!-- fix ul.tagit style -->
 									<ul id="keywords" style="margin-left: 0px;">
