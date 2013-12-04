@@ -321,13 +321,16 @@
 				
 				<div style="margin-top: 20px;">
 					
-					<div id="trust" class="well">
+<!-- 					th:href="${trDir.key.id} == ${currentAccount} ? @{/account/current.html} : @{'/account/show/'}+${trDir.key.id}" -->
+					
+					
+					<div id="trust" th:if="${actualAccount.id} != ${currentAccount}" class="well">
 						<h4 class="modal-header"
 							th:text="'Trust '+${actualAccount.username}"></h4>
 						<p id="trustText" th:if="${knows != null}"
 							th:text="'Your current trust value is: '+${trustValue}"></p>
 						<p id="trustText" th:if="${knows == null}"
-							th:text="'You don\'t have trusted this user yet'"></p>
+							th:text="'You haven\'t trusted this user yet'"></p>
 
 						<div class="slider slider-horizontal">
 							<input type="text" class="slider" value="" id="sl1" style="" />

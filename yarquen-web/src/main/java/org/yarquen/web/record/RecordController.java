@@ -147,6 +147,7 @@ public class RecordController {
 			else{
 				model.addAttribute("trustValue","5");
 			}
+			model.addAttribute("currentAccount", userDetails.getId());
 		}
 
 		Article article = articleRepository.findOne(articleId);
