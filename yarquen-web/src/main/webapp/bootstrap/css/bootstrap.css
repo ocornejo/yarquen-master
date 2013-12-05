@@ -5445,15 +5445,25 @@ a.badge:hover {
   cursor: pointer;
 }
 
-.label-danger {
-  background-color: #d9534f;
+.label-excellent {
+  background-color: #8dc53e;
 }
 
-
-.label-primary {
-  background-color: #428bca;
+.label-good {
+  background-color: #bed036;
 }
 
+.label-regular {
+  background-color: #eedc2e;
+}
+
+.label-poor {
+  background-color: #de8a39;
+}
+
+.label-bad {
+  background-color: #cf3744;
+}
 
 .label-important,
 .badge-important {

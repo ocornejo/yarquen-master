@@ -123,7 +123,9 @@
 				mousemove : function(e){
 					var realOffsetLeft = findRealLeft(this);
 					var relativeX = e.pageX - realOffsetLeft;
-					if(opts.step) newWidth = Math.floor(relativeX/starWidth)*starWidth + starWidth;
+					//original line
+					//if(opts.step) newWidth = Math.floor(relativeX/starWidth)*starWidth + starWidth;
+					if(relativeX < 24) newWidth = Math.floor(relativeX/starWidth)*starWidth + starWidth;
 					else newWidth = relativeX;
 					average.width(newWidth);
 					if (opts.showRateInfo)

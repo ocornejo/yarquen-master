@@ -33,15 +33,15 @@ public class KeywordTrust {
 	public void setColor(){
 		
 		if (isBetween(trust, 1, 2)) {
-		  color = "danger";
+		  color = "bad";
 		} else if (isBetween(trust, 3, 4)) {
-			color = "warning";
+			color = "poor";
 		} else if (isBetween(trust, 5, 6)) {
-			color = "info";
+			color = "regular";
 		} else if (isBetween(trust, 7, 8)) {
-			color = "success";
+			color = "good";
 		} else if (isBetween(trust, 9, 10)) {
-			color = "primary";
+			color = "excellent";
 		} else{
 			color= "default";
 		}
