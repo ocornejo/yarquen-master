@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import org.yarquen.keyword.KeywordService;
 import org.yarquen.skill.Skill;
 import org.yarquen.web.article.ArticleService;
 import org.yarquen.web.lucene.ArticleSearcher;
+import org.yarquen.web.search.SearchResult;
 
 /**
  * Search form
@@ -204,7 +206,7 @@ public class EnricherController {
 				
 				LOGGER.trace("updating article {} hoola {} ", id,persistedArticle.getKeywordsTrust());
 				persistedArticle.setAuthor(article.getAuthor());
-				persistedArticle.setDate(article.getDate());
+				persistedArticle.setDate(article.getDate());		
 				//persistedArticle.setKeywords(article.getKeywords());
 				persistedArticle.setSummary(article.getSummary());
 				persistedArticle.setTitle(article.getTitle());
@@ -222,15 +224,35 @@ public class EnricherController {
 							KeywordTrust kwt = new KeywordTrust();
 							kwt.setId(er.getAccountId());
 							kwt.setName(kwd);
-							String code = articleService.addKeywordTrust(er.getArticleId(), kwt);
-							LOGGER.info("KeywordTrust added with state = {}",code);
+							List<KeywordTrust> kwtPersisted = new ArrayList<KeywordTrust>(persistedArticle.getKeywordsTrust());
+							
+							if(!kwtPersisted.isEmpty()){
+								boolean found = false;
+								for(KeywordTrust temp: kwtPersisted){
+									if(temp.getName().compareTo(kwt.getName())==0){
+										found = true;
+									}
+								}
+								if(!found){
+									String code = articleService.addKeywordTrust(er.getArticleId(), kwt);
+									LOGGER.info("KeywordTrust added with state = {}",code);
+								}
+							}
+							else{
+								String code = articleService.addKeywordTrust(er.getArticleId(), kwt);
+								LOGGER.info("KeywordTrust added with state = {}",code);	
+							}
+							
+							
 						} catch (Exception e) {
 							LOGGER.error("can't add KeywordTrust", e);
 						}
 					}
 					
 				}
+				LOGGER.info("Hola estoy aca");
 				if(er.isChangedRemovedKeywords()){
+					LOGGER.info("Hola a acacacacacacaca");
 					for(String kwd: er.getRemovedKeywords()){
 						try{
 							String code = articleService.removeKeywordTrust(er.getArticleId(),kwd);
@@ -388,45 +410,97 @@ public class EnricherController {
 		}
 
 		// Comparing Keywords
-		final List<String> addedKeywords = new ArrayList<String>();
+//		Iterator<SearchResult> i = bestResults.iterator();
+//		while(i.hasNext()){
+//			SearchResult sr = i.next();
+//			if(sr.getRatingFinal()==0)
+//				i.remove();
+//		}
+		//final List<String> addedKeywords = new ArrayList<String>();
+		final List<String> addedKeywordsTrust = new ArrayList<String>();
 		final List<String> removedKeywords = new ArrayList<String>();
+		final List<String> removedKeywordsTrust = new ArrayList<String>();
+		
+		Iterator<String> updatedKeywords = null;
+		if(updatedArticle.getKeywords()!=null)
+			updatedKeywords = updatedArticle.getKeywords().iterator();
+		
+		Iterator<KeywordTrust> updatedKeywordsTrust = null;
+		if(updatedArticle.getKeywordsTrust()!=null)
+			updatedKeywordsTrust = updatedArticle.getKeywordsTrust().iterator();
+		
+		Iterator<String> persistedKeywords = null;
+		if(persistedArticle.getKeywords()!=null)
+			persistedKeywords = persistedArticle.getKeywords().iterator();
+		
+		Iterator<KeywordTrust> persistedKeywordsTrust= null;
+		if(persistedArticle.getKeywordsTrust()!=null)
+			persistedKeywordsTrust = persistedArticle.getKeywordsTrust().iterator();
+		
 		if (updatedArticle.getKeywords() != null
-				&& !updatedArticle.getKeywords().isEmpty()) {
-			for (String updatedKeyword : updatedArticle.getKeywords()) {
-				if (persistedArticle.getKeywords() != null
-						&& !persistedArticle.getKeywords().contains(
-								updatedKeyword)) {
-					addedKeywords.add(updatedKeyword);
+		 		&& !updatedArticle.getKeywords().isEmpty()) {
+			
+			while(updatedKeywords.hasNext()){
+				String upKey = updatedKeywords.next();
+				if(persistedArticle.getKeywords() !=null && persistedArticle.getKeywords().contains(upKey)){
+					LOGGER.info("ENTRE");
 				}
+				
+				if(persistedArticle.getKeywordsTrust() !=null && contains(persistedArticle.getKeywordsTrust(),upKey)){
+					LOGGER.info("ENTRE");
+				}
+				
 			}
 		}
-		if (persistedArticle.getKeywords() != null
-				&& !persistedArticle.getKeywords().isEmpty()) {
-			for (String persistedKeyword : persistedArticle.getKeywords()) {
-				if (updatedArticle.getKeywords() != null
-						&& !updatedArticle.getKeywords().contains(
-								persistedKeyword)) {
-					removedKeywords.add(persistedKeyword);
-				}
-			}
-		}
-		if (!addedKeywords.isEmpty() || !removedKeywords.isEmpty()) {
-			changed = true;
-		}
-		if (!addedKeywords.isEmpty()) {
-			enrichmentRecord.setAddedKeywords(addedKeywords);
-			enrichmentRecord.setChangedAddedKeywords(true);
-		}
-		else{
-			enrichmentRecord.setChangedAddedKeywords(false);
-		}
-		if (!removedKeywords.isEmpty()) {
-			enrichmentRecord.setRemovedKeywords(removedKeywords);
-			enrichmentRecord.setChangedRemovedKeywords(true);
-		}
-		else{
-			enrichmentRecord.setChangedRemovedKeywords(false);
-		}
+		
+//		if (updatedArticle.getKeywords() != null
+//				&& !updatedArticle.getKeywords().isEmpty()) {
+//			for (String updatedKeyword : updatedArticle.getKeywords()) {
+//				if (persistedArticle.getKeywordsTrust() != null
+//						&& !persistedArticle.getKeywordsTrust().contains(
+//								updatedKeyword)) {
+//					addedKeywordsTrust.add(updatedKeyword);
+//					LOGGER.info("added keyword trust");
+//				}
+//			}
+//			
+//			for (String updatedKeyword : updatedArticle.getKeywords()) {
+//				if (persistedArticle.getKeywords() != null
+//						&& !persistedArticle.getKeywords().contains(
+//								updatedKeyword) && !persistedArticle.getKeywordsTrust().contains(updatedKeyword)) {
+//					removedKeywords.add(updatedKeyword);
+//					LOGGER.info("removed keyword");
+//				}
+//			}
+//			
+//		}
+//		if (persistedArticle.getKeywords() != null
+//				&& !persistedArticle.getKeywords().isEmpty()) {
+//			for (String persistedKeyword : persistedArticle.getKeywords()) {
+//				if (updatedArticle.getKeywords() != null
+//						&& !updatedArticle.getKeywords().contains(
+//								persistedKeyword)) {
+//					removedKeywords.add(persistedKeyword);
+//				}
+//			}
+//		}
+//		if (!addedKeywordsTrust.isEmpty() || !removedKeywords.isEmpty()) {
+//			changed = true;
+//		}
+//		if (!addedKeywordsTrust.isEmpty()) {
+//			enrichmentRecord.setAddedKeywords(addedKeywordsTrust);
+//			enrichmentRecord.setChangedAddedKeywords(true);
+//		}
+//		else{
+//			enrichmentRecord.setChangedAddedKeywords(false);
+//		}
+//		if (!removedKeywords.isEmpty()) {
+//			enrichmentRecord.setRemovedKeywords(removedKeywords);
+//			enrichmentRecord.setChangedRemovedKeywords(true);
+//		}
+//		else{
+//			enrichmentRecord.setChangedRemovedKeywords(false);
+//		}
 
 		// Comparing Title
 		if (!persistedArticle.getTitle().equals(updatedArticle.getTitle())) {
@@ -560,5 +634,14 @@ public class EnricherController {
 			keywordsName.add(keyword.getName());
 		}
 		return keywordsName;
+	}
+	
+	public static boolean contains(List<KeywordTrust> list, String name) {
+	    for (KeywordTrust object : list) {
+	        if (object.getName().compareTo(name) ==0) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }

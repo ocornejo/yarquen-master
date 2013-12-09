@@ -42,6 +42,9 @@ public class EnrichmentRecord {
 	
 	private boolean changedRemovedKey;
 	private List<String> removedKeywords;
+	
+	private boolean changedRemovedKeyTrust;
+	private List<String> removedKeywordsTrust;
 
 	private List<Skill> addedProvidedSkills;
 	private List<Skill> removedProvidedSkills;
@@ -260,6 +263,14 @@ public class EnrichmentRecord {
 
 	public void setNewSummary(String newSummary) {
 		this.newSummary = newSummary;
+	}
+
+	public List<String> getRemovedKeywordsTrust() {
+		return removedKeywordsTrust;
+	}
+
+	public void setRemovedKeywordsTrust(List<String> removedKeywordsTrust) {
+		this.removedKeywordsTrust = removedKeywordsTrust;
 	}
 
 }
