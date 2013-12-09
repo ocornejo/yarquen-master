@@ -13,7 +13,6 @@ import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
@@ -409,15 +408,7 @@ public class EnricherController {
 			enrichmentRecord.setChangedSummary(false);
 		}
 
-		// Comparing Keywords
-//		Iterator<SearchResult> i = bestResults.iterator();
-//		while(i.hasNext()){
-//			SearchResult sr = i.next();
-//			if(sr.getRatingFinal()==0)
-//				i.remove();
-//		}
-		//final List<String> addedKeywords = new ArrayList<String>();
-		final List<String> addedKeywordsTrust = new ArrayList<String>();
+		final List<String> addedKeywordsTrust;
 		final List<String> removedKeywords = new ArrayList<String>();
 		final List<String> removedKeywordsTrust = new ArrayList<String>();
 		
@@ -425,32 +416,44 @@ public class EnricherController {
 		if(updatedArticle.getKeywords()!=null)
 			updatedKeywords = updatedArticle.getKeywords().iterator();
 		
-		Iterator<KeywordTrust> updatedKeywordsTrust = null;
-		if(updatedArticle.getKeywordsTrust()!=null)
-			updatedKeywordsTrust = updatedArticle.getKeywordsTrust().iterator();
+		List<String> persistedKeywords = null;
+		if(persistedArticle.getKeywords()!=null) 
+			persistedKeywords =new ArrayList<String>(persistedArticle.getKeywords());
 		
-		Iterator<String> persistedKeywords = null;
-		if(persistedArticle.getKeywords()!=null)
-			persistedKeywords = persistedArticle.getKeywords().iterator();
-		
-		Iterator<KeywordTrust> persistedKeywordsTrust= null;
+		List<KeywordTrust> persistedKeywordsTrust = null;
 		if(persistedArticle.getKeywordsTrust()!=null)
-			persistedKeywordsTrust = persistedArticle.getKeywordsTrust().iterator();
+			persistedKeywordsTrust= new ArrayList<KeywordTrust>(persistedArticle.getKeywordsTrust());
 		
 		if (updatedArticle.getKeywords() != null
 		 		&& !updatedArticle.getKeywords().isEmpty()) {
 			
 			while(updatedKeywords.hasNext()){
+				
 				String upKey = updatedKeywords.next();
 				if(persistedArticle.getKeywords() !=null && persistedArticle.getKeywords().contains(upKey)){
-					LOGGER.info("ENTRE");
+					updatedKeywords.remove();
+					persistedKeywords.remove(upKey);
 				}
 				
 				if(persistedArticle.getKeywordsTrust() !=null && contains(persistedArticle.getKeywordsTrust(),upKey)){
-					LOGGER.info("ENTRE");
+					updatedKeywords.remove();
+					persistedKeywordsTrust.remove(returnIndex(persistedArticle.getKeywordsTrust(),upKey));
 				}
 				
 			}
+			
+			if(updatedArticle.getKeywords().size()>0){
+				LOGGER.info("agregaron kws Trust");
+				addedKeywordsTrust = new ArrayList<String>();
+			}
+			
+			if(persistedKeywords!=null && persistedKeywords.size()>0){
+				LOGGER.info("borraron kws del sistema");
+			}
+			if(persistedKeywordsTrust!=null &&persistedKeywordsTrust.size()>0){
+				LOGGER.info("borraron kws Trust");
+			}
+			
 		}
 		
 //		if (updatedArticle.getKeywords() != null
@@ -643,5 +646,15 @@ public class EnricherController {
 	        }
 	    }
 	    return false;
+	}
+	public static int returnIndex(List<KeywordTrust> list, String name) {
+	    int i = 0;
+		for (KeywordTrust object : list) {
+	        if (object.getName().compareTo(name) ==0) {
+	            return i;
+	        }
+	        i++;
+	    }
+	    return -1;
 	}
 }
