@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
+import org.yarquen.article.KeywordTrust;
 import org.yarquen.skill.Skill;
 
 /**
@@ -44,7 +45,7 @@ public class EnrichmentRecord {
 	private List<String> removedKeywords;
 	
 	private boolean changedRemovedKeyTrust;
-	private List<String> removedKeywordsTrust;
+	private List<KeywordTrust> removedKeywordsTrust;
 
 	private List<Skill> addedProvidedSkills;
 	private List<Skill> removedProvidedSkills;
@@ -265,12 +266,20 @@ public class EnrichmentRecord {
 		this.newSummary = newSummary;
 	}
 
-	public List<String> getRemovedKeywordsTrust() {
+	public List<KeywordTrust> getRemovedKeywordsTrust() {
 		return removedKeywordsTrust;
 	}
 
-	public void setRemovedKeywordsTrust(List<String> removedKeywordsTrust) {
+	public void setRemovedKeywordsTrust(List<KeywordTrust> removedKeywordsTrust) {
 		this.removedKeywordsTrust = removedKeywordsTrust;
+	}
+	
+	public boolean isChangedRemovedKeywordsTrust() {
+		return changedRemovedKeyTrust;
+	}
+
+	public void setChangedRemovedKeywordsTrust(boolean changedRemovedKeyTrust) {
+		this.changedRemovedKeyTrust = changedRemovedKeyTrust;
 	}
 
 }

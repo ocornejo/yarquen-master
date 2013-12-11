@@ -8,5 +8,6 @@ public interface ArticleService {
 	String addRating(String id, Rating rating);
 	String addKeywordTrust(String id, KeywordTrust kwt);
 	String removeKeywordTrust(String id, String keyword);
+	String removeKeyword(String id, String keyword);
 
 }

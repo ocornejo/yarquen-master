@@ -120,8 +120,10 @@
 						<tr>
 							<td style="text-align: right;"><strong>Keywords</strong></td>
 							<td><span th:each="kw : ${article.keywords}"> <span
-									th:text="${kw}" class="label"></span>
-							</span></td>
+									th:text="${kw}" class="label"></span></span>
+								<span th:each="kwt : *{article.keywordsTrust}"> <span
+									th:text="${kwt.name}" class="label"></span></span>
+							</td>
 						</tr>
 						<tr>
 							<td style="text-align: right;"><strong>Provided
@@ -229,7 +231,9 @@
 									th:text="${akw}" class="label label-info">Programming
 										Language</span>
 							</span> <span th:each="rkw : ${actualRecord.removedKeywords}"> <span
-									th:text="${rkw}" class="label label-important">C#</span></span></td>
+									th:text="${rkw}" class="label label-important">C#</span></span>
+									<span th:each="rkwt : ${actualRecord.removedKeywordsTrust}"> <span
+									th:text="${rkwt.name}" class="label label-important">C#</span></span></td>
 
 							<td th:remove="all"><span class="label">C++</span> <span
 								class="label">Java</span> <span class="label label-important">C#</span><span

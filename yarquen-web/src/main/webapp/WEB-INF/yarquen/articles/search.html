@@ -237,7 +237,9 @@
 								
 							
 							<br sec:authorize="isAuthenticated()" /> <small sec:authorize="isAuthenticated()">Rating: </small> <small
-								sec:authorize="isAuthenticated()" th:text="${result.ratingFinal}"></small> <br />
+								sec:authorize="isAuthenticated()" th:text="${result.ratingFinal}"></small>
+							<small sec:authorize="isAuthenticated()"> Trust score: </small> <small
+								sec:authorize="isAuthenticated()"  th:text="${result.trustScore}"></small> <br />	
 							<div sec:authorize="isAuthenticated()" class="basic" th:id="${result.id}" 
 								th:attr="data-average=${result.ratingFinal}"></div>
 							

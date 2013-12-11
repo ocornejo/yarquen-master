@@ -43,7 +43,6 @@ import org.yarquen.keyword.KeywordService;
 import org.yarquen.skill.Skill;
 import org.yarquen.web.article.ArticleService;
 import org.yarquen.web.lucene.ArticleSearcher;
-import org.yarquen.web.search.SearchResult;
 
 /**
  * Search form
@@ -249,18 +248,28 @@ public class EnricherController {
 					}
 					
 				}
-				LOGGER.info("Hola estoy aca");
-				if(er.isChangedRemovedKeywords()){
-					LOGGER.info("Hola a acacacacacacaca");
-					for(String kwd: er.getRemovedKeywords()){
+				
+				if(er.isChangedRemovedKeywordsTrust()){
+					for(KeywordTrust kwd: er.getRemovedKeywordsTrust()){
 						try{
-							String code = articleService.removeKeywordTrust(er.getArticleId(),kwd);
+							String code = articleService.removeKeywordTrust(er.getArticleId(),kwd.getName());
 							LOGGER.info("KeywordTrust removed with state = {}",code);
 						} catch (Exception e) {
 							LOGGER.error("can't remove KeywordTrust", e);
 						}
 					}
-				}	
+				}
+				
+				if(er.isChangedRemovedKeywords()){
+					for(String kwd: er.getRemovedKeywords()){
+						try{
+							String code = articleService.removeKeyword(er.getArticleId(),kwd);
+							LOGGER.info("Keyword removed with state = {}",code);
+						} catch (Exception e) {
+							LOGGER.error("can't remove Keyword", e);
+						}
+					}
+				}
 					
 				// reindex
 				LOGGER.trace("reindexing article {}", id);
@@ -408,9 +417,9 @@ public class EnricherController {
 			enrichmentRecord.setChangedSummary(false);
 		}
 
-		final List<String> addedKeywordsTrust;
-		final List<String> removedKeywords = new ArrayList<String>();
-		final List<String> removedKeywordsTrust = new ArrayList<String>();
+		List<String> addedKeywordsTrust= null;
+		List<String> removedKeywords= null;
+		List<KeywordTrust> removedKeywordsTrust= null;
 		
 		Iterator<String> updatedKeywords = null;
 		if(updatedArticle.getKeywords()!=null)
@@ -437,73 +446,54 @@ public class EnricherController {
 				
 				if(persistedArticle.getKeywordsTrust() !=null && contains(persistedArticle.getKeywordsTrust(),upKey)){
 					updatedKeywords.remove();
-					persistedKeywordsTrust.remove(returnIndex(persistedArticle.getKeywordsTrust(),upKey));
+					persistedKeywordsTrust.remove(returnIndex(persistedKeywordsTrust,upKey));
 				}
 				
 			}
 			
 			if(updatedArticle.getKeywords().size()>0){
 				LOGGER.info("agregaron kws Trust");
-				addedKeywordsTrust = new ArrayList<String>();
+				addedKeywordsTrust = new ArrayList<String>(updatedArticle.getKeywords());
 			}
 			
 			if(persistedKeywords!=null && persistedKeywords.size()>0){
 				LOGGER.info("borraron kws del sistema");
+				removedKeywords = new ArrayList<String>(persistedKeywords);
 			}
-			if(persistedKeywordsTrust!=null &&persistedKeywordsTrust.size()>0){
+			if(persistedKeywordsTrust!=null && persistedKeywordsTrust.size()>0){
 				LOGGER.info("borraron kws Trust");
+				removedKeywordsTrust = new ArrayList<KeywordTrust>(persistedKeywordsTrust);
 			}
 			
 		}
 		
-//		if (updatedArticle.getKeywords() != null
-//				&& !updatedArticle.getKeywords().isEmpty()) {
-//			for (String updatedKeyword : updatedArticle.getKeywords()) {
-//				if (persistedArticle.getKeywordsTrust() != null
-//						&& !persistedArticle.getKeywordsTrust().contains(
-//								updatedKeyword)) {
-//					addedKeywordsTrust.add(updatedKeyword);
-//					LOGGER.info("added keyword trust");
-//				}
-//			}
-//			
-//			for (String updatedKeyword : updatedArticle.getKeywords()) {
-//				if (persistedArticle.getKeywords() != null
-//						&& !persistedArticle.getKeywords().contains(
-//								updatedKeyword) && !persistedArticle.getKeywordsTrust().contains(updatedKeyword)) {
-//					removedKeywords.add(updatedKeyword);
-//					LOGGER.info("removed keyword");
-//				}
-//			}
-//			
-//		}
-//		if (persistedArticle.getKeywords() != null
-//				&& !persistedArticle.getKeywords().isEmpty()) {
-//			for (String persistedKeyword : persistedArticle.getKeywords()) {
-//				if (updatedArticle.getKeywords() != null
-//						&& !updatedArticle.getKeywords().contains(
-//								persistedKeyword)) {
-//					removedKeywords.add(persistedKeyword);
-//				}
-//			}
-//		}
-//		if (!addedKeywordsTrust.isEmpty() || !removedKeywords.isEmpty()) {
-//			changed = true;
-//		}
-//		if (!addedKeywordsTrust.isEmpty()) {
-//			enrichmentRecord.setAddedKeywords(addedKeywordsTrust);
-//			enrichmentRecord.setChangedAddedKeywords(true);
-//		}
-//		else{
-//			enrichmentRecord.setChangedAddedKeywords(false);
-//		}
-//		if (!removedKeywords.isEmpty()) {
-//			enrichmentRecord.setRemovedKeywords(removedKeywords);
-//			enrichmentRecord.setChangedRemovedKeywords(true);
-//		}
-//		else{
-//			enrichmentRecord.setChangedRemovedKeywords(false);
-//		}
+		if (addedKeywordsTrust!=null && !addedKeywordsTrust.isEmpty() || 
+				removedKeywords!=null && !removedKeywords.isEmpty() || 
+				removedKeywordsTrust!=null && !removedKeywordsTrust.isEmpty()) {
+			changed = true;
+		}
+		if (addedKeywordsTrust!=null && !addedKeywordsTrust.isEmpty()) {
+			enrichmentRecord.setAddedKeywords(addedKeywordsTrust);
+			enrichmentRecord.setChangedAddedKeywords(true);
+		}
+		else{
+			enrichmentRecord.setChangedAddedKeywords(false);
+		}
+		if (removedKeywords!=null && !removedKeywords.isEmpty()) {
+			enrichmentRecord.setRemovedKeywords(removedKeywords);
+			enrichmentRecord.setChangedRemovedKeywords(true);
+		}
+		else{
+			enrichmentRecord.setChangedRemovedKeywords(false);
+		}
+		
+		if (removedKeywordsTrust!=null && !removedKeywordsTrust.isEmpty()) {
+			enrichmentRecord.setRemovedKeywordsTrust(removedKeywordsTrust);
+			enrichmentRecord.setChangedRemovedKeywordsTrust(true);
+		}
+		else{
+			enrichmentRecord.setChangedRemovedKeywordsTrust(false);
+		}
 
 		// Comparing Title
 		if (!persistedArticle.getTitle().equals(updatedArticle.getTitle())) {

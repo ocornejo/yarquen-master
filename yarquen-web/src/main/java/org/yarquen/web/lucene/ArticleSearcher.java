@@ -3,13 +3,11 @@ package org.yarquen.web.lucene;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -49,15 +47,11 @@ import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.yarquen.account.Account;
 import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
 import org.yarquen.article.KeywordTrust;
-import org.yarquen.article.Rating;
 import org.yarquen.category.CategoryBranch;
 import org.yarquen.category.CategoryService;
 import org.yarquen.skill.Skill;
@@ -684,8 +678,10 @@ public class ArticleSearcher {
 		
 		if(article.getRatings().size()>0)
 			searchResult.setRatingFinal(article.getRatings(),trustAction, source);
-		else
+		else{
 			searchResult.setRatingFinalDirect(0);
+			searchResult.setTrustScore(0);
+		}
 	
 		return searchResult;
 	}

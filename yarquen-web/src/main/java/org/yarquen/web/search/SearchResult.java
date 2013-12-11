@@ -1,13 +1,12 @@
 package org.yarquen.web.search;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.neo4j.graphdb.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yarquen.account.AccountService;
 import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
@@ -22,8 +21,6 @@ import org.yarquen.trust.Trust;
  */
 
 public class SearchResult {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(SearchResult.class);
 	
 	@Resource
 	private AccountService accountService;
@@ -40,6 +37,8 @@ public class SearchResult {
     private double ratingFinal;
 	
 	private List<Rating> ratings;
+
+	private double trustScore;
 	
 	
 	public List<KeywordTrust> getKeywordsTrust() {
@@ -57,7 +56,10 @@ public class SearchResult {
 				kw.setColor();
 				this.keywordsTrust.add(kw);
 			}
-		}	
+		}
+		if(!this.keywordsTrust.isEmpty()){
+			Collections.sort(this.keywordsTrust, new KeyTrustComparator());
+		}
 	}
 
 	public List<Rating> getRatings() {
@@ -88,8 +90,17 @@ public class SearchResult {
 			if(trust>0){			
 				double value = (ratingFinal/trust);
 				this.ratingFinal = (double)Math.round( value* 10)/10;
+				this.trustScore = trust;
 			}
 		}
+	}
+	
+	public void setTrustScore(double trustScore){
+		this.trustScore = trustScore;
+	}
+	
+	public double getTrustScore() {
+		return trustScore;
 	}
 
 	public String getAuthor() {
@@ -157,7 +168,6 @@ public class SearchResult {
 	}
 
 	public void setRatingFinalDirect(int i) {
-		// TODO Auto-generated method stub
 		this.ratingFinal=i;
 	}
 	

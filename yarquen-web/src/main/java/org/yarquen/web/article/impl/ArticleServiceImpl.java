@@ -105,7 +105,7 @@ public class ArticleServiceImpl implements ArticleService{
 				kwts.remove(index);
 				article.setKeywordsTrust(kwts);
 				
-				LOGGER.info("The keyword {} was removed successfully", keyword);
+				LOGGER.info("The keywordTrust {} was removed successfully", keyword);
 				articleRepository.save(article);
 				return "Ok";
 			}
@@ -119,6 +119,25 @@ public class ArticleServiceImpl implements ArticleService{
 			return "Error";
 		}
 		
+	}
+
+	@Override
+	public String removeKeyword(String id, String keyword) {
+		// TODO Auto-generated method stub
+		Article article = articleRepository.findOne(id);
+		try {
+			List<String> kw = new ArrayList<String>(article.getKeywords());
+			kw.remove(keyword);
+			article.setKeywords(kw);
+			LOGGER.info("The keyword {} was removed successfully", keyword);
+			articleRepository.save(article);
+			return "Ok";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			LOGGER.error("An error ocurred while trying to remove the keyword");
+			e.printStackTrace();
+			return "Error";
+		}
 	}
 
 }
