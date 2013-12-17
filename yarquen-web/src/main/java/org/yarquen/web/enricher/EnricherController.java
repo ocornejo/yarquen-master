@@ -270,6 +270,35 @@ public class EnricherController {
 						}
 					}
 				}
+				
+				//prov skills enrichment
+				
+				if(er.isChangedAddedProvSkills()){
+					Account userDetails = (Account) SecurityContextHolder.getContext()
+							.getAuthentication().getDetails();
+					
+					List<Skill> skills = new ArrayList<Skill>(persistedArticle.getProvidedSkills());
+					
+					for(Skill skillProv: er.getAddedProvidedSkills()){
+						skillProv.setId(userDetails.getId());
+						skills.add(skillProv);
+					}
+					persistedArticle.setProvidedSkills(skills);
+				}
+				
+				if(er.isChangedRemovedProvSkills()){
+					
+					List<Skill> skills = new ArrayList<Skill>(persistedArticle.getProvidedSkills());
+					
+					for(Skill skillProv: er.getRemovedProvidedSkills()){
+						skills.remove(returnIndexSkill(skills, skillProv));
+					}
+					persistedArticle.setProvidedSkills(skills);
+				}
+				
+				articleRepository.save(persistedArticle);
+				
+				
 					
 				// reindex
 				LOGGER.trace("reindexing article {}", id);
@@ -545,31 +574,6 @@ public class EnricherController {
 			
 		}
 		
-
-		
-//		if (updatedArticle.getProvidedSkills() != null
-//				&& !updatedArticle.getProvidedSkills().isEmpty()) {
-//			for (Skill updatedProvidedSkill : updatedArticle
-//					.getProvidedSkills()) {
-//				if (persistedArticle.getProvidedSkills() != null
-//						&& !persistedArticle.getProvidedSkills().contains(
-//								updatedProvidedSkill)) {
-//					addedProvidedSkills.add(updatedProvidedSkill);
-//				}
-//			}
-//		}
-//		if (persistedArticle.getProvidedSkills() != null
-//				&& !persistedArticle.getProvidedSkills().isEmpty()) {
-//			for (Skill persistedProvidedSkill : persistedArticle
-//					.getProvidedSkills()) {
-//				if (updatedArticle.getProvidedSkills() != null
-//						&& !updatedArticle.getProvidedSkills().contains(
-//								persistedProvidedSkill)) {
-//					removedProvidedSkills.add(persistedProvidedSkill);
-//				}
-//			}
-//		}
-		
 	
 		if (addedProvidedSkills !=null && !addedProvidedSkills.isEmpty() || 
 				removedProvidedSkills!=null &&!removedProvidedSkills.isEmpty()) {
@@ -595,28 +599,28 @@ public class EnricherController {
 		// Comparing Required Skills
 		final List<Skill> addedRequiredSkills = new ArrayList<Skill>();
 		final List<Skill> removedRequiredSkills = new ArrayList<Skill>();
-		if (updatedArticle.getRequiredSkills() != null
-				&& !updatedArticle.getRequiredSkills().isEmpty()) {
-			for (Skill updatedRequiredSkill : updatedArticle
-					.getRequiredSkills()) {
-				if (persistedArticle.getRequiredSkills() != null
-						&& !persistedArticle.getRequiredSkills().contains(
-								updatedRequiredSkill)) {
-					addedRequiredSkills.add(updatedRequiredSkill);
-				}
-			}
-		}
-		if (persistedArticle.getRequiredSkills() != null
-				&& !persistedArticle.getRequiredSkills().isEmpty()) {
-			for (Skill persistedRequiredSkill : persistedArticle
-					.getRequiredSkills()) {
-				if (updatedArticle.getRequiredSkills() != null
-						&& !updatedArticle.getRequiredSkills().contains(
-								persistedRequiredSkill)) {
-					removedRequiredSkills.add(persistedRequiredSkill);
-				}
-			}
-		}
+//		if (updatedArticle.getRequiredSkills() != null
+//				&& !updatedArticle.getRequiredSkills().isEmpty()) {
+//			for (Skill updatedRequiredSkill : updatedArticle
+//					.getRequiredSkills()) {
+//				if (persistedArticle.getRequiredSkills() != null
+//						&& !persistedArticle.getRequiredSkills().contains(
+//								updatedRequiredSkill)) {
+//					addedRequiredSkills.add(updatedRequiredSkill);
+//				}
+//			}
+//		}
+//		if (persistedArticle.getRequiredSkills() != null
+//				&& !persistedArticle.getRequiredSkills().isEmpty()) {
+//			for (Skill persistedRequiredSkill : persistedArticle
+//					.getRequiredSkills()) {
+//				if (updatedArticle.getRequiredSkills() != null
+//						&& !updatedArticle.getRequiredSkills().contains(
+//								persistedRequiredSkill)) {
+//					removedRequiredSkills.add(persistedRequiredSkill);
+//				}
+//			}
+//		}
 		if (!addedRequiredSkills.isEmpty() || !removedRequiredSkills.isEmpty()) {
 			changed = true;
 		}
