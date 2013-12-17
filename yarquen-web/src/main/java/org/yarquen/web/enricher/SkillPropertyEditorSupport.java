@@ -27,7 +27,7 @@ public final class SkillPropertyEditorSupport extends PropertyEditorSupport {
 
 	@Override
 	public void setAsText(String skillAsText) throws IllegalArgumentException {
-		LOGGER.trace("converting {} to a Skill object", skillAsText);
+		LOGGER.info("converting {} to a Skill object", skillAsText);
 		try {
 			final int levelSeparationPosition = skillAsText.lastIndexOf('.');
 

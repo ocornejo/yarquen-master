@@ -202,15 +202,15 @@ public class EnricherController {
 				LOGGER.trace("saving new version of article id {}", id);
 				EnrichmentRecord er = saveArticleDiff(persistedArticle, article);	
 				
-				LOGGER.trace("updating article {} hoola {} ", id,persistedArticle.getKeywordsTrust());
+				LOGGER.trace("updating article {} {} ", id,persistedArticle.getKeywordsTrust());
 				persistedArticle.setAuthor(article.getAuthor());
 				persistedArticle.setDate(article.getDate());		
 				//persistedArticle.setKeywords(article.getKeywords());
 				persistedArticle.setSummary(article.getSummary());
 				persistedArticle.setTitle(article.getTitle());
 				persistedArticle.setUrl(article.getUrl());
-				persistedArticle.setProvidedSkills(article.getProvidedSkills());
-				persistedArticle.setRequiredSkills(article.getRequiredSkills());
+				//persistedArticle.setProvidedSkills(article.getProvidedSkills());
+				//persistedArticle.setRequiredSkills(article.getRequiredSkills());
 
 				Article updatedArticle = articleRepository
 						.save(persistedArticle);
@@ -344,9 +344,7 @@ public class EnricherController {
 
 			enrichmentRecordRepository.save(enrichmentRecord);
 			LOGGER.trace("enrichment record saved for article id: {}",
-					enrichmentRecord.getArticleId());
-			
-			
+					enrichmentRecord.getArticleId());			
 			
 		} else {
 			LOGGER.trace("enrichment record not created, there was no change");
@@ -510,38 +508,88 @@ public class EnricherController {
 		}
 
 		// Comparing Provided Skills
-		final List<Skill> addedProvidedSkills = new ArrayList<Skill>();
-		final List<Skill> removedProvidedSkills = new ArrayList<Skill>();
+		List<Skill> addedProvidedSkills = null;
+		List<Skill> removedProvidedSkills = null;
+		
+		Iterator<Skill> updatedProvSkills = null;
+		if(updatedArticle.getProvidedSkills()!= null)
+			updatedProvSkills = updatedArticle.getProvidedSkills().iterator();
+		
+		List<Skill> persistedProvSkills = null;
+		if(persistedArticle.getProvidedSkills()!=null) 
+			persistedProvSkills =new ArrayList<Skill>(persistedArticle.getProvidedSkills());
+		
+		
 		if (updatedArticle.getProvidedSkills() != null
-				&& !updatedArticle.getProvidedSkills().isEmpty()) {
-			for (Skill updatedProvidedSkill : updatedArticle
-					.getProvidedSkills()) {
-				if (persistedArticle.getProvidedSkills() != null
-						&& !persistedArticle.getProvidedSkills().contains(
-								updatedProvidedSkill)) {
-					addedProvidedSkills.add(updatedProvidedSkill);
+		 		&& !updatedArticle.getProvidedSkills().isEmpty()) {
+			
+			while(updatedProvSkills.hasNext()){
+				
+				Skill upSkill = updatedProvSkills.next();
+				if(persistedArticle.getProvidedSkills() !=null && containsSkill(persistedArticle.getProvidedSkills(), upSkill)){
+					updatedProvSkills.remove();
+					persistedProvSkills.remove(returnIndexSkill(persistedProvSkills, upSkill));
 				}
+			
 			}
-		}
-		if (persistedArticle.getProvidedSkills() != null
-				&& !persistedArticle.getProvidedSkills().isEmpty()) {
-			for (Skill persistedProvidedSkill : persistedArticle
-					.getProvidedSkills()) {
-				if (updatedArticle.getProvidedSkills() != null
-						&& !updatedArticle.getProvidedSkills().contains(
-								persistedProvidedSkill)) {
-					removedProvidedSkills.add(persistedProvidedSkill);
-				}
+			
+			if(updatedArticle.getProvidedSkills().size()>0){
+				LOGGER.info("agregaron prov skills");
+				addedProvidedSkills = new ArrayList<Skill>(updatedArticle.getProvidedSkills());
 			}
+			
+			if(persistedProvSkills!=null && persistedProvSkills.size()>0){
+				LOGGER.info("borraron prov skills");
+				removedProvidedSkills = new ArrayList<Skill>(persistedProvSkills);
+			}
+			
 		}
-		if (!addedProvidedSkills.isEmpty() || !removedProvidedSkills.isEmpty()) {
+		
+
+		
+//		if (updatedArticle.getProvidedSkills() != null
+//				&& !updatedArticle.getProvidedSkills().isEmpty()) {
+//			for (Skill updatedProvidedSkill : updatedArticle
+//					.getProvidedSkills()) {
+//				if (persistedArticle.getProvidedSkills() != null
+//						&& !persistedArticle.getProvidedSkills().contains(
+//								updatedProvidedSkill)) {
+//					addedProvidedSkills.add(updatedProvidedSkill);
+//				}
+//			}
+//		}
+//		if (persistedArticle.getProvidedSkills() != null
+//				&& !persistedArticle.getProvidedSkills().isEmpty()) {
+//			for (Skill persistedProvidedSkill : persistedArticle
+//					.getProvidedSkills()) {
+//				if (updatedArticle.getProvidedSkills() != null
+//						&& !updatedArticle.getProvidedSkills().contains(
+//								persistedProvidedSkill)) {
+//					removedProvidedSkills.add(persistedProvidedSkill);
+//				}
+//			}
+//		}
+		
+	
+		if (addedProvidedSkills !=null && !addedProvidedSkills.isEmpty() || 
+				removedProvidedSkills!=null &&!removedProvidedSkills.isEmpty()) {
 			changed = true;
-		}
-		if (!addedProvidedSkills.isEmpty()) {
+		}		
+		
+		if (addedProvidedSkills !=null && !addedProvidedSkills.isEmpty()) {
 			enrichmentRecord.setAddedProvidedSkills(addedProvidedSkills);
+			enrichmentRecord.setChangedAddedProvSkills(true);
 		}
-		if (!removedProvidedSkills.isEmpty()) {
+		else{
+			enrichmentRecord.setChangedAddedProvSkills(false);
+		}
+		
+		if (removedProvidedSkills!=null && !removedProvidedSkills.isEmpty()) {
 			enrichmentRecord.setRemovedProvidedSkills(removedProvidedSkills);
+			enrichmentRecord.setChangedRemovedProvSkills(true);
+		}
+		else{
+			enrichmentRecord.setChangedRemovedProvSkills(false);
 		}
 
 		// Comparing Required Skills
@@ -629,7 +677,7 @@ public class EnricherController {
 		return keywordsName;
 	}
 	
-	public static boolean contains(List<KeywordTrust> list, String name) {
+	private static boolean contains(List<KeywordTrust> list, String name) {
 	    for (KeywordTrust object : list) {
 	        if (object.getName().compareTo(name) ==0) {
 	            return true;
@@ -637,12 +685,34 @@ public class EnricherController {
 	    }
 	    return false;
 	}
-	public static int returnIndex(List<KeywordTrust> list, String name) {
+	
+	private static boolean containsSkill(List<Skill> list, Skill skill) {
+	    for (Skill object : list) {
+	    	if(object.getAsText().compareTo(skill.getAsText())==0){
+	    		return true;
+	    	}
+	    }
+	    return false;
+	}
+	
+	
+	private static int returnIndex(List<KeywordTrust> list, String name) {
 	    int i = 0;
 		for (KeywordTrust object : list) {
 	        if (object.getName().compareTo(name) ==0) {
 	            return i;
 	        }
+	        i++;
+	    }
+	    return -1;
+	}
+	
+	private static int returnIndexSkill(List<Skill> list, Skill skill) {
+	    int i = 0;
+		for (Skill object : list) {
+	    	if(object.getAsText().compareTo(skill.getAsText())==0){
+	    		return i;
+	    	}
 	        i++;
 	    }
 	    return -1;

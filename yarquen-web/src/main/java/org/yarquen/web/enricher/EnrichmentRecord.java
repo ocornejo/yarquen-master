@@ -47,7 +47,10 @@ public class EnrichmentRecord {
 	private boolean changedRemovedKeyTrust;
 	private List<KeywordTrust> removedKeywordsTrust;
 
+	private boolean changedAddedProvSkills;
 	private List<Skill> addedProvidedSkills;
+	
+	private boolean changedRemovedProvSkills;
 	private List<Skill> removedProvidedSkills;
 
 	private List<Skill> addedRequiredSkills;
@@ -280,6 +283,22 @@ public class EnrichmentRecord {
 
 	public void setChangedRemovedKeywordsTrust(boolean changedRemovedKeyTrust) {
 		this.changedRemovedKeyTrust = changedRemovedKeyTrust;
+	}
+
+	public boolean isChangedAddedProvSkills() {
+		return changedAddedProvSkills;
+	}
+
+	public void setChangedAddedProvSkills(boolean changedAddedProvSkills) {
+		this.changedAddedProvSkills = changedAddedProvSkills;
+	}
+
+	public boolean isChangedRemovedProvSkills() {
+		return changedRemovedProvSkills;
+	}
+
+	public void setChangedRemovedProvSkills(boolean changedRemovedProvSkills) {
+		this.changedRemovedProvSkills = changedRemovedProvSkills;
 	}
 
 }
