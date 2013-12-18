@@ -11,6 +11,8 @@ public interface AccountService {
 	Account register(Account account);
 
 	Account updateSkills(Account account);
+	
+	Account setSkills(Account account);
 
 	Account authenticate(String username, String password);
 

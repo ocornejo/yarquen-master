@@ -50,6 +50,8 @@ public class Account {
 	private List<Skill> skills;
 
 	private List<String> roleId;
+	
+	private double trustTreshold;
 
 	public List<String> getRoleId() {
 		if (roleId == null)
@@ -141,6 +143,14 @@ public class Account {
 				+ email + ", familyName=" + familyName + ", firstName="
 				+ firstName + ", id=" + id + ", middleName=" + middleName
 				+ ", username=" + username + ", skills=" + skills + "]";
+	}
+
+	public double getTrustTreshold() {
+		return trustTreshold;
+	}
+
+	public void setTrustTreshold(double trustTreshold) {
+		this.trustTreshold = trustTreshold;
 	}
 
 }

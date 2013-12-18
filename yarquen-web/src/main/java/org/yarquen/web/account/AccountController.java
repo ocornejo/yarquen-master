@@ -375,6 +375,31 @@ public class AccountController {
 				
 	}
 	
+	@RequestMapping(value="/addTrustTreshold",method = RequestMethod.GET)
+	public void addTrustTreshold(
+			@RequestParam("user") String user,
+			@RequestParam("trust") String trust, HttpServletResponse rsp) 
+					throws IOException {
+		boolean op;
+		LOGGER.debug("Setting trust treshold");
+
+		op = trustAction.setTrust(Integer.parseInt(trust), source, sink);
+		
+		if(op){
+			LOGGER.info("The user {} was trusted by {} sucessfully",user,userDetails.getId());
+			rsp.setStatus(HttpServletResponse.SC_OK);
+			rsp.getWriter().print("TRANSACTION_OK");
+		}
+		else{
+			LOGGER.error("Error adding trust");
+			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			rsp.getWriter().print("TRANSACTION_ERROR");
+		}
+				
+	}
+	
+	
+	
 	
 	@RequestMapping(value="/deleteTrust/{user}",method = RequestMethod.GET)
 	public ModelAndView deleteTrust(
