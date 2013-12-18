@@ -252,7 +252,7 @@ public class ArticleSearcher {
 			//neo4j data
 			Trust trustAction = new Trust();
 			Node source = trustAction.getNode(accountId);
-		
+			LOGGER.info("source: {}",source);
 		
 		for (ScoreDoc scoreDoc : hits) {
 			final Document doc = searcher.doc(scoreDoc.doc);

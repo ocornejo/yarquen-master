@@ -182,9 +182,13 @@
 									th:href="${facets.getNewKeywordApplied(kw)}" th:text="${kw}"
 									th:class="${facets.isKeywordApplied(kw) ? 'text-error' : 'text-success'}">lambda,</a>,</small>
 								<br /> <small>Rating: </small> <small
-									th:text="${result.ratingFinal}"></small> <br />
+									th:text="${result.ratingFinal}"></small>
+									<small
+								sec:authorize="isAuthenticated()"> Trust score: </small> <small
+								sec:authorize="isAuthenticated()" th:text="${result.trustScore}"></small> <br />
 								<div class="basic" th:id="${result.id}"
 									th:attr="data-average=${result.ratingFinal}"></div>
+								
 
 							</div>
 						</li>

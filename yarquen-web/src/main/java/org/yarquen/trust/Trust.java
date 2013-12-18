@@ -73,7 +73,7 @@ public class Trust {
 	}
 	
 	public boolean deleteUser(){
-		//TO-DO!
+		//TODO
 		return false;
 	}
 	
@@ -117,11 +117,10 @@ public class Trust {
 	public double getTrust(Node source, Node sink)
 	{
 		double total = 0;
-
 		if(checkAdjacency(source,sink))
 			total = (double) getAdjacencyTrust(source,sink);
 		else
-			total = tidalTrust(source,sink);
+			total = (double)Math.round( tidalTrust(source,sink)* 10)/10;
 		return total;
 	}
 	

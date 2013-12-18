@@ -1,17 +1,21 @@
 package org.yarquen.web.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.neo4j.graphdb.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yarquen.account.AccountService;
 import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
 import org.yarquen.skill.Skill;
 import org.yarquen.trust.Trust;
+import org.yarquen.web.enricher.EnricherController;
 
 
 /**
@@ -22,6 +26,8 @@ import org.yarquen.trust.Trust;
  */
 
 public class SearchResult {
+	static final Logger LOGGER = LoggerFactory
+			.getLogger(SearchResult.class);
 	
 	@Resource
 	private AccountService accountService;
@@ -67,22 +73,6 @@ public class SearchResult {
 		return providedSkills;
 	}
 
-	public void setProvidedSkills(List<Skill> providedSkills, Trust trustAction, Node source) {
-		this.providedSkills = new ArrayList<Skill>();
-		
-		if(providedSkills.size()>0){
-			for(Skill skillProv : providedSkills){
-				Node sink = trustAction.getNode(skillProv.getId());
-				skillProv.setTrust(trustAction.getTrust(source, sink));
-				skillProv.setColor();
-				this.providedSkills.add(skillProv);
-			}
-		}
-		if(!this.providedSkills.isEmpty()){
-			Collections.sort(this.providedSkills, new SkillTrustComparator());
-		}
-	}
-
 	public List<Rating> getRatings() {
 		return ratings;
 	}
@@ -100,6 +90,7 @@ public class SearchResult {
 		double rate = 0;
 		double trust = 0;
 		this.ratingFinal = 0;
+		List<Double> trustList = new ArrayList<Double>();
 		if(ratings.size()>0){
 			for(Rating rt: ratings){
 				Node sink = trustAction.getNode(rt.getId());
@@ -107,12 +98,15 @@ public class SearchResult {
 				rate = Double.parseDouble(rt.getRating()) * trustTemp;
 				this.ratingFinal+=rate;
 				trust += trustTemp;
+				if(trustTemp>0) 
+					trustList.add(trustTemp);
 			}
-			if(trust>0){			
+			if(trust>0){
 				double value = (ratingFinal/trust);
 				this.ratingFinal = (double)Math.round( value* 10)/10;
-				this.trustScore = trust;
+				this.trustScore = median(trustList);
 			}
+			
 		}
 	}
 	
@@ -202,7 +196,12 @@ public class SearchResult {
 		if(requiredSkills.size()>0){
 			for(Skill skillReq : requiredSkills){
 				Node sink = trustAction.getNode(skillReq.getId());
-				skillReq.setTrust(trustAction.getTrust(source, sink));
+				if(sink!=null){
+					skillReq.setTrust(trustAction.getTrust(source, sink));
+				}
+				else{
+					skillReq.setTrust(0);
+				}
 				skillReq.setColor();
 				this.requiredSkills.add(skillReq);
 			}
@@ -211,5 +210,38 @@ public class SearchResult {
 			Collections.sort(this.requiredSkills, new SkillTrustComparator());
 		}
 	}
+	
+	public void setProvidedSkills(List<Skill> providedSkills, Trust trustAction, Node source) {
+		this.providedSkills = new ArrayList<Skill>();
+		
+		if(providedSkills.size()>0){
+			for(Skill skillProv : providedSkills){
+				Node sink = trustAction.getNode(skillProv.getId());
+				if(sink!=null){
+					skillProv.setTrust(trustAction.getTrust(source, sink));
+				}
+				else{
+					skillProv.setTrust(0);
+				}
+				skillProv.setColor();
+				this.providedSkills.add(skillProv);
+			}
+		}
+		if(!this.providedSkills.isEmpty()){
+			Collections.sort(this.providedSkills, new SkillTrustComparator());
+		}
+	}
+	
+	private double median(List<Double> list){
+		Collections.sort(list, new DoubleComparator());
+		
+		int mid = list.size()/2; 
+		double median = (Double)list.get(mid); 
+		if (list.size()%2 == 0) { 
+			median = (median + (Double)list.get(mid-1))/2; 
+		}
+		return (double)Math.round( median* 10)/10;
+	}
+	
 	
 }
