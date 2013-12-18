@@ -10,6 +10,7 @@ import org.neo4j.graphdb.Node;
 import org.yarquen.account.AccountService;
 import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
+import org.yarquen.skill.Skill;
 import org.yarquen.trust.Trust;
 
 
@@ -30,15 +31,15 @@ public class SearchResult {
 	private String id;
 	private List<String> keywords;
 	private List<KeywordTrust> keywordsTrust;
+	private List<Skill> providedSkills;
+	private List<Skill> requiredSkills;
 	private float score;
 	private String summary;
 	private String title;
 	private String url;
     private double ratingFinal;
-	
 	private List<Rating> ratings;
-
-	private double trustScore;
+    private double trustScore;
 	
 	
 	public List<KeywordTrust> getKeywordsTrust() {
@@ -59,6 +60,26 @@ public class SearchResult {
 		}
 		if(!this.keywordsTrust.isEmpty()){
 			Collections.sort(this.keywordsTrust, new KeyTrustComparator());
+		}
+	}
+	
+	public List<Skill> getProvidedSkills() {
+		return providedSkills;
+	}
+
+	public void setProvidedSkills(List<Skill> providedSkills, Trust trustAction, Node source) {
+		this.providedSkills = new ArrayList<Skill>();
+		
+		if(providedSkills.size()>0){
+			for(Skill skillProv : providedSkills){
+				Node sink = trustAction.getNode(skillProv.getId());
+				skillProv.setTrust(trustAction.getTrust(source, sink));
+				skillProv.setColor();
+				this.providedSkills.add(skillProv);
+			}
+		}
+		if(!this.providedSkills.isEmpty()){
+			Collections.sort(this.providedSkills, new SkillTrustComparator());
 		}
 	}
 
@@ -169,6 +190,26 @@ public class SearchResult {
 
 	public void setRatingFinalDirect(int i) {
 		this.ratingFinal=i;
+	}
+
+	public List<Skill> getRequiredSkills() {
+		return requiredSkills;
+	}
+
+	public void setRequiredSkills(List<Skill> requiredSkills, Trust trustAction, Node source) {
+		this.requiredSkills = new ArrayList<Skill>();
+		
+		if(requiredSkills.size()>0){
+			for(Skill skillReq : requiredSkills){
+				Node sink = trustAction.getNode(skillReq.getId());
+				skillReq.setTrust(trustAction.getTrust(source, sink));
+				skillReq.setColor();
+				this.requiredSkills.add(skillReq);
+			}
+		}
+		if(!this.requiredSkills.isEmpty()){
+			Collections.sort(this.requiredSkills, new SkillTrustComparator());
+		}
 	}
 	
 }

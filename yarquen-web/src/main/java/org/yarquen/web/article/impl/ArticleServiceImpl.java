@@ -15,6 +15,7 @@ import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
 import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
+import org.yarquen.skill.Skill;
 import org.yarquen.web.article.ArticleService;
 
 
@@ -30,7 +31,6 @@ public class ArticleServiceImpl implements ArticleService{
 
 	@Override
 	public String addRating(String id,Rating rating) {
-		// TODO Auto-generated method stub
 		Article article = articleRepository.findOne(id);
 
 		try {
@@ -59,9 +59,7 @@ public class ArticleServiceImpl implements ArticleService{
 			articleRepository.save(article);
 			return "Ok";
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			LOGGER.error("An error ocurred while trying to insert new rating");
-			e.printStackTrace();
 			return "Error";
 		}
 		
@@ -69,7 +67,6 @@ public class ArticleServiceImpl implements ArticleService{
 
 	@Override
 	public String addKeywordTrust(String id, KeywordTrust kwt) {
-		// TODO Auto-generated method stub
 		Article article = articleRepository.findOne(id);
 
 		try {
@@ -81,16 +78,13 @@ public class ArticleServiceImpl implements ArticleService{
 			articleRepository.save(article);
 			return "Ok";
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			LOGGER.error("An error ocurred while trying to insert new keywordTrust");
-			e.printStackTrace();
 			return "Error";
 		}
 	}
 
 	@Override
 	public String removeKeywordTrust(String id, String keyword) {
-		// TODO Auto-generated method stub
 		Article article = articleRepository.findOne(id);
 		
 		try {
@@ -115,7 +109,6 @@ public class ArticleServiceImpl implements ArticleService{
 			}
 		} catch (Exception e) {
 			LOGGER.error("An error ocurred while trying to remove the keywordTrust");
-			e.printStackTrace();
 			return "Error";
 		}
 		
@@ -123,7 +116,6 @@ public class ArticleServiceImpl implements ArticleService{
 
 	@Override
 	public String removeKeyword(String id, String keyword) {
-		// TODO Auto-generated method stub
 		Article article = articleRepository.findOne(id);
 		try {
 			List<String> kw = new ArrayList<String>(article.getKeywords());
@@ -133,9 +125,103 @@ public class ArticleServiceImpl implements ArticleService{
 			articleRepository.save(article);
 			return "Ok";
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			LOGGER.error("An error ocurred while trying to remove the keyword");
-			e.printStackTrace();
+			return "Error";
+		}
+	}
+
+	@Override
+	public String addProvidedSkill(String id, Skill skill) {
+		Article article = articleRepository.findOne(id);
+
+		try {
+			List<Skill> skills = new ArrayList<Skill>(article.getProvidedSkills());
+			skills.add(skill);
+			article.setProvidedSkills(skills);
+			
+			LOGGER.info("{} provided skill added successfull", skill.getAsText());
+			articleRepository.save(article);
+			return "Ok";
+		} catch (Exception e) {
+			LOGGER.error("An error ocurred while trying to insert new provided skill");
+			return "Error";
+		}
+	}
+
+	@Override
+	public String removeProvidedSkill(String id, Skill skill) {
+		// TODO Auto-generated method stub
+		Article article = articleRepository.findOne(id);
+		
+		try {
+			List<Skill> skills = new ArrayList<Skill>(article.getProvidedSkills());
+			int index = -1;
+			for (int i = 0; i < skills.size(); i++)
+			    if (skills.get(i).getAsText().compareTo(skill.getAsText())==0) {
+			        index = i;
+			        break;
+			    }
+			if(index != -1){
+				skills.remove(index);
+				article.setProvidedSkills(skills);
+				
+				LOGGER.info("The provided skill {} was removed successfully", skill.getAsText());
+				articleRepository.save(article);
+				return "Ok";
+			}
+			else{
+				LOGGER.error("The provided skill not exist in the Database");
+				return "Error";
+			}
+		} catch (Exception e) {
+			LOGGER.error("An error ocurred while trying to remove the provided skill");
+			return "Error";
+		}
+	}
+
+	@Override
+	public String addRequiredSkill(String id, Skill skill) {
+		Article article = articleRepository.findOne(id);
+		try {
+			List<Skill> skills = new ArrayList<Skill>(article.getRequiredSkills());
+			skills.add(skill);
+			article.setRequiredSkills(skills);
+			
+			LOGGER.info("{} required skill added successfull", skill.getAsText());
+			articleRepository.save(article);
+			return "Ok";
+		} catch (Exception e) {
+			LOGGER.error("An error ocurred while trying to insert new required skill");
+			return "Error";
+		}
+	}
+
+	@Override
+	public String removeRequiredSkill(String id, Skill skill) {
+		Article article = articleRepository.findOne(id);
+		
+		try {
+			List<Skill> skills = new ArrayList<Skill>(article.getRequiredSkills());
+			int index = -1;
+			for (int i = 0; i < skills.size(); i++)
+			    if (skills.get(i).getAsText().compareTo(skill.getAsText())==0) {
+			        index = i;
+			        break;
+			    }
+			if(index != -1){
+				skills.remove(index);
+				article.setRequiredSkills(skills);
+				
+				LOGGER.info("The required skill {} was removed successfully", skill.getAsText());
+				articleRepository.save(article);
+				return "Ok";
+			}
+			else{
+				LOGGER.error("The required skill not exist in the Database");
+				return "Error";
+			}
+		} catch (Exception e) {
+			LOGGER.error("An error ocurred while trying to remove the required skill");
 			return "Error";
 		}
 	}

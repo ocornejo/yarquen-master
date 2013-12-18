@@ -80,7 +80,8 @@
 		</div>
 
 		<div class="container-fluid">
-			<div id="facetsSection" class="sidebar left" th:if="${results != null}">
+			<div id="facetsSection" class="sidebar left"
+				th:if="${results != null}">
 				<h3>Facets</h3>
 				<div id="authorFacetSection">
 					<h4>Author</h4>
@@ -151,46 +152,46 @@
 			<div class="sidebar right" sec:authorize="isAuthenticated()">
 				<div th:if="${bestResults != null}" class="well">
 					<h4>Best trust-based results</h4>
-									<ol id="results">
-					<li th:each="result : ${bestResults}">
-						<div style="margin-bottom: 15px">
-							<span> <em><a th:href="${result.url}"
-									href="http://architects.dzone.com/news/functional-programming-101-lam"
-									th:text="${result.title}" target="_blank">Functional
-										Programming 101: Lambda Forms</a></em> <small>by</small> <small><span
-									class="icon-user"></span> <a href="#"
-									th:href="${facets.getNewAuthorApplied(result.author)}"
-									th:class="${facets.isAuthorApplied(result.author) ? 'text-error' : ''}"
-									th:text="${result.author}">Pramod Subramanyan</a></small> <small>on</small>
-								<small><span class="icon-calendar"></span> <a
-									th:text="${result.date}" href="#"
-									th:class="${facets.isYearApplied(result.date) ? 'text-error' : ''}"
-									th:href="${facets.getNewDateApplied(result.date)}">05.19.2008</a></small>
-								<a th:href="@{'/articles/enricher/' + ${result.id}}"
-								th:id="${'enrich' + result.title}" href="enricher.html"
-								rel="tooltip" title="complete metadata"><span
-									class="icon-pencil"></span></a> <a th:id="${result.title}"
-								th:href="@{'/articles/record/' + ${result.id}}"
-								href="record.html" rel="tooltip" title="see changes"><span
-									class="icon-time"></span></a>
-							</span> <br /> <small th:id="'url'+${result.url}" class="muted"
-								th:text="${result.url}">http://architects.dzone.com/news/functional-programming-101-lam</small>
-							<br /> <span class="icon-tags"></span> <small class="muted">Keywords:</small>
-							<small th:each="kw : ${result.keywords}"
-								style="margin-right: 5px"><a href="#"
-								th:href="${facets.getNewKeywordApplied(kw)}" th:text="${kw}"
-								th:class="${facets.isKeywordApplied(kw) ? 'text-error' : 'text-success'}">lambda,</a>,</small>
-							<br /> <small>Rating: </small> <small
-								th:text="${result.ratingFinal}"></small> <br />
-							<div class="basic" th:id="${result.id}"
-								th:attr="data-average=${result.ratingFinal}"></div>
+					<ol id="results">
+						<li th:each="result : ${bestResults}">
+							<div style="margin-bottom: 15px">
+								<span> <em><a th:href="${result.url}"
+										href="http://architects.dzone.com/news/functional-programming-101-lam"
+										th:text="${result.title}" target="_blank">Functional
+											Programming 101: Lambda Forms</a></em> <small>by</small> <small><span
+										class="icon-user"></span> <a href="#"
+										th:href="${facets.getNewAuthorApplied(result.author)}"
+										th:class="${facets.isAuthorApplied(result.author) ? 'text-error' : ''}"
+										th:text="${result.author}">Pramod Subramanyan</a></small> <small>on</small>
+									<small><span class="icon-calendar"></span> <a
+										th:text="${result.date}" href="#"
+										th:class="${facets.isYearApplied(result.date) ? 'text-error' : ''}"
+										th:href="${facets.getNewDateApplied(result.date)}">05.19.2008</a></small>
+									<a th:href="@{'/articles/enricher/' + ${result.id}}"
+									th:id="${'enrich' + result.title}" href="enricher.html"
+									rel="tooltip" title="complete metadata"><span
+										class="icon-pencil"></span></a> <a th:id="${result.title}"
+									th:href="@{'/articles/record/' + ${result.id}}"
+									href="record.html" rel="tooltip" title="see changes"><span
+										class="icon-time"></span></a>
+								</span> <br /> <small th:id="'url'+${result.url}" class="muted"
+									th:text="${result.url}">http://architects.dzone.com/news/functional-programming-101-lam</small>
+								<br /> <span class="icon-tags"></span> <small class="muted">Keywords:</small>
+								<small th:each="kw : ${result.keywords}"
+									style="margin-right: 5px"><a href="#"
+									th:href="${facets.getNewKeywordApplied(kw)}" th:text="${kw}"
+									th:class="${facets.isKeywordApplied(kw) ? 'text-error' : 'text-success'}">lambda,</a>,</small>
+								<br /> <small>Rating: </small> <small
+									th:text="${result.ratingFinal}"></small> <br />
+								<div class="basic" th:id="${result.id}"
+									th:attr="data-average=${result.ratingFinal}"></div>
 
-						</div>
-					</li>
-				</ol>
+							</div>
+						</li>
+					</ol>
 				</div>
 			</div>
-			
+
 			<div class="content fixed">
 
 				<h3 th:if="${results != null}">Results</h3>
@@ -221,31 +222,45 @@
 									class="icon-time"></span></a>
 							</span> <br /> <small th:id="'url'+${result.url}" class="muted"
 								th:text="${result.url}">http://architects.dzone.com/news/functional-programming-101-lam</small>
-							<br /> 
-							<span class="icon-tags"></span> <small class="muted">Keywords:</small>
-							
-							<small th:each="kwt : ${result.KeywordsTrust}">
-							<a><span th:text="${kwt.name}" 
-								 th:class="${'label label-'+kwt.color}"></span></a></small>
-							
+							<br /> <span class="icon-tags"></span> <small class="muted">Keywords:</small>
+
+							<small th:each="kwt : ${result.KeywordsTrust}"> <a><span
+									th:text="${kwt.name}" th:class="${'label label-'+kwt.color}"></span></a></small>
+
 							<small th:each="kw : ${result.keywords}"
-								style="margin-right: 5px"><a href="#" 
-								th:href="${facets.getNewKeywordApplied(kw)}"><span 
-								 th:text="${kw}" 
-								 th:class="${facets.isKeywordApplied(kw) ? 'label label-inverse' : 'label label-default'}"></span></a>
-						   </small>
-								
-							
-							<br sec:authorize="isAuthenticated()" /> <small sec:authorize="isAuthenticated()">Rating: </small> <small
-								sec:authorize="isAuthenticated()" th:text="${result.ratingFinal}"></small>
-							<small sec:authorize="isAuthenticated()"> Trust score: </small> <small
-								sec:authorize="isAuthenticated()"  th:text="${result.trustScore}"></small> <br />	
-							<div sec:authorize="isAuthenticated()" class="basic" th:id="${result.id}" 
+								style="margin-right: 5px"><a href="#"
+								th:href="${facets.getNewKeywordApplied(kw)}"><span
+									th:text="${kw}"
+									th:class="${facets.isKeywordApplied(kw) ? 'label label-inverse' : 'label label-default'}"></span></a>
+							</small> <br sec:authorize="isAuthenticated()" /> <span
+								sec:authorize="isAuthenticated()" class="icon-tags"></span> <small
+								sec:authorize="isAuthenticated()" class="muted">Req
+								Skills:</small> <small
+								th:if="${result.requiredSkills != null and !result.requiredSkills.isEmpty() and result.requiredSkills.size() > 0}"
+								th:each="rS : ${result.requiredSkills}"> <a><span
+									th:text="${rS.friendlyName()}"
+									th:class="${'label label-'+rS.color}"></span></a></small> <br
+								sec:authorize="isAuthenticated()" /> <span
+								sec:authorize="isAuthenticated()" class="icon-tags"></span> <small
+								sec:authorize="isAuthenticated()" class="muted">Prov
+								Skills:</small> <small
+								th:if="${result.providedSkills != null and !result.providedSkills.isEmpty() and result.providedSkills.size() > 0}"
+								th:each="pS : ${result.providedSkills}"> <a><span
+									th:text="${pS.friendlyName()}"
+									th:class="${'label label-'+pS.color}"></span></a></small> <br
+								sec:authorize="isAuthenticated()" /> <small
+								sec:authorize="isAuthenticated()">Rating: </small> <small
+								sec:authorize="isAuthenticated()"
+								th:text="${result.ratingFinal}"></small> <small
+								sec:authorize="isAuthenticated()"> Trust score: </small> <small
+								sec:authorize="isAuthenticated()" th:text="${result.trustScore}"></small>
+							<br />
+							<div sec:authorize="isAuthenticated()" class="basic"
+								th:id="${result.id}"
 								th:attr="data-average=${result.ratingFinal}"></div>
-							
-							<br sec:authorize="isAuthenticated()" /> 
-							<small><a href="#"
-								class="resultDetailsLink muted">+ more details</a></small>
+
+							<br sec:authorize="isAuthenticated()" /> <small><a
+								href="#" class="resultDetailsLink muted">+ more details</a></small>
 
 							<div class="resultDetails hide">
 								<button type="button"
@@ -304,7 +319,6 @@
 								            }
 								        }
 								       });
-						         
 						    }
 						}); 
 						           

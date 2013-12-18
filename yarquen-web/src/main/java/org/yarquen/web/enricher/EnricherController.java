@@ -272,33 +272,100 @@ public class EnricherController {
 				}
 				
 				//prov skills enrichment
-				
+								
 				if(er.isChangedAddedProvSkills()){
 					Account userDetails = (Account) SecurityContextHolder.getContext()
-							.getAuthentication().getDetails();
-					
-					List<Skill> skills = new ArrayList<Skill>(persistedArticle.getProvidedSkills());
+							.getAuthentication().getDetails();					
 					
 					for(Skill skillProv: er.getAddedProvidedSkills()){
-						skillProv.setId(userDetails.getId());
-						skills.add(skillProv);
-					}
-					persistedArticle.setProvidedSkills(skills);
+						try{
+							List<Skill> skillsPersisted = new ArrayList<Skill>(persistedArticle.getProvidedSkills());
+							
+							if(!skillsPersisted.isEmpty()){
+								boolean found = false;
+								for(Skill temp: skillsPersisted){
+									if(temp.getAsText().compareTo(skillProv.getAsText())==0){
+										found = true;
+									}
+								}
+								if(!found){
+									skillProv.setId(userDetails.getId());
+									String code = articleService.addProvidedSkill(er.getArticleId(), skillProv);
+									LOGGER.info("Skill provided added with state = {}",code);
+								}
+							}
+							else{
+								skillProv.setId(userDetails.getId());
+								String code = articleService.addProvidedSkill(er.getArticleId(), skillProv);
+								LOGGER.info("Skill provided added with state = {}",code);	
+							}
+							
+						} catch (Exception e) {
+							LOGGER.error("can't add skill provided", e);
+						}
+					}		
+					
 				}
 				
 				if(er.isChangedRemovedProvSkills()){
 					
-					List<Skill> skills = new ArrayList<Skill>(persistedArticle.getProvidedSkills());
-					
 					for(Skill skillProv: er.getRemovedProvidedSkills()){
-						skills.remove(returnIndexSkill(skills, skillProv));
+						try{
+							String code = articleService.removeProvidedSkill(er.getArticleId(), skillProv);
+							LOGGER.info("Skill provided removed with state = {}",code);
+						} catch (Exception e) {
+							LOGGER.error("can't remove skill provided", e);
+						}
 					}
-					persistedArticle.setProvidedSkills(skills);
 				}
 				
-				articleRepository.save(persistedArticle);
+				//req skills enrichment
 				
+				if(er.isChangedAddedReqSkills()){
+					Account userDetails = (Account) SecurityContextHolder.getContext()
+							.getAuthentication().getDetails();					
+					
+					for(Skill skillReq: er.getAddedRequiredSkills()){
+						try{
+							List<Skill> skillsPersisted = new ArrayList<Skill>(persistedArticle.getRequiredSkills());
+							
+							if(!skillsPersisted.isEmpty()){
+								boolean found = false;
+								for(Skill temp: skillsPersisted){
+									if(temp.getAsText().compareTo(skillReq.getAsText())==0){
+										found = true;
+									}
+								}
+								if(!found){
+									skillReq.setId(userDetails.getId());
+									String code = articleService.addRequiredSkill(er.getArticleId(), skillReq);
+									LOGGER.info("Skill required added with state = {}",code);
+								}
+							}
+							else{
+								skillReq.setId(userDetails.getId());
+								String code = articleService.addRequiredSkill(er.getArticleId(), skillReq);
+								LOGGER.info("Skill required added with state = {}",code);	
+							}
+							
+						} catch (Exception e) {
+							LOGGER.error("can't add skill required", e);
+						}
+					}
+				}
 				
+				if(er.isChangedRemovedReqSkills()){
+										
+					for(Skill skillReq: er.getRemovedRequiredSkills()){
+						try{
+							String code = articleService.removeRequiredSkill(er.getArticleId(), skillReq);
+							LOGGER.info("Skill required removed with state = {}",code);
+						} catch (Exception e) {
+							LOGGER.error("can't remove skill required", e);
+						}
+					}
+
+				}		
 					
 				// reindex
 				LOGGER.trace("reindexing article {}", id);
@@ -494,6 +561,17 @@ public class EnricherController {
 			
 		}
 		
+		if(persistedKeywords!=null && !persistedKeywords.isEmpty()){
+			LOGGER.info("borraron kws del sistema");
+			removedKeywords = new ArrayList<String>(persistedKeywords);
+		}
+		
+		if(persistedKeywordsTrust!=null && !persistedKeywordsTrust.isEmpty()){
+			LOGGER.info("borraron kws Trust");
+			removedKeywordsTrust = new ArrayList<KeywordTrust>(persistedKeywordsTrust);
+		}
+		
+		
 		if (addedKeywordsTrust!=null && !addedKeywordsTrust.isEmpty() || 
 				removedKeywords!=null && !removedKeywords.isEmpty() || 
 				removedKeywordsTrust!=null && !removedKeywordsTrust.isEmpty()) {
@@ -573,8 +651,11 @@ public class EnricherController {
 			}
 			
 		}
+		if(persistedProvSkills!=null && !persistedProvSkills.isEmpty()){
+			LOGGER.info("borraron prov skills");
+			removedProvidedSkills = new ArrayList<Skill>(persistedProvSkills);
+		}
 		
-	
 		if (addedProvidedSkills !=null && !addedProvidedSkills.isEmpty() || 
 				removedProvidedSkills!=null &&!removedProvidedSkills.isEmpty()) {
 			changed = true;
@@ -597,38 +678,63 @@ public class EnricherController {
 		}
 
 		// Comparing Required Skills
-		final List<Skill> addedRequiredSkills = new ArrayList<Skill>();
-		final List<Skill> removedRequiredSkills = new ArrayList<Skill>();
-//		if (updatedArticle.getRequiredSkills() != null
-//				&& !updatedArticle.getRequiredSkills().isEmpty()) {
-//			for (Skill updatedRequiredSkill : updatedArticle
-//					.getRequiredSkills()) {
-//				if (persistedArticle.getRequiredSkills() != null
-//						&& !persistedArticle.getRequiredSkills().contains(
-//								updatedRequiredSkill)) {
-//					addedRequiredSkills.add(updatedRequiredSkill);
-//				}
-//			}
-//		}
-//		if (persistedArticle.getRequiredSkills() != null
-//				&& !persistedArticle.getRequiredSkills().isEmpty()) {
-//			for (Skill persistedRequiredSkill : persistedArticle
-//					.getRequiredSkills()) {
-//				if (updatedArticle.getRequiredSkills() != null
-//						&& !updatedArticle.getRequiredSkills().contains(
-//								persistedRequiredSkill)) {
-//					removedRequiredSkills.add(persistedRequiredSkill);
-//				}
-//			}
-//		}
-		if (!addedRequiredSkills.isEmpty() || !removedRequiredSkills.isEmpty()) {
+		List<Skill> addedRequiredSkills = null;
+		List<Skill> removedRequiredSkills = null;
+		
+		Iterator<Skill> updatedReqSkills = null;
+		if(updatedArticle.getRequiredSkills()!= null)
+			updatedReqSkills = updatedArticle.getRequiredSkills().iterator();
+		
+		List<Skill> persistedReqSkills = null;
+		if(persistedArticle.getRequiredSkills()!=null) 
+			persistedReqSkills =new ArrayList<Skill>(persistedArticle.getRequiredSkills());
+		
+		if (updatedArticle.getRequiredSkills() != null
+		 		&& !updatedArticle.getRequiredSkills().isEmpty()) {
+			
+			while(updatedReqSkills.hasNext()){
+				
+				Skill upSkill = updatedReqSkills.next();
+				if(persistedArticle.getRequiredSkills() !=null && containsSkill(persistedArticle.getRequiredSkills(), upSkill)){
+					updatedReqSkills.remove();
+					persistedReqSkills.remove(returnIndexSkill(persistedReqSkills, upSkill));
+				}
+			
+			}
+			
+			if(updatedArticle.getRequiredSkills().size()>0){
+				LOGGER.info("agregaron req skills");
+				addedRequiredSkills = new ArrayList<Skill>(updatedArticle.getRequiredSkills());
+			}
+			
+			if(persistedReqSkills!=null && persistedReqSkills.size()>0){
+				LOGGER.info("borraron req skills");
+				removedRequiredSkills = new ArrayList<Skill>(persistedReqSkills);
+			}
+			
+		}
+		if(persistedReqSkills!=null && !persistedReqSkills.isEmpty()){
+			LOGGER.info("borraron req skills");
+			removedRequiredSkills = new ArrayList<Skill>(persistedReqSkills);
+		}
+
+		if (addedRequiredSkills!=null && !addedRequiredSkills.isEmpty() || 
+				removedRequiredSkills!=null && !removedRequiredSkills.isEmpty()) {
 			changed = true;
 		}
-		if (!addedRequiredSkills.isEmpty()) {
+		if (addedRequiredSkills!=null && !addedRequiredSkills.isEmpty()) {
 			enrichmentRecord.setAddedRequiredSkills(addedRequiredSkills);
+			enrichmentRecord.setChangedAddedReqSkills(true);
 		}
-		if (!removedRequiredSkills.isEmpty()) {
+		else{
+			enrichmentRecord.setChangedAddedReqSkills(false);
+		}
+		if (removedRequiredSkills !=null && !removedRequiredSkills.isEmpty()) {
 			enrichmentRecord.setRemovedRequiredSkills(removedRequiredSkills);
+			enrichmentRecord.setChangedRemovedReqSkills(true);
+		}
+		else{
+			enrichmentRecord.setChangedRemovedReqSkills(false);
 		}
 
 		return changed;

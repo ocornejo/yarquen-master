@@ -53,7 +53,10 @@ public class EnrichmentRecord {
 	private boolean changedRemovedProvSkills;
 	private List<Skill> removedProvidedSkills;
 
+	private boolean changedAddedReqSkills;
 	private List<Skill> addedRequiredSkills;
+	
+	private boolean changedRemovedReqSkills;
 	private List<Skill> removedRequiredSkills;
 
 	// If null, there was no update
@@ -299,6 +302,22 @@ public class EnrichmentRecord {
 
 	public void setChangedRemovedProvSkills(boolean changedRemovedProvSkills) {
 		this.changedRemovedProvSkills = changedRemovedProvSkills;
+	}
+
+	public boolean isChangedAddedReqSkills() {
+		return changedAddedReqSkills;
+	}
+
+	public void setChangedAddedReqSkills(boolean changedAddedReqSkills) {
+		this.changedAddedReqSkills = changedAddedReqSkills;
+	}
+
+	public boolean isChangedRemovedReqSkills() {
+		return changedRemovedReqSkills;
+	}
+
+	public void setChangedRemovedReqSkills(boolean changedRemovedReqSkills) {
+		this.changedRemovedReqSkills = changedRemovedReqSkills;
 	}
 
 }

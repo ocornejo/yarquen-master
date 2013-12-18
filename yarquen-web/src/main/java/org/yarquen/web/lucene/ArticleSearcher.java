@@ -676,6 +676,26 @@ public class ArticleSearcher {
 		}
 		searchResult.setKeywordsTrust(keyTrust,trustAction,source);
 		
+		//req skills
+		final List<Skill> skillReq = new ArrayList<Skill>();
+		if (article.getRequiredSkills() != null) {
+			for (Skill skill : article.getRequiredSkills()) {
+				skillReq.add(skill);
+			}
+		}
+		searchResult.setRequiredSkills(skillReq, trustAction, source);
+		
+		//prov skills
+				final List<Skill> skillProv = new ArrayList<Skill>();
+				if (article.getProvidedSkills() != null) {
+					for (Skill skill : article.getProvidedSkills()) {
+						skillProv.add(skill);
+					}
+				}
+		searchResult.setProvidedSkills(skillProv, trustAction, source);
+				
+		
+		
 		if(article.getRatings().size()>0)
 			searchResult.setRatingFinal(article.getRatings(),trustAction, source);
 		else{
