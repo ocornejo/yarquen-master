@@ -233,4 +233,10 @@ public class AccountServiceImpl implements AccountService {
 		return accountRepository.findOne(id);
 	}
 
+	@Override
+	public Account updateTrustTreshold(Account account) {
+		LOGGER.info("updating trust treshold {}", account.getUsername());
+		return accountRepository.save(account);
+	}
+
 }

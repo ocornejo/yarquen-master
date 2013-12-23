@@ -1,7 +1,6 @@
 package org.yarquen.web.search;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import org.yarquen.article.KeywordTrust;
 import org.yarquen.article.Rating;
 import org.yarquen.skill.Skill;
 import org.yarquen.trust.Trust;
-import org.yarquen.web.enricher.EnricherController;
 
 
 /**

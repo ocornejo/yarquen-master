@@ -13,9 +13,11 @@ import java.util.TimeZone;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.yarquen.account.Account;
@@ -41,6 +44,7 @@ import org.yarquen.keyword.Keyword;
 import org.yarquen.keyword.KeywordRepository;
 import org.yarquen.keyword.KeywordService;
 import org.yarquen.skill.Skill;
+import org.yarquen.trust.Trust;
 import org.yarquen.web.article.ArticleService;
 import org.yarquen.web.lucene.ArticleSearcher;
 
@@ -53,7 +57,7 @@ import org.yarquen.web.lucene.ArticleSearcher;
  */
 @Controller
 @SessionAttributes({ EnricherController.REFERER })
-@RequestMapping(value = "/articles/enricher/{id}")
+@RequestMapping(value = "/articles/enricher")
 public class EnricherController {
 	public static final String REFERER = "referer";
 	private static final String ARTICLE = "article";
@@ -90,7 +94,7 @@ public class EnricherController {
 				new SkillPropertyEditorSupport(categoryService));
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = "cancel")
+	@RequestMapping(value="/{id}",method = RequestMethod.POST, params = "cancel")
 	public String returnToSearch(@ModelAttribute(REFERER) String referer,
 			RedirectAttributes redirAtts) {
 		if (referer != null) {
@@ -101,8 +105,54 @@ public class EnricherController {
 			return "redirect:/articles";
 		}
 	}
+	
+	@RequestMapping(value="/checkIfTagCanBeRemoved",method = RequestMethod.GET)
+	public void checkIfTagCanBeRemoved(
+			@RequestParam("tag") String tag,
+			@RequestParam("article") String id, HttpServletResponse rsp) 
+					throws IOException {
+		final Article article = articleRepository.findOne(id);
+		
+		Account userDetails = (Account) SecurityContextHolder.getContext()
+				.getAuthentication().getDetails();
+		
+		LOGGER.debug("Getting if tag can be removed by user {}", userDetails.getUsername());
+		
+		Trust trustAction = new Trust();
+		Node source = trustAction.getNode(userDetails.getId());
+		
+		List<String> keywords = article.getKeywords();
+		List<KeywordTrust> keywordsTrust = article.getKeywordsTrust();
+		
+		if(keywords!=null && !keywords.isEmpty() && keywords.contains(tag)){
+			LOGGER.info("The user {} can remove the system tag",userDetails.getId());
+			rsp.setStatus(HttpServletResponse.SC_OK);
+			rsp.getWriter().print("YES");
+		}else if(keywordsTrust!=null && !keywordsTrust.isEmpty() && contains(keywordsTrust, tag)){
+			int index =returnIndex(keywordsTrust, tag);
+			Node sink = trustAction.getNode(keywordsTrust.get(index).getId());
+			double trustSource = trustAction.getHowMuchTrust(source);
+			double trustSink = trustAction.getHowMuchTrust(sink);
+			LOGGER.info("trust source: {} trust sink: {}",trustSource,trustSink);
+			if(trustSource >= trustSink){
+				LOGGER.info("The user {} can remove the tag made by {}",userDetails.getId(),keywordsTrust.get(index).getId());
+				rsp.setStatus(HttpServletResponse.SC_OK);
+				rsp.getWriter().print("YES");
+			}else{
+				LOGGER.info("The user {} cannot remove the tag made by {}",userDetails.getId(),keywordsTrust.get(index).getId());
+				rsp.setStatus(HttpServletResponse.SC_OK);
+				rsp.getWriter().print("NO");
+			}
+		}else{
+			LOGGER.error("Tag requested doesn't exist");
+			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			rsp.getWriter().print("TRANSACTION_ERROR");
+		}
+				
+	}
+	
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/{id}",method = RequestMethod.GET)
 	public String setupForm(@PathVariable String id, Model model,
 			HttpServletRequest request) {
 		LOGGER.trace("setup enrichment form for article id={}", id);
@@ -140,7 +190,7 @@ public class EnricherController {
 		return "articles/enricher";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = "submit")
+	@RequestMapping(value="/{id}",method = RequestMethod.POST, params = "submit")
 	public String update(@ModelAttribute(REFERER) String referer,
 			@Valid @ModelAttribute(ARTICLE) Article article,
 			BindingResult result, Model model, RedirectAttributes redirAtts) {

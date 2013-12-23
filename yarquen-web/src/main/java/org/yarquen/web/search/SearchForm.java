@@ -73,6 +73,19 @@ public class SearchForm {
 		final String query = searchFields.getQuery();
 		LOGGER.debug("searching query: {}", query);
 		if (query == null || query.trim().equals("")) {
+			Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+			boolean loggedIn = true; 
+			for (GrantedAuthority it : authorities){ 
+				if (it.toString().compareTo("ROLE_ANONYMOUS")==0) 
+					loggedIn = false;
+			}
+			if(loggedIn){
+				Account userDetails = (Account) SecurityContextHolder.getContext()
+						.getAuthentication().getDetails();
+				
+				Account account = accountService.findOne(userDetails.getId());
+				model.addAttribute("trustTreshold",account.getTrustTreshold());
+			}
 			return "articles/search";
 		} else {
 			try {
@@ -89,8 +102,16 @@ public class SearchForm {
 				
 				//con trust
 				if(loggedIn){
+					//get user information
+					Account userDetails = (Account) SecurityContextHolder.getContext()
+							.getAuthentication().getDetails();
+					
+					Account account = accountService.findOne(userDetails.getId());
+					
 					results = articleSearcher.searchWT(
-						searchFields, facetsCount,loggedIn);
+						searchFields, facetsCount,loggedIn,account);
+					model.addAttribute("trustTreshold",account.getTrustTreshold());
+					
 				}
 				else{
 					results = articleSearcher.search(
@@ -108,6 +129,7 @@ public class SearchForm {
 
 				// result
 				if (!results.isEmpty()) {
+
 					model.addAttribute("results", results);
 					List<SearchResult> bestResults = new ArrayList<SearchResult>(results);
 					

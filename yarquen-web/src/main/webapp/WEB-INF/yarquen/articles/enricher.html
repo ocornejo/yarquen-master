@@ -15,7 +15,7 @@
 		<script th:src="@{/static/js/jquery.js}" src="../../../js/jquery.js"></script>
 		<script th:src="@{/static/bootstrap/js/bootstrap.min.js}" src="../../../bootstrap/js/bootstrap.min.js"></script>
 		<script th:src="@{/static/js/jquery-ui-1.10.0.custom.min.js}" src="../../../js/jquery-ui-1.10.0.custom.min.js"></script>
-		<script th:src="@{/static/js/tag-it.min.js}" src="../../../js/tag-it.min.js" charset="utf-8"></script>
+		<script th:src="@{/static/js/tag-it.js}" src="../../../js/tag-it.js" charset="utf-8"></script>
 		<script th:src="@{/static/jstree/jquery.jstree.js}" src="../../../jstree/jquery.jstree.js"></script>
 	</head>
 	<body>
@@ -255,10 +255,34 @@ $(document).ready(function() {
 		caseSensitive: true,
 		placeholderText: "new keyword",
 		afterTagAdded: addKeywordHiddenField,
+		beforeTagRemoved: check,
 		afterTagRemoved: removeKeywordHidddenField,
 		availableTags: /*[[ ${keywords} ]]*/ ["Java", "C#", "Haskell"]
 	});
 });
+
+function check(event,ui){
+	
+	var article = [[${id}]];
+	var tag = ui.tagLabel;
+	
+
+	$.ajax({
+        type: "GET",
+        url: /*[[@{'/articles/enricher/checkIfTagCanBeRemoved'}]]*/ "http://localhost:8080/yarquen/articles/enricher/checkIfTagCanBeRemoved",
+        data: {tag: tag,article: article},
+        complete: function(e, xhr, settings){
+            if(e.status === 200){
+            	if(e.responseText=="NO"){
+            		alert("You can't remove this tag, your trust isn't enough");
+            		$("#keywords").tagit("createTag",tag);
+            	}
+            }else{
+            	alert(e.responseText);	
+            }
+        }
+        });
+}
 
 function addKeywordHiddenField(event, ui) {
 	var c = $("#keywordList").children().size();

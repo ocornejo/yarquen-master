@@ -77,7 +77,8 @@
 										th:href="@{/account/edit/}+${account.id}">edit</a></small>
 								</h2>
 								<h3 th:text="${account.username}">kathleen</h3>
-
+								<h3 th:text="${esteeselvalor}">3</h3>
+								
 								<br />
 								<div class="row">
 									<div class="span6">
@@ -265,9 +266,9 @@
 										th:text="'Set your trust treshold'">
 									</h4>
 									<p id="trustTresholdText" 
-										th:if="${account.trustTreshold != null}" th:text="'Your current trust treshold is: '+${account.trustTreshold}"></p>
+										th:if="${hasTt != null}" th:text="'Your current trust treshold is: '+${account.trustTreshold}"></p>
 									<p id="trustTresholdText" 
-										th:if="${account.trustTreshold == null}" th:text="'You haven\'t set your trust treshold yet'"></p>
+										th:if="${hasTt == null}" th:text="'You haven\'t set your trust treshold yet'"></p>
 
 									<div class="slider slider-horizontal">
 										<input type="text" class="slider" value="" id="sl2" style="" />
@@ -318,21 +319,20 @@ $(document).ready(function() {
        });
 	 
 	 $('#sl2').slider({
-		 min: 1,
+		 min: 0,
 		 max: 10,
-		 value: [[${account.trustTreshold}]] == null ? 1 : [[${account.trustTreshold}]],
+		 value: [[${account.trustTreshold}]],
          formater: function(value) {
            return 'Current value: '+value;
          }
        }
-       ).on('slideStop', function(ev){    	   
-    	   var user=[[${user}]];
+       ).on('slideStop', function(ev){
     	   var trust=ev.value;
     	   
 	   		$.ajax({
 		        type: "GET",
 		        url: /*[[@{'/account/addTrustTreshold'}]]*/ "http://localhost:8080/yarquen/account/addTrustTreshold",
-		        data: {user: user, trust: trust},
+		        data: {trust: trust},
 		        complete: function(e, xhr, settings){
 		            if(e.status === 200){
 		            	console.log("trust treshold added successfully"+e.responseText);

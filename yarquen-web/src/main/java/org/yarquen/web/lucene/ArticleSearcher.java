@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.yarquen.account.Account;
+import org.yarquen.account.AccountRepository;
+import org.yarquen.account.AccountService;
 import org.yarquen.article.Article;
 import org.yarquen.article.ArticleRepository;
 import org.yarquen.article.KeywordTrust;
@@ -84,6 +86,8 @@ public class ArticleSearcher {
 	private ArticleRepository articleRepository;
 	@Resource
 	private CategoryService categoryService;
+	private AccountRepository accountRepository;
+
 	private Directory indexDirectory;
 	@Value("#{config.indexDirectory}")
 	private String indexDirectoryPath;
@@ -149,7 +153,9 @@ public class ArticleSearcher {
 		indexWriter.commit();
 	}
 
-	public List<SearchResult> searchWT(SearchFields searchFields, YarquenFacets facetsCount, boolean loggedIn) throws IOException, ParseException {
+	public List<SearchResult> searchWT(SearchFields searchFields,
+			YarquenFacets facetsCount, boolean loggedIn, Account account) throws IOException,
+			ParseException {
 		final String queryString = searchFields.getQuery();
 		LOGGER.debug("searching: {}", queryString);
 
@@ -240,20 +246,15 @@ public class ArticleSearcher {
 		}
 
 		final ScoreDoc[] hits = collector.topDocs().scoreDocs;
-		List<SearchResult> results = new ArrayList<SearchResult>(
-				hits.length);
+		List<SearchResult> results = new ArrayList<SearchResult>(hits.length);
 		LOGGER.debug("{} results from index", hits.length);
-		
-	
-			Account userDetails = (Account) SecurityContextHolder.getContext()
-					.getAuthentication().getDetails();
-			
-			String accountId = userDetails.getId();
-			//neo4j data
-			Trust trustAction = new Trust();
-			Node source = trustAction.getNode(accountId);
-			LOGGER.info("source: {}",source);
-		
+
+		int trustTreshold = account.getTrustTreshold();
+		// neo4j data
+		Trust trustAction = new Trust();
+		Node source = trustAction.getNode(account.getId());
+		LOGGER.info("source: {}", source);
+
 		for (ScoreDoc scoreDoc : hits) {
 			final Document doc = searcher.doc(scoreDoc.doc);
 			final IndexableField idField = doc.getField(Article.Fields.ID
@@ -265,23 +266,24 @@ public class ArticleSearcher {
 						"the article {} is indexed but doesn't exists in the database",
 						id);
 			} else {
-				
-				final SearchResult searchResult = createSearchResult(article,trustAction, source);
-			
+
+				final SearchResult searchResult = createSearchResult(article,
+						trustAction, source);
+
 				float score = (float) (Math.round(scoreDoc.score * 10.0) / 10.0);
 				searchResult.setScore(score);
-				
-
-				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",searchResult.getTitle(),String.valueOf(searchResult.getScore()));
-				
-				results.add(searchResult);
+				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",
+						searchResult.getTitle(),
+						String.valueOf(searchResult.getScore()));
+				if (searchResult.getTrustScore() >= trustTreshold)
+					results.add(searchResult);
 			}
 		}
-		
+
 		return results;
 	}
-	
-	//sin trust
+
+	// sin trust
 	public List<SearchResult> search(SearchFields searchFields,
 			YarquenFacets facetsCount) throws IOException, ParseException {
 		final String queryString = searchFields.getQuery();
@@ -374,11 +376,9 @@ public class ArticleSearcher {
 		}
 
 		final ScoreDoc[] hits = collector.topDocs().scoreDocs;
-		List<SearchResult> results = new ArrayList<SearchResult>(
-				hits.length);
+		List<SearchResult> results = new ArrayList<SearchResult>(hits.length);
 		LOGGER.debug("{} results from index", hits.length);
-		
-		
+
 		for (ScoreDoc scoreDoc : hits) {
 			final Document doc = searcher.doc(scoreDoc.doc);
 			final IndexableField idField = doc.getField(Article.Fields.ID
@@ -390,19 +390,20 @@ public class ArticleSearcher {
 						"the article {} is indexed but doesn't exists in the database",
 						id);
 			} else {
-				
+
 				final SearchResult searchResult = createSearchResult(article);
-			
+
 				float score = (float) (Math.round(scoreDoc.score * 10.0) / 10.0);
 				searchResult.setScore(score);
-				
 
-				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",searchResult.getTitle(),String.valueOf(searchResult.getScore()));
-				
+				LOGGER.trace("result:\n\ttitle:'{}'\n\turl:{} score: {}",
+						searchResult.getTitle(),
+						String.valueOf(searchResult.getScore()));
+
 				results.add(searchResult);
 			}
 		}
-		
+
 		return results;
 	}
 
@@ -644,9 +645,10 @@ public class ArticleSearcher {
 				countFacetRequests.length, i - 1);
 		return new FacetSearchParams(countFacetRequests);
 	}
-	
-	//this method fills the searchResult properties
-	private SearchResult createSearchResult(Article article, Trust trustAction, Node source) {
+
+	// this method fills the searchResult properties
+	private SearchResult createSearchResult(Article article, Trust trustAction,
+			Node source) {
 		final SearchResult searchResult = new SearchResult();
 		searchResult.setId(article.getId());
 		searchResult.setUrl(article.getUrl());
@@ -667,16 +669,16 @@ public class ArticleSearcher {
 			}
 		}
 		searchResult.setKeywords(keywords);
-		
+
 		final List<KeywordTrust> keyTrust = new ArrayList<KeywordTrust>();
 		if (article.getKeywordsTrust() != null) {
 			for (KeywordTrust kwt : article.getKeywordsTrust()) {
 				keyTrust.add(kwt);
 			}
 		}
-		searchResult.setKeywordsTrust(keyTrust,trustAction,source);
-		
-		//req skills
+		searchResult.setKeywordsTrust(keyTrust, trustAction, source);
+
+		// req skills
 		final List<Skill> skillReq = new ArrayList<Skill>();
 		if (article.getRequiredSkills() != null) {
 			for (Skill skill : article.getRequiredSkills()) {
@@ -684,28 +686,27 @@ public class ArticleSearcher {
 			}
 		}
 		searchResult.setRequiredSkills(skillReq, trustAction, source);
-		
-		//prov skills
-				final List<Skill> skillProv = new ArrayList<Skill>();
-				if (article.getProvidedSkills() != null) {
-					for (Skill skill : article.getProvidedSkills()) {
-						skillProv.add(skill);
-					}
-				}
+
+		// prov skills
+		final List<Skill> skillProv = new ArrayList<Skill>();
+		if (article.getProvidedSkills() != null) {
+			for (Skill skill : article.getProvidedSkills()) {
+				skillProv.add(skill);
+			}
+		}
 		searchResult.setProvidedSkills(skillProv, trustAction, source);
-				
-		
-		
-		if(article.getRatings().size()>0)
-			searchResult.setRatingFinal(article.getRatings(),trustAction, source);
-		else{
+
+		if (article.getRatings().size() > 0)
+			searchResult.setRatingFinal(article.getRatings(), trustAction,
+					source);
+		else {
 			searchResult.setRatingFinalDirect(0);
 			searchResult.setTrustScore(0);
 		}
-	
+
 		return searchResult;
 	}
-	
+
 	private SearchResult createSearchResult(Article article) {
 		final SearchResult searchResult = new SearchResult();
 		searchResult.setId(article.getId());
@@ -728,7 +729,7 @@ public class ArticleSearcher {
 		}
 		searchResult.setKeywords(keywords);
 		searchResult.setRatingFinalDirect(0);
-	
+
 		return searchResult;
 	}
 

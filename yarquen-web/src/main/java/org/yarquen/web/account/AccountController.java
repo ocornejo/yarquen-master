@@ -213,6 +213,8 @@ public class AccountController {
 		Trust trustAction = new Trust();
 		Node user = trustAction.getNode(account.getId());
 		
+		model.addAttribute("esteeselvalor", trustAction.getHowMuchTrust(user));
+		
 		List<String> idTrustees = trustAction.getTrustees(account.getId());
 		
 		Map<Account, Double> accountWrapperDirect = new LinkedHashMap<Account, Double>();
@@ -250,6 +252,10 @@ public class AccountController {
 		if (idTrusters != null && !idTrusters.isEmpty()) {
 			model.addAttribute("trustersDirect", accountWrapperDirectTrusters);
 			model.addAttribute("trustersInferred", accountWrapperInferredTrusters);
+		}
+		LOGGER.info("account treshold {}",account.getTrustTreshold());
+		if(account.getTrustTreshold()>=0){
+			model.addAttribute("hasTt",true);
 		}
 		
 		return "account/show";
@@ -374,31 +380,32 @@ public class AccountController {
 		}
 				
 	}
-	
+		
 	@RequestMapping(value="/addTrustTreshold",method = RequestMethod.GET)
 	public void addTrustTreshold(
-			@RequestParam("user") String user,
 			@RequestParam("trust") String trust, HttpServletResponse rsp) 
 					throws IOException {
-		boolean op;
-		LOGGER.debug("Setting trust treshold");
-
-		op = trustAction.setTrust(Integer.parseInt(trust), source, sink);
+	
+		LOGGER.info("Setting trust treshold");
+		Account userDetails = (Account) SecurityContextHolder.getContext()
+				.getAuthentication().getDetails();
+		int trustTreshold = Integer.parseInt(trust);
+		Account account = accountService.findOne(userDetails.getId());
 		
-		if(op){
-			LOGGER.info("The user {} was trusted by {} sucessfully",user,userDetails.getId());
+		account.setTrustTreshold(trustTreshold);
+		
+		try {
+			accountService.updateTrustTreshold(account);
+			LOGGER.info("It was setted a trust treshold for user {}",account.getUsername());
 			rsp.setStatus(HttpServletResponse.SC_OK);
 			rsp.getWriter().print("TRANSACTION_OK");
-		}
-		else{
-			LOGGER.error("Error adding trust");
+		} catch (BeanValidationException e) {
+			LOGGER.error("Can't set trust treshold");
 			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			rsp.getWriter().print("TRANSACTION_ERROR");
 		}
-				
+		
 	}
-	
-	
 	
 	
 	@RequestMapping(value="/deleteTrust/{user}",method = RequestMethod.GET)

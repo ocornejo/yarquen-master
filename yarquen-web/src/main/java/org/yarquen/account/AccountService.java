@@ -12,7 +12,7 @@ public interface AccountService {
 
 	Account updateSkills(Account account);
 	
-	Account setSkills(Account account);
+	Account updateTrustTreshold(Account account);
 
 	Account authenticate(String username, String password);
 

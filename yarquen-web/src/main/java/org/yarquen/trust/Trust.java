@@ -55,7 +55,6 @@ public class Trust {
 	}
 	
 	public void createUser(String accountID) {
-		// TODO Auto-generated method stub
 		LOGGER.info("registering account {} in Neo4j DB", accountID);
 		
 		Map<String, Object> props = new HashMap<String, Object>();
@@ -122,6 +121,18 @@ public class Trust {
 		else
 			total = (double)Math.round( tidalTrust(source,sink)* 10)/10;
 		return total;
+	}
+	
+	public double getHowMuchTrust(Node sink){
+		
+		double total = 0;
+		RelationshipType rel = DynamicRelationshipType.withName("TRUSTS");
+		int i= 0;
+		for(Relationship r :sink.getRelationships(Direction.INCOMING,rel)) {
+			total = total +	(int) r.getProperty("value");
+			i++;
+		}
+		return (double)Math.round( total/i* 10)/10;
 	}
 	
 	public boolean setTrust(int trust, Node n1, Node n2)

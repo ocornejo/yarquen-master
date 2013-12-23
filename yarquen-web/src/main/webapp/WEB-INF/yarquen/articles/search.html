@@ -182,13 +182,13 @@
 									th:href="${facets.getNewKeywordApplied(kw)}" th:text="${kw}"
 									th:class="${facets.isKeywordApplied(kw) ? 'text-error' : 'text-success'}">lambda,</a>,</small>
 								<br /> <small>Rating: </small> <small
-									th:text="${result.ratingFinal}"></small>
-									<small
-								sec:authorize="isAuthenticated()"> Trust score: </small> <small
-								sec:authorize="isAuthenticated()" th:text="${result.trustScore}"></small> <br />
+									th:text="${result.ratingFinal}"></small> <small
+									sec:authorize="isAuthenticated()"> Trust score: </small> <small
+									sec:authorize="isAuthenticated()"
+									th:text="${result.trustScore}"></small> <br />
 								<div class="basic" th:id="${result.id}"
 									th:attr="data-average=${result.ratingFinal}"></div>
-								
+
 
 							</div>
 						</li>
@@ -226,10 +226,11 @@
 									class="icon-time"></span></a>
 							</span> <br /> <small th:id="'url'+${result.url}" class="muted"
 								th:text="${result.url}">http://architects.dzone.com/news/functional-programming-101-lam</small>
-							<br /> <span class="icon-tags"></span> <small class="muted">Keywords:</small>
+							<br/> <span class="icon-tags"></span> <small class="muted">Keywords:</small>
 
-							<small th:each="kwt : ${result.KeywordsTrust}"> <a><span
-									th:text="${kwt.name}" th:class="${'label label-'+kwt.color}"></span></a></small>
+							<small th:each="kwt : ${result.KeywordsTrust}"> <a href="#"
+								th:href="${facets.getNewKeywordApplied(kwt.name)}"><span
+									th:text="${kwt.name}" th:class="${facets.isKeywordApplied(kwt.name) ? 'label label-inverse' : 'label label-'+kwt.color}"></span></a></small>
 
 							<small th:each="kw : ${result.keywords}"
 								style="margin-right: 5px"><a href="#"
@@ -298,6 +299,8 @@
 								how to populate a form using Spring annotations. The annotated
 								user controller class is shown below.</p>
 						</div></li>
+
+
 					<script type="text/javascript">
 						/*<![CDATA[*/
 						           
@@ -354,11 +357,17 @@
 								});
 						/*]]>*/
 					</script>
+
 				</ol>
+
+
 			</div>
-
+			<div>
+				<small class="muted"
+					th:text="'Your currently trust treshold is '+${trustTreshold}+', if you wanna change it click '"></small><a
+					style="font-size: small;" th:href="@{/account/current.html#trustTreshold}">here</a>
+			</div>
 		</div>
-
 
 		<hr />
 		<footer class="pull-right" th:substituteby="layout :: footer">
