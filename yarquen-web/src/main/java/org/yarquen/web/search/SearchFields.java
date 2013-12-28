@@ -1,6 +1,8 @@
 package org.yarquen.web.search;
 
 import java.util.List;
+
+import org.yarquen.article.KeywordTrust;
 import org.yarquen.skill.Skill;
 
 /**
@@ -14,6 +16,7 @@ public class SearchFields {
 	private String author;
 	private Integer facets;
 	private List<String> keyword;
+	private List<KeywordTrust> keywordTrust;
 	private List<Skill> providedSkill;
 	private String query;
 	private List<Skill> requiredSkill;
@@ -83,5 +86,13 @@ public class SearchFields {
 
 	public void setYear(String year) {
 		this.year = year;
+	}
+
+	public List<KeywordTrust> getKeywordTrust() {
+		return keywordTrust;
+	}
+
+	public void setKeywordTrust(List<KeywordTrust> keywordTrust) {
+		this.keywordTrust = keywordTrust;
 	}
 }

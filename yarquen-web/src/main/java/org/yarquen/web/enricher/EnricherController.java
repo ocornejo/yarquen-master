@@ -64,8 +64,7 @@ public class EnricherController {
 	private static final String AUTHORS = "authors";
 	private static final String CATEGORIES = "categories";
 	private static final String KEYWORDS = "keywords";
-	
-	
+
 	static final Logger LOGGER = LoggerFactory
 			.getLogger(EnricherController.class);
 
@@ -94,7 +93,7 @@ public class EnricherController {
 				new SkillPropertyEditorSupport(categoryService));
 	}
 
-	@RequestMapping(value="/{id}",method = RequestMethod.POST, params = "cancel")
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = "cancel")
 	public String returnToSearch(@ModelAttribute(REFERER) String referer,
 			RedirectAttributes redirAtts) {
 		if (referer != null) {
@@ -105,54 +104,147 @@ public class EnricherController {
 			return "redirect:/articles";
 		}
 	}
-	
-	@RequestMapping(value="/checkIfTagCanBeRemoved",method = RequestMethod.GET)
-	public void checkIfTagCanBeRemoved(
-			@RequestParam("tag") String tag,
-			@RequestParam("article") String id, HttpServletResponse rsp) 
-					throws IOException {
+
+	@RequestMapping(value = "/checkIfTagCanBeRemoved", method = RequestMethod.GET)
+	public void checkIfTagCanBeRemoved(@RequestParam("tag") String tag,
+			@RequestParam("article") String id, HttpServletResponse rsp)
+			throws IOException {
 		final Article article = articleRepository.findOne(id);
-		
+
 		Account userDetails = (Account) SecurityContextHolder.getContext()
 				.getAuthentication().getDetails();
-		
-		LOGGER.debug("Getting if tag can be removed by user {}", userDetails.getUsername());
-		
+
+		LOGGER.debug("Getting if tag can be removed by user {}",
+				userDetails.getUsername());
+
 		Trust trustAction = new Trust();
 		Node source = trustAction.getNode(userDetails.getId());
-		
+
 		List<String> keywords = article.getKeywords();
 		List<KeywordTrust> keywordsTrust = article.getKeywordsTrust();
-		
-		if(keywords!=null && !keywords.isEmpty() && keywords.contains(tag)){
-			LOGGER.info("The user {} can remove the system tag",userDetails.getId());
+	
+
+		if (keywords != null && !keywords.isEmpty() && keywords.contains(tag)) {
+			LOGGER.info("The user {} can remove the system tag",
+					userDetails.getId());
 			rsp.setStatus(HttpServletResponse.SC_OK);
 			rsp.getWriter().print("YES");
-		}else if(keywordsTrust!=null && !keywordsTrust.isEmpty() && contains(keywordsTrust, tag)){
-			int index =returnIndex(keywordsTrust, tag);
+		} else if (keywordsTrust != null && !keywordsTrust.isEmpty()
+				&& contains(keywordsTrust, tag)) {
+			int index = returnIndex(keywordsTrust, tag);
 			Node sink = trustAction.getNode(keywordsTrust.get(index).getId());
 			double trustSource = trustAction.getHowMuchTrust(source);
 			double trustSink = trustAction.getHowMuchTrust(sink);
-			LOGGER.info("trust source: {} trust sink: {}",trustSource,trustSink);
-			if(trustSource >= trustSink){
-				LOGGER.info("The user {} can remove the tag made by {}",userDetails.getId(),keywordsTrust.get(index).getId());
+			LOGGER.info("trust source: {} trust sink: {}", trustSource,
+					trustSink);
+			if (trustSource >= trustSink) {
+				LOGGER.info("The user {} can remove the tag made by {}",
+						userDetails.getId(), keywordsTrust.get(index).getId());
 				rsp.setStatus(HttpServletResponse.SC_OK);
 				rsp.getWriter().print("YES");
-			}else{
-				LOGGER.info("The user {} cannot remove the tag made by {}",userDetails.getId(),keywordsTrust.get(index).getId());
+			} else {
+				LOGGER.info("The user {} cannot remove the tag made by {}",
+						userDetails.getId(), keywordsTrust.get(index).getId());
 				rsp.setStatus(HttpServletResponse.SC_OK);
 				rsp.getWriter().print("NO");
 			}
-		}else{
+		} else if(keywords.isEmpty()){
+			LOGGER.info("Tag requested doesn't exist OYOY");
+			rsp.setStatus(HttpServletResponse.SC_OK);
+			rsp.getWriter().print("YES");
+		}else {
 			LOGGER.error("Tag requested doesn't exist");
 			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			rsp.getWriter().print("TRANSACTION_ERROR");
 		}
-				
+
 	}
 	
+	@RequestMapping(value = "/checkIfSkillCanBeRemoved", method = RequestMethod.GET)
+	public void checkIfSkillCanBeRemoved(@RequestParam("skill") String skill,
+			@RequestParam("article") String id, HttpServletResponse rsp)
+			throws IOException {
+		final Article article = articleRepository.findOne(id);
 
-	@RequestMapping(value="/{id}",method = RequestMethod.GET)
+		Account userDetails = (Account) SecurityContextHolder.getContext()
+				.getAuthentication().getDetails();
+		
+
+		LOGGER.debug("Getting if skill can be removed by user {}",
+				userDetails.getUsername());
+
+		Trust trustAction = new Trust();
+		Node source = trustAction.getNode(userDetails.getId());
+
+		List<Skill> providedSkills= article.getProvidedSkills();
+		List<Skill> requiredSkills = article.getRequiredSkills();
+	
+
+		if (providedSkills != null && !providedSkills.isEmpty() && containsSkillString(providedSkills,skill)) {
+			int index = returnIndexSkillString(providedSkills, skill);
+			
+			if(providedSkills.get(index).getId()==null){
+				LOGGER.info("The user {} can remove the system tag",
+						userDetails.getId());
+				rsp.setStatus(HttpServletResponse.SC_OK);
+				rsp.getWriter().print("YES");
+			}
+			else{
+				Node sink = trustAction.getNode(providedSkills.get(index).getId());
+				double trustSource = trustAction.getHowMuchTrust(source);
+				double trustSink = trustAction.getHowMuchTrust(sink);
+				LOGGER.info("trust source: {} trust sink: {}", trustSource,
+						trustSink);
+				if (trustSource >= trustSink) {
+					LOGGER.info("The user {} can remove the tag made by {}",
+							userDetails.getId(), providedSkills.get(index).getId());
+					rsp.setStatus(HttpServletResponse.SC_OK);
+					rsp.getWriter().print("YES");
+				} else {
+					LOGGER.info("The user {} cannot remove the tag made by {}",
+							userDetails.getId(), providedSkills.get(index).getId());
+					rsp.setStatus(HttpServletResponse.SC_OK);
+					rsp.getWriter().print("NO");
+				}
+			}
+			
+			
+		} else if (requiredSkills != null && !requiredSkills.isEmpty() && containsSkillString(requiredSkills,skill)) {
+			int index = returnIndexSkillString(requiredSkills, skill);
+			
+			if(requiredSkills.get(index).getId()==null){
+				LOGGER.info("The user {} can remove the system tag",
+						userDetails.getId());
+				rsp.setStatus(HttpServletResponse.SC_OK);
+				rsp.getWriter().print("YES");
+			}
+			else{
+				Node sink = trustAction.getNode(requiredSkills.get(index).getId());
+				double trustSource = trustAction.getHowMuchTrust(source);
+				double trustSink = trustAction.getHowMuchTrust(sink);
+				LOGGER.info("trust source: {} trust sink: {}", trustSource,
+						trustSink);
+				if (trustSource >= trustSink) {
+					LOGGER.info("The user {} can remove the tag made by {}",
+							userDetails.getId(), requiredSkills.get(index).getId());
+					rsp.setStatus(HttpServletResponse.SC_OK);
+					rsp.getWriter().print("YES");
+				} else {
+					LOGGER.info("The user {} cannot remove the tag made by {}",
+							userDetails.getId(), requiredSkills.get(index).getId());
+					rsp.setStatus(HttpServletResponse.SC_OK);
+					rsp.getWriter().print("NO");
+				}
+			}	
+		}
+
+	}
+	
+	
+	
+	
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public String setupForm(@PathVariable String id, Model model,
 			HttpServletRequest request) {
 		LOGGER.trace("setup enrichment form for article id={}", id);
@@ -190,7 +282,7 @@ public class EnricherController {
 		return "articles/enricher";
 	}
 
-	@RequestMapping(value="/{id}",method = RequestMethod.POST, params = "submit")
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = "submit")
 	public String update(@ModelAttribute(REFERER) String referer,
 			@Valid @ModelAttribute(ARTICLE) Article article,
 			BindingResult result, Model model, RedirectAttributes redirAtts) {
@@ -244,185 +336,222 @@ public class EnricherController {
 
 			// get persisted article
 			Article persistedArticle = articleRepository.findOne(id);
-			
+
 			if (persistedArticle == null) {
 				throw new RuntimeException("Article " + id + " not found");
 			} else {
-				//update
+				// update
 				LOGGER.trace("saving new version of article id {}", id);
-				EnrichmentRecord er = saveArticleDiff(persistedArticle, article);	
-				
-				LOGGER.trace("updating article {} {} ", id,persistedArticle.getKeywordsTrust());
+				EnrichmentRecord er = saveArticleDiff(persistedArticle, article);
+
+				LOGGER.trace("updating article {} {} ", id,
+						persistedArticle.getKeywordsTrust());
 				persistedArticle.setAuthor(article.getAuthor());
-				persistedArticle.setDate(article.getDate());		
-				//persistedArticle.setKeywords(article.getKeywords());
+				persistedArticle.setDate(article.getDate());
+				// persistedArticle.setKeywords(article.getKeywords());
 				persistedArticle.setSummary(article.getSummary());
 				persistedArticle.setTitle(article.getTitle());
 				persistedArticle.setUrl(article.getUrl());
-				//persistedArticle.setProvidedSkills(article.getProvidedSkills());
-				//persistedArticle.setRequiredSkills(article.getRequiredSkills());
+				// persistedArticle.setProvidedSkills(article.getProvidedSkills());
+				// persistedArticle.setRequiredSkills(article.getRequiredSkills());
 
 				Article updatedArticle = articleRepository
 						.save(persistedArticle);
-				
-				//trust keywords enrichment				
-				if(er.isChangedAddedKeywords()){
-					for(String kwd: er.getAddedKeywords()){
-						try{
+
+				// trust keywords enrichment
+				if (er.isChangedAddedKeywords()) {
+					for (String kwd : er.getAddedKeywords()) {
+						try {
 							KeywordTrust kwt = new KeywordTrust();
 							kwt.setId(er.getAccountId());
 							kwt.setName(kwd);
-							List<KeywordTrust> kwtPersisted = new ArrayList<KeywordTrust>(persistedArticle.getKeywordsTrust());
-							
-							if(!kwtPersisted.isEmpty()){
+							List<KeywordTrust> kwtPersisted = new ArrayList<KeywordTrust>(
+									persistedArticle.getKeywordsTrust());
+
+							if (!kwtPersisted.isEmpty()) {
 								boolean found = false;
-								for(KeywordTrust temp: kwtPersisted){
-									if(temp.getName().compareTo(kwt.getName())==0){
+								for (KeywordTrust temp : kwtPersisted) {
+									if (temp.getName().compareTo(kwt.getName()) == 0) {
 										found = true;
 									}
 								}
-								if(!found){
-									String code = articleService.addKeywordTrust(er.getArticleId(), kwt);
-									LOGGER.info("KeywordTrust added with state = {}",code);
+								if (!found) {
+									String code = articleService
+											.addKeywordTrust(er.getArticleId(),
+													kwt);
+									LOGGER.info(
+											"KeywordTrust added with state = {}",
+											code);
+
 								}
+							} else {
+								String code = articleService.addKeywordTrust(
+										er.getArticleId(), kwt);
+								LOGGER.info(
+										"KeywordTrust added with state = {}",
+										code);
+
 							}
-							else{
-								String code = articleService.addKeywordTrust(er.getArticleId(), kwt);
-								LOGGER.info("KeywordTrust added with state = {}",code);	
-							}
-							
-							
+							addKeywords(er.getAddedKeywords());
+
 						} catch (Exception e) {
 							LOGGER.error("can't add KeywordTrust", e);
 						}
 					}
-					
+
 				}
-				
-				if(er.isChangedRemovedKeywordsTrust()){
-					for(KeywordTrust kwd: er.getRemovedKeywordsTrust()){
-						try{
-							String code = articleService.removeKeywordTrust(er.getArticleId(),kwd.getName());
-							LOGGER.info("KeywordTrust removed with state = {}",code);
+
+				if (er.isChangedRemovedKeywordsTrust()) {
+					for (KeywordTrust kwd : er.getRemovedKeywordsTrust()) {
+						try {
+							String code = articleService.removeKeywordTrust(
+									er.getArticleId(), kwd.getName());
+							LOGGER.info("KeywordTrust removed with state = {}",
+									code);
 						} catch (Exception e) {
 							LOGGER.error("can't remove KeywordTrust", e);
 						}
 					}
 				}
-				
-				if(er.isChangedRemovedKeywords()){
-					for(String kwd: er.getRemovedKeywords()){
-						try{
-							String code = articleService.removeKeyword(er.getArticleId(),kwd);
-							LOGGER.info("Keyword removed with state = {}",code);
+
+				if (er.isChangedRemovedKeywords()) {
+					for (String kwd : er.getRemovedKeywords()) {
+						try {
+							String code = articleService.removeKeyword(
+									er.getArticleId(), kwd);
+							LOGGER.info("Keyword removed with state = {}", code);
 						} catch (Exception e) {
 							LOGGER.error("can't remove Keyword", e);
 						}
 					}
 				}
-				
-				//prov skills enrichment
-								
-				if(er.isChangedAddedProvSkills()){
-					Account userDetails = (Account) SecurityContextHolder.getContext()
-							.getAuthentication().getDetails();					
-					
-					for(Skill skillProv: er.getAddedProvidedSkills()){
-						try{
-							List<Skill> skillsPersisted = new ArrayList<Skill>(persistedArticle.getProvidedSkills());
-							
-							if(!skillsPersisted.isEmpty()){
+
+				// prov skills enrichment
+
+				if (er.isChangedAddedProvSkills()) {
+					Account userDetails = (Account) SecurityContextHolder
+							.getContext().getAuthentication().getDetails();
+
+					for (Skill skillProv : er.getAddedProvidedSkills()) {
+						try {
+							List<Skill> skillsPersisted = new ArrayList<Skill>(
+									persistedArticle.getProvidedSkills());
+
+							if (!skillsPersisted.isEmpty()) {
 								boolean found = false;
-								for(Skill temp: skillsPersisted){
-									if(temp.getAsText().compareTo(skillProv.getAsText())==0){
+								for (Skill temp : skillsPersisted) {
+									if (temp.getAsText().compareTo(
+											skillProv.getAsText()) == 0) {
 										found = true;
 									}
 								}
-								if(!found){
+								if (!found) {
 									skillProv.setId(userDetails.getId());
-									String code = articleService.addProvidedSkill(er.getArticleId(), skillProv);
-									LOGGER.info("Skill provided added with state = {}",code);
+									String code = articleService
+											.addProvidedSkill(
+													er.getArticleId(),
+													skillProv);
+									LOGGER.info(
+											"Skill provided added with state = {}",
+											code);
 								}
-							}
-							else{
+							} else {
 								skillProv.setId(userDetails.getId());
-								String code = articleService.addProvidedSkill(er.getArticleId(), skillProv);
-								LOGGER.info("Skill provided added with state = {}",code);	
+								String code = articleService.addProvidedSkill(
+										er.getArticleId(), skillProv);
+								LOGGER.info(
+										"Skill provided added with state = {}",
+										code);
 							}
-							
+
 						} catch (Exception e) {
 							LOGGER.error("can't add skill provided", e);
 						}
-					}		
-					
+					}
+
 				}
-				
-				if(er.isChangedRemovedProvSkills()){
-					
-					for(Skill skillProv: er.getRemovedProvidedSkills()){
-						try{
-							String code = articleService.removeProvidedSkill(er.getArticleId(), skillProv);
-							LOGGER.info("Skill provided removed with state = {}",code);
+
+				if (er.isChangedRemovedProvSkills()) {
+
+					for (Skill skillProv : er.getRemovedProvidedSkills()) {
+						try {
+							String code = articleService.removeProvidedSkill(
+									er.getArticleId(), skillProv);
+							LOGGER.info(
+									"Skill provided removed with state = {}",
+									code);
 						} catch (Exception e) {
 							LOGGER.error("can't remove skill provided", e);
 						}
 					}
 				}
-				
-				//req skills enrichment
-				
-				if(er.isChangedAddedReqSkills()){
-					Account userDetails = (Account) SecurityContextHolder.getContext()
-							.getAuthentication().getDetails();					
-					
-					for(Skill skillReq: er.getAddedRequiredSkills()){
-						try{
-							List<Skill> skillsPersisted = new ArrayList<Skill>(persistedArticle.getRequiredSkills());
-							
-							if(!skillsPersisted.isEmpty()){
+
+				// req skills enrichment
+
+				if (er.isChangedAddedReqSkills()) {
+					Account userDetails = (Account) SecurityContextHolder
+							.getContext().getAuthentication().getDetails();
+
+					for (Skill skillReq : er.getAddedRequiredSkills()) {
+						try {
+							List<Skill> skillsPersisted = new ArrayList<Skill>(
+									persistedArticle.getRequiredSkills());
+
+							if (!skillsPersisted.isEmpty()) {
 								boolean found = false;
-								for(Skill temp: skillsPersisted){
-									if(temp.getAsText().compareTo(skillReq.getAsText())==0){
+								for (Skill temp : skillsPersisted) {
+									if (temp.getAsText().compareTo(
+											skillReq.getAsText()) == 0) {
 										found = true;
 									}
 								}
-								if(!found){
+								if (!found) {
 									skillReq.setId(userDetails.getId());
-									String code = articleService.addRequiredSkill(er.getArticleId(), skillReq);
-									LOGGER.info("Skill required added with state = {}",code);
+									String code = articleService
+											.addRequiredSkill(
+													er.getArticleId(), skillReq);
+									LOGGER.info(
+											"Skill required added with state = {}",
+											code);
 								}
-							}
-							else{
+							} else {
 								skillReq.setId(userDetails.getId());
-								String code = articleService.addRequiredSkill(er.getArticleId(), skillReq);
-								LOGGER.info("Skill required added with state = {}",code);	
+								String code = articleService.addRequiredSkill(
+										er.getArticleId(), skillReq);
+								LOGGER.info(
+										"Skill required added with state = {}",
+										code);
 							}
-							
+
 						} catch (Exception e) {
 							LOGGER.error("can't add skill required", e);
 						}
 					}
 				}
-				
-				if(er.isChangedRemovedReqSkills()){
-										
-					for(Skill skillReq: er.getRemovedRequiredSkills()){
-						try{
-							String code = articleService.removeRequiredSkill(er.getArticleId(), skillReq);
-							LOGGER.info("Skill required removed with state = {}",code);
+
+				if (er.isChangedRemovedReqSkills()) {
+
+					for (Skill skillReq : er.getRemovedRequiredSkills()) {
+						try {
+							String code = articleService.removeRequiredSkill(
+									er.getArticleId(), skillReq);
+							LOGGER.info(
+									"Skill required removed with state = {}",
+									code);
 						} catch (Exception e) {
 							LOGGER.error("can't remove skill required", e);
 						}
 					}
 
-				}		
-					
+				}
+
 				// reindex
 				LOGGER.trace("reindexing article {}", id);
-				
+
 				try {
-					articleSearcher.reindexArticle(updatedArticle);
-					addAuthorAndKeywords(updatedArticle);
+					Article articleToReindex = articleRepository.findOne(updatedArticle.getId());
+					articleSearcher.reindexArticle(articleToReindex);
+					addAuthor(updatedArticle);
 				} catch (IOException e) {
 					final String msg = "something wen't wrong while reindexing Article "
 							+ id + "(" + updatedArticle.getTitle() + ")";
@@ -436,8 +565,6 @@ public class EnricherController {
 						message);
 				redirAtts.addFlashAttribute("enrichmentMessage", message);
 
-
-				
 				if (referer != null) {
 					LOGGER.trace("update => referer: '{}'", referer.toString());
 					final int i = referer.indexOf('?');
@@ -490,17 +617,14 @@ public class EnricherController {
 
 			enrichmentRecordRepository.save(enrichmentRecord);
 			LOGGER.trace("enrichment record saved for article id: {}",
-					enrichmentRecord.getArticleId());			
-			
+					enrichmentRecord.getArticleId());
+
 		} else {
 			LOGGER.trace("enrichment record not created, there was no change");
 		}
 		return enrichmentRecord;
 
 	}
-	
-	
-	
 
 	/**
 	 * Compares every field of a persisted and updated article and keeps the
@@ -561,92 +685,98 @@ public class EnricherController {
 			enrichmentRecord.setChangedSummary(false);
 		}
 
-		List<String> addedKeywordsTrust= null;
-		List<String> removedKeywords= null;
-		List<KeywordTrust> removedKeywordsTrust= null;
-		
+		List<String> addedKeywordsTrust = null;
+		List<String> removedKeywords = null;
+		List<KeywordTrust> removedKeywordsTrust = null;
+
 		Iterator<String> updatedKeywords = null;
-		if(updatedArticle.getKeywords()!=null)
+		if (updatedArticle.getKeywords() != null)
 			updatedKeywords = updatedArticle.getKeywords().iterator();
-		
+
 		List<String> persistedKeywords = null;
-		if(persistedArticle.getKeywords()!=null) 
-			persistedKeywords =new ArrayList<String>(persistedArticle.getKeywords());
-		
+		if (persistedArticle.getKeywords() != null)
+			persistedKeywords = new ArrayList<String>(
+					persistedArticle.getKeywords());
+
 		List<KeywordTrust> persistedKeywordsTrust = null;
-		if(persistedArticle.getKeywordsTrust()!=null)
-			persistedKeywordsTrust= new ArrayList<KeywordTrust>(persistedArticle.getKeywordsTrust());
-		
+		if (persistedArticle.getKeywordsTrust() != null)
+			persistedKeywordsTrust = new ArrayList<KeywordTrust>(
+					persistedArticle.getKeywordsTrust());
+
 		if (updatedArticle.getKeywords() != null
-		 		&& !updatedArticle.getKeywords().isEmpty()) {
-			
-			while(updatedKeywords.hasNext()){
-				
+				&& !updatedArticle.getKeywords().isEmpty()) {
+
+			while (updatedKeywords.hasNext()) {
+
 				String upKey = updatedKeywords.next();
-				if(persistedArticle.getKeywords() !=null && persistedArticle.getKeywords().contains(upKey)){
+				if (persistedArticle.getKeywords() != null
+						&& persistedArticle.getKeywords().contains(upKey)) {
 					updatedKeywords.remove();
 					persistedKeywords.remove(upKey);
 				}
-				
-				if(persistedArticle.getKeywordsTrust() !=null && contains(persistedArticle.getKeywordsTrust(),upKey)){
+
+				if (persistedArticle.getKeywordsTrust() != null
+						&& contains(persistedArticle.getKeywordsTrust(), upKey)) {
 					updatedKeywords.remove();
-					persistedKeywordsTrust.remove(returnIndex(persistedKeywordsTrust,upKey));
+					persistedKeywordsTrust.remove(returnIndex(
+							persistedKeywordsTrust, upKey));
 				}
-				
+
 			}
-			
-			if(updatedArticle.getKeywords().size()>0){
+
+			if (updatedArticle.getKeywords().size() > 0) {
 				LOGGER.info("agregaron kws Trust");
-				addedKeywordsTrust = new ArrayList<String>(updatedArticle.getKeywords());
+				addedKeywordsTrust = new ArrayList<String>(
+						updatedArticle.getKeywords());
 			}
-			
-			if(persistedKeywords!=null && persistedKeywords.size()>0){
+
+			if (persistedKeywords != null && persistedKeywords.size() > 0) {
 				LOGGER.info("borraron kws del sistema");
 				removedKeywords = new ArrayList<String>(persistedKeywords);
 			}
-			if(persistedKeywordsTrust!=null && persistedKeywordsTrust.size()>0){
+			if (persistedKeywordsTrust != null
+					&& persistedKeywordsTrust.size() > 0) {
 				LOGGER.info("borraron kws Trust");
-				removedKeywordsTrust = new ArrayList<KeywordTrust>(persistedKeywordsTrust);
+				removedKeywordsTrust = new ArrayList<KeywordTrust>(
+						persistedKeywordsTrust);
 			}
-			
+
 		}
-		
-		if(persistedKeywords!=null && !persistedKeywords.isEmpty()){
+
+		if (persistedKeywords != null && !persistedKeywords.isEmpty()) {
 			LOGGER.info("borraron kws del sistema");
 			removedKeywords = new ArrayList<String>(persistedKeywords);
 		}
-		
-		if(persistedKeywordsTrust!=null && !persistedKeywordsTrust.isEmpty()){
+
+		if (persistedKeywordsTrust != null && !persistedKeywordsTrust.isEmpty()) {
 			LOGGER.info("borraron kws Trust");
-			removedKeywordsTrust = new ArrayList<KeywordTrust>(persistedKeywordsTrust);
+			removedKeywordsTrust = new ArrayList<KeywordTrust>(
+					persistedKeywordsTrust);
 		}
-		
-		
-		if (addedKeywordsTrust!=null && !addedKeywordsTrust.isEmpty() || 
-				removedKeywords!=null && !removedKeywords.isEmpty() || 
-				removedKeywordsTrust!=null && !removedKeywordsTrust.isEmpty()) {
+
+		if (addedKeywordsTrust != null && !addedKeywordsTrust.isEmpty()
+				|| removedKeywords != null && !removedKeywords.isEmpty()
+				|| removedKeywordsTrust != null
+				&& !removedKeywordsTrust.isEmpty()) {
 			changed = true;
 		}
-		if (addedKeywordsTrust!=null && !addedKeywordsTrust.isEmpty()) {
+		if (addedKeywordsTrust != null && !addedKeywordsTrust.isEmpty()) {
 			enrichmentRecord.setAddedKeywords(addedKeywordsTrust);
 			enrichmentRecord.setChangedAddedKeywords(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedAddedKeywords(false);
 		}
-		if (removedKeywords!=null && !removedKeywords.isEmpty()) {
+		if (removedKeywords != null && !removedKeywords.isEmpty()) {
 			enrichmentRecord.setRemovedKeywords(removedKeywords);
 			enrichmentRecord.setChangedRemovedKeywords(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedRemovedKeywords(false);
 		}
-		
-		if (removedKeywordsTrust!=null && !removedKeywordsTrust.isEmpty()) {
+
+		if (removedKeywordsTrust != null && !removedKeywordsTrust.isEmpty()) {
 			enrichmentRecord.setRemovedKeywordsTrust(removedKeywordsTrust);
 			enrichmentRecord.setChangedRemovedKeywordsTrust(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedRemovedKeywordsTrust(false);
 		}
 
@@ -667,123 +797,131 @@ public class EnricherController {
 		// Comparing Provided Skills
 		List<Skill> addedProvidedSkills = null;
 		List<Skill> removedProvidedSkills = null;
-		
+
 		Iterator<Skill> updatedProvSkills = null;
-		if(updatedArticle.getProvidedSkills()!= null)
+		if (updatedArticle.getProvidedSkills() != null)
 			updatedProvSkills = updatedArticle.getProvidedSkills().iterator();
-		
+
 		List<Skill> persistedProvSkills = null;
-		if(persistedArticle.getProvidedSkills()!=null) 
-			persistedProvSkills =new ArrayList<Skill>(persistedArticle.getProvidedSkills());
-		
-		
+		if (persistedArticle.getProvidedSkills() != null)
+			persistedProvSkills = new ArrayList<Skill>(
+					persistedArticle.getProvidedSkills());
+
 		if (updatedArticle.getProvidedSkills() != null
-		 		&& !updatedArticle.getProvidedSkills().isEmpty()) {
-			
-			while(updatedProvSkills.hasNext()){
-				
+				&& !updatedArticle.getProvidedSkills().isEmpty()) {
+
+			while (updatedProvSkills.hasNext()) {
+
 				Skill upSkill = updatedProvSkills.next();
-				if(persistedArticle.getProvidedSkills() !=null && containsSkill(persistedArticle.getProvidedSkills(), upSkill)){
+				if (persistedArticle.getProvidedSkills() != null
+						&& containsSkill(persistedArticle.getProvidedSkills(),
+								upSkill)) {
 					updatedProvSkills.remove();
-					persistedProvSkills.remove(returnIndexSkill(persistedProvSkills, upSkill));
+					persistedProvSkills.remove(returnIndexSkill(
+							persistedProvSkills, upSkill));
 				}
-			
+
 			}
-			
-			if(updatedArticle.getProvidedSkills().size()>0){
+
+			if (updatedArticle.getProvidedSkills().size() > 0) {
 				LOGGER.info("agregaron prov skills");
-				addedProvidedSkills = new ArrayList<Skill>(updatedArticle.getProvidedSkills());
+				addedProvidedSkills = new ArrayList<Skill>(
+						updatedArticle.getProvidedSkills());
 			}
-			
-			if(persistedProvSkills!=null && persistedProvSkills.size()>0){
+
+			if (persistedProvSkills != null && persistedProvSkills.size() > 0) {
 				LOGGER.info("borraron prov skills");
-				removedProvidedSkills = new ArrayList<Skill>(persistedProvSkills);
+				removedProvidedSkills = new ArrayList<Skill>(
+						persistedProvSkills);
 			}
-			
+
 		}
-		if(persistedProvSkills!=null && !persistedProvSkills.isEmpty()){
+		if (persistedProvSkills != null && !persistedProvSkills.isEmpty()) {
 			LOGGER.info("borraron prov skills");
 			removedProvidedSkills = new ArrayList<Skill>(persistedProvSkills);
 		}
-		
-		if (addedProvidedSkills !=null && !addedProvidedSkills.isEmpty() || 
-				removedProvidedSkills!=null &&!removedProvidedSkills.isEmpty()) {
+
+		if (addedProvidedSkills != null && !addedProvidedSkills.isEmpty()
+				|| removedProvidedSkills != null
+				&& !removedProvidedSkills.isEmpty()) {
 			changed = true;
-		}		
-		
-		if (addedProvidedSkills !=null && !addedProvidedSkills.isEmpty()) {
+		}
+
+		if (addedProvidedSkills != null && !addedProvidedSkills.isEmpty()) {
 			enrichmentRecord.setAddedProvidedSkills(addedProvidedSkills);
 			enrichmentRecord.setChangedAddedProvSkills(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedAddedProvSkills(false);
 		}
-		
-		if (removedProvidedSkills!=null && !removedProvidedSkills.isEmpty()) {
+
+		if (removedProvidedSkills != null && !removedProvidedSkills.isEmpty()) {
 			enrichmentRecord.setRemovedProvidedSkills(removedProvidedSkills);
 			enrichmentRecord.setChangedRemovedProvSkills(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedRemovedProvSkills(false);
 		}
 
 		// Comparing Required Skills
 		List<Skill> addedRequiredSkills = null;
 		List<Skill> removedRequiredSkills = null;
-		
+
 		Iterator<Skill> updatedReqSkills = null;
-		if(updatedArticle.getRequiredSkills()!= null)
+		if (updatedArticle.getRequiredSkills() != null)
 			updatedReqSkills = updatedArticle.getRequiredSkills().iterator();
-		
+
 		List<Skill> persistedReqSkills = null;
-		if(persistedArticle.getRequiredSkills()!=null) 
-			persistedReqSkills =new ArrayList<Skill>(persistedArticle.getRequiredSkills());
-		
+		if (persistedArticle.getRequiredSkills() != null)
+			persistedReqSkills = new ArrayList<Skill>(
+					persistedArticle.getRequiredSkills());
+
 		if (updatedArticle.getRequiredSkills() != null
-		 		&& !updatedArticle.getRequiredSkills().isEmpty()) {
-			
-			while(updatedReqSkills.hasNext()){
-				
+				&& !updatedArticle.getRequiredSkills().isEmpty()) {
+
+			while (updatedReqSkills.hasNext()) {
+
 				Skill upSkill = updatedReqSkills.next();
-				if(persistedArticle.getRequiredSkills() !=null && containsSkill(persistedArticle.getRequiredSkills(), upSkill)){
+				if (persistedArticle.getRequiredSkills() != null
+						&& containsSkill(persistedArticle.getRequiredSkills(),
+								upSkill)) {
 					updatedReqSkills.remove();
-					persistedReqSkills.remove(returnIndexSkill(persistedReqSkills, upSkill));
+					persistedReqSkills.remove(returnIndexSkill(
+							persistedReqSkills, upSkill));
 				}
-			
+
 			}
-			
-			if(updatedArticle.getRequiredSkills().size()>0){
+
+			if (updatedArticle.getRequiredSkills().size() > 0) {
 				LOGGER.info("agregaron req skills");
-				addedRequiredSkills = new ArrayList<Skill>(updatedArticle.getRequiredSkills());
+				addedRequiredSkills = new ArrayList<Skill>(
+						updatedArticle.getRequiredSkills());
 			}
-			
-			if(persistedReqSkills!=null && persistedReqSkills.size()>0){
+
+			if (persistedReqSkills != null && persistedReqSkills.size() > 0) {
 				LOGGER.info("borraron req skills");
 				removedRequiredSkills = new ArrayList<Skill>(persistedReqSkills);
 			}
-			
+
 		}
-		if(persistedReqSkills!=null && !persistedReqSkills.isEmpty()){
+		if (persistedReqSkills != null && !persistedReqSkills.isEmpty()) {
 			LOGGER.info("borraron req skills");
 			removedRequiredSkills = new ArrayList<Skill>(persistedReqSkills);
 		}
 
-		if (addedRequiredSkills!=null && !addedRequiredSkills.isEmpty() || 
-				removedRequiredSkills!=null && !removedRequiredSkills.isEmpty()) {
+		if (addedRequiredSkills != null && !addedRequiredSkills.isEmpty()
+				|| removedRequiredSkills != null
+				&& !removedRequiredSkills.isEmpty()) {
 			changed = true;
 		}
-		if (addedRequiredSkills!=null && !addedRequiredSkills.isEmpty()) {
+		if (addedRequiredSkills != null && !addedRequiredSkills.isEmpty()) {
 			enrichmentRecord.setAddedRequiredSkills(addedRequiredSkills);
 			enrichmentRecord.setChangedAddedReqSkills(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedAddedReqSkills(false);
 		}
-		if (removedRequiredSkills !=null && !removedRequiredSkills.isEmpty()) {
+		if (removedRequiredSkills != null && !removedRequiredSkills.isEmpty()) {
 			enrichmentRecord.setRemovedRequiredSkills(removedRequiredSkills);
 			enrichmentRecord.setChangedRemovedReqSkills(true);
-		}
-		else{
+		} else {
 			enrichmentRecord.setChangedRemovedReqSkills(false);
 		}
 
@@ -791,7 +929,7 @@ public class EnricherController {
 
 	}
 
-	private void addAuthorAndKeywords(Article article) {
+	private void addAuthor(Article article) {
 		// add author if doesn't exists
 		final String authorName = article.getAuthor();
 		if (authorName != null) {
@@ -804,19 +942,19 @@ public class EnricherController {
 			}
 		}
 
+	}
+
+	private void addKeywords(List<String> list) {
 		// add inexistent keywords
-		final List<KeywordTrust> keywords = article.getKeywordsTrust();
-		for (KeywordTrust kw : keywords) {
-			final Keyword keywordFound = keywordRepository.findByName(kw.getName());
+		for (String kw : list) {
+			final Keyword keywordFound = keywordRepository.findByName(kw);
 			if (keywordFound == null) {
 				final Keyword keyword = new Keyword();
-				keyword.setName(kw.getName());
-				LOGGER.trace("adding keyword {}", kw);
+				keyword.setName(kw);
+				LOGGER.info("adding keyword {}", kw);
 				keywordRepository.save(keyword);
 			}
 		}
-	
-
 	}
 
 	private List<String> getAuthors() {
@@ -836,45 +974,65 @@ public class EnricherController {
 		}
 		return keywordsName;
 	}
-	
+
 	private static boolean contains(List<KeywordTrust> list, String name) {
-	    for (KeywordTrust object : list) {
-	        if (object.getName().compareTo(name) ==0) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
-	
-	private static boolean containsSkill(List<Skill> list, Skill skill) {
-	    for (Skill object : list) {
-	    	if(object.getAsText().compareTo(skill.getAsText())==0){
-	    		return true;
-	    	}
-	    }
-	    return false;
-	}
-	
-	
-	private static int returnIndex(List<KeywordTrust> list, String name) {
-	    int i = 0;
 		for (KeywordTrust object : list) {
-	        if (object.getName().compareTo(name) ==0) {
-	            return i;
-	        }
-	        i++;
-	    }
-	    return -1;
+			if (object.getName().compareTo(name) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean containsSkill(List<Skill> list, Skill skill) {
+		for (Skill object : list) {
+			if (object.getAsText().compareTo(skill.getAsText()) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean containsSkillString(List<Skill> list, String skill) {
+		for (Skill object : list) {
+			if (object.getAsText().compareTo(skill) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	private static int returnIndex(List<KeywordTrust> list, String name) {
+		int i = 0;
+		for (KeywordTrust object : list) {
+			if (object.getName().compareTo(name) == 0) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+
+	private static int returnIndexSkill(List<Skill> list, Skill skill) {
+		int i = 0;
+		for (Skill object : list) {
+			if (object.getAsText().compareTo(skill.getAsText()) == 0) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
 	}
 	
-	private static int returnIndexSkill(List<Skill> list, Skill skill) {
-	    int i = 0;
+	private static int returnIndexSkillString(List<Skill> list, String skill) {
+		int i = 0;
 		for (Skill object : list) {
-	    	if(object.getAsText().compareTo(skill.getAsText())==0){
-	    		return i;
-	    	}
-	        i++;
-	    }
-	    return -1;
+			if (object.getAsText().compareTo(skill) == 0) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
 	}
 }

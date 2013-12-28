@@ -5446,23 +5446,23 @@ a.badge:hover {
 }
 
 .label-excellent {
-  background-color: #8dc53e;
+  background-color: #330000;
 }
 
 .label-good {
-  background-color: #bed036;
+  background-color: #5b3c3c;
 }
 
 .label-regular {
-  background-color: #eedc2e;
+  background-color: #8d7878;
 }
 
 .label-poor {
-  background-color: #de8a39;
+  background-color: #bfb4b4;
 }
 
 .label-bad {
-  background-color: #cf3744;
+  background-color: #e7eaea;
 }
 
 .label-important,

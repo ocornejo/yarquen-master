@@ -86,7 +86,6 @@ public class ArticleSearcher {
 	private ArticleRepository articleRepository;
 	@Resource
 	private CategoryService categoryService;
-	private AccountRepository accountRepository;
 
 	private Directory indexDirectory;
 	@Value("#{config.indexDirectory}")
@@ -434,6 +433,12 @@ public class ArticleSearcher {
 						kw));
 			}
 		}
+		if (article.getKeywordsTrust() != null) {
+			for (KeywordTrust kwt : article.getKeywordsTrust()) {
+				facets.add(new CategoryPath(Article.Facets.KEYWORD.toString(),
+						kwt.getName()));
+			}
+		}
 		if (article.getProvidedSkills() != null) {
 			for (Skill skill : article.getProvidedSkills()) {
 				final String[] components = skill
@@ -546,6 +551,15 @@ public class ArticleSearcher {
 						kw));
 			}
 		}
+		final List<KeywordTrust> keywordTrustValues = searchFields.getKeywordTrust();
+		if (keywordTrustValues != null && !keywordTrustValues.isEmpty()) {
+			facetedSearch = true;
+			for (KeywordTrust kwt : keywordTrustValues) {
+				facets.add(new CategoryPath(Article.Facets.KEYWORD.toString(),
+						kwt.getName()));
+			}
+		}
+		
 		// provided skills
 		final List<Skill> providedSkills = searchFields.getProvidedSkill();
 		if (providedSkills != null && !providedSkills.isEmpty()) {
@@ -575,8 +589,8 @@ public class ArticleSearcher {
 
 		if (facetedSearch) {
 			LOGGER.debug(
-					"faceted search: author={} year={} keywords={} providedSkills={} requiredSkills={}",
-					new Object[] { author, year, keywordValues, providedSkills,
+					"faceted search: author={} year={} keywords={} keywordsTrust={} providedSkills={} requiredSkills={}",
+					new Object[] { author, year, keywordValues, keywordTrustValues, providedSkills,
 							requiredSkills });
 			return DrillDown.query(facetSearchParams, textQuery,
 					facets.toArray(new CategoryPath[facets.size()]));

@@ -400,28 +400,49 @@ $("#newSkillSave").click(function() {
 });
 
 function removeSkill(selector, collectionProperty, skillTd) {	
-	skillTd.parent().remove();
+	var article = [[${id}]];
+	var skill = skillTd.children().first().text();
 	
-	var skillCode = skillTd.children().first().text();
-	console.log("skillCode: " + skillCode);
-	var c = $(selector).children().size();
-	console.log("children count: " + c);
-	var i = 0;
-	//locate and remove the skill element
-	for(; i < c; i++) {
-		var sel = selector + " input:nth-child(" + ( i + 1 ) + ")";
-		console.log("sel: " + selector + " = " + $(selector).attr("value"));
-		if($(sel).attr("value") == skillCode) {
-			$(sel).remove();
-			break;
-		}
-	}
-	//fix remaining elements
-	for(; i < c; i++) {
-		var sel = selector + " input:nth-child(" + ( i + 1 ) + ")";
-		$(sel).attr("id", collectionProperty + i);
-		$(sel).attr("name", collectionProperty + "[" + i + "]");
-	}
+
+	$.ajax({
+        type: "GET",
+        url: /*[[@{'/articles/enricher/checkIfSkillCanBeRemoved'}]]*/ "http://localhost:8080/yarquen/articles/enricher/checkIfSkillCanBeRemoved",
+        data: {skill: skill,article: article},
+        complete: function(e, xhr, settings){
+            if(e.status === 200){
+            	if(e.responseText=="NO"){
+            		alert("You can't remove this skill, your trust isn't enough");
+            	}
+            	else{
+            		skillTd.parent().remove();
+            		
+            		var skillCode = skillTd.children().first().text();
+            		console.log("skillCode: " + skillCode);
+            		var c = $(selector).children().size();
+            		console.log("children count: " + c);
+            		var i = 0;
+            		//locate and remove the skill element
+            		for(; i < c; i++) {
+            			var sel = selector + " input:nth-child(" + ( i + 1 ) + ")";
+            			console.log("sel: " + selector + " = " + $(selector).attr("value"));
+            			if($(sel).attr("value") == skillCode) {
+            				$(sel).remove();
+            				break;
+            			}
+            		}
+            		//fix remaining elements
+            		for(; i < c; i++) {
+            			var sel = selector + " input:nth-child(" + ( i + 1 ) + ")";
+            			$(sel).attr("id", collectionProperty + i);
+            			$(sel).attr("name", collectionProperty + "[" + i + "]");
+            		}
+            	}
+            }else{
+            	alert(e.responseText);	
+            }
+        }
+        });
+	
 }
 
 //date
