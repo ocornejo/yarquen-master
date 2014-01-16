@@ -83,7 +83,7 @@ public class SearchResult {
 		return this.ratingFinal;
 	}
 	
-	public void setRatingFinal(List<Rating> ratings, Trust trustAction, Node source) {
+	public void setRatingFinal(List<Rating> ratings, Trust trustAction, Node source, int threshold) {
 		
 		double rate = 0;
 		double trust = 0;
@@ -92,7 +92,7 @@ public class SearchResult {
 		if(ratings.size()>0){
 			for(Rating rt: ratings){
 				Node sink = trustAction.getNode(rt.getId());
-				double trustTemp = trustAction.getTrust(source, sink);
+				double trustTemp = trustAction.getTrust(source, sink) > threshold ? trustAction.getTrust(source, sink) : 0;
 				rate = Double.parseDouble(rt.getRating()) * trustTemp;
 				this.ratingFinal+=rate;
 				trust += trustTemp;

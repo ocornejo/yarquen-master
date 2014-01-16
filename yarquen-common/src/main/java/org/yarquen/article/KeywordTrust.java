@@ -43,7 +43,7 @@ public class KeywordTrust {
 		} else if (isBetween(trust, 9, 10)) {
 			color = "excellent";
 		} else{
-			color= "default";
+			color= "info";
 		}
 	}
 	public String getColor(){

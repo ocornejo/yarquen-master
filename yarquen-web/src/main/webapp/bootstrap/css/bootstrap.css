@@ -5497,7 +5497,11 @@ a.badge:hover {
 
 .label-info,
 .badge-info {
-  background-color: #3a87ad;
+  background-color: #ffffff;
+  color: #3e3e3e;
+  border-style: groove;
+  border-width: 1px;
+  border-color: #ededed;
 }
 
 .label-info[href],

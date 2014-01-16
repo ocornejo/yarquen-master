@@ -267,7 +267,7 @@ public class ArticleSearcher {
 			} else {
 
 				final SearchResult searchResult = createSearchResult(article,
-						trustAction, source);
+						trustAction, source, trustTreshold);
 
 				float score = (float) (Math.round(scoreDoc.score * 10.0) / 10.0);
 				searchResult.setScore(score);
@@ -662,7 +662,7 @@ public class ArticleSearcher {
 
 	// this method fills the searchResult properties
 	private SearchResult createSearchResult(Article article, Trust trustAction,
-			Node source) {
+			Node source,int threshold) {
 		final SearchResult searchResult = new SearchResult();
 		searchResult.setId(article.getId());
 		searchResult.setUrl(article.getUrl());
@@ -712,7 +712,7 @@ public class ArticleSearcher {
 
 		if (article.getRatings().size() > 0)
 			searchResult.setRatingFinal(article.getRatings(), trustAction,
-					source);
+					source,threshold);
 		else {
 			searchResult.setRatingFinalDirect(0);
 			searchResult.setTrustScore(0);
