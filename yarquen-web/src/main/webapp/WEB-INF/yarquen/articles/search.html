@@ -152,7 +152,7 @@
 			<div class="sidebar right" sec:authorize="isAuthenticated()">
 				<div th:if="${bestResults != null}" class="well">
 					<h4>Best trust-based results</h4>
-					<ol id="results">
+					<ol id="bResults">
 						<li th:each="result : ${bestResults}">
 							<div style="margin-bottom: 15px">
 								<span> <em><a th:href="${result.url}"
