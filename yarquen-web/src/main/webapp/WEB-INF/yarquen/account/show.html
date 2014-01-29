@@ -263,12 +263,12 @@
 							
 							<div id="trustTreshold" class="well" th:if="${account.id} == ${currentAccount}">
 									<h4 class="modal-header"
-										th:text="'Set your trust treshold'">
+										th:text="'Set your trust threshold'">
 									</h4>
 									<p id="trustTresholdText" 
-										th:if="${hasTt != null}" th:text="'Your current trust treshold is: '+${account.trustTreshold}"></p>
+										th:if="${hasTt != null}" th:text="'Your current trust threshold is: '+${account.trustTreshold}"></p>
 									<p id="trustTresholdText" 
-										th:if="${hasTt == null}" th:text="'You haven\'t set your trust treshold yet'"></p>
+										th:if="${hasTt == null}" th:text="'You haven\'t set your trust threshold yet'"></p>
 
 									<div class="slider slider-horizontal">
 										<input type="text" class="slider" value="" id="sl2" style="" />
