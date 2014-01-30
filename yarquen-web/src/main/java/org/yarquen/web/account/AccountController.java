@@ -213,7 +213,6 @@ public class AccountController {
 		Trust trustAction = new Trust();
 		Node user = trustAction.getNode(account.getId());
 		
-		model.addAttribute("esteeselvalor", trustAction.getHowMuchTrust(user));
 		
 		List<String> idTrustees = trustAction.getTrustees(account.getId());
 		
